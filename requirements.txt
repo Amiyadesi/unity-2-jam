@@ -1,0 +1,3 @@
+# No Python package dependency is required for the helper scripts.
+# Keep this file so the contest README command stays valid:
+#   pip install -r requirements.txt
