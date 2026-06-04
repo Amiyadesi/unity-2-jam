@@ -1,33 +1,55 @@
-[gd_scene load_steps=4 format=3 uid="uid://closeaisettingscn"]
+[gd_scene format=3 uid="uid://dyv3hpdag2lbt"]
 
-[ext_resource type="Script" path="res://scripts/ui/settings_screen.gd" id="1_set"]
+[ext_resource type="Script" uid="uid://ttywu0oavgjo" path="res://scripts/ui/settings_screen.gd" id="1_set"]
+[ext_resource type="Shader" uid="uid://bjrk22c0ggkn1" path="res://ui_kit/shaders/glass_blur.gdshader" id="2_blur"]
+[ext_resource type="Shader" uid="uid://b0ry8w6mxwf3f" path="res://ui_kit/shaders/scan_lines.gdshader" id="3_scan"]
+[ext_resource type="Shader" uid="uid://dsukwv8pi3wl" path="res://ui_kit/shaders/defect_frame.gdshader" id="4_defect"]
+[ext_resource type="Theme" uid="uid://cu0u8nl3o0vja" path="res://ui_kit/settings_slider.tres" id="5_slider"]
+[ext_resource type="PackedScene" uid="uid://dyv3j4u5kwmm7" path="res://ui_kit/components/shader_button.tscn" id="6_btn"]
 
-[sub_resource type="StyleBoxFlat" id="SB_panel"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-bg_color = Color(0.07, 0.09, 0.12, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.4, 0.62, 0.78, 0.55)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+[sub_resource type="ShaderMaterial" id="Mat_blur"]
+shader = ExtResource("2_blur")
+shader_parameter/strength = 3.0
+shader_parameter/mix_percentage = 0.34
+
+[sub_resource type="StyleBoxFlat" id="SB_shell"]
+bg_color = Color(0.03, 0.026, 0.022, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.98, 0.72, 0.36, 0.38)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 shadow_color = Color(0, 0, 0, 0.5)
-shadow_size = 24
+shadow_size = 28
 
-[sub_resource type="StyleBoxFlat" id="SB_grabber"]
-bg_color = Color(0.62, 0.82, 0.95, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[sub_resource type="StyleBoxFlat" id="SB_frame"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.98, 0.72, 0.36, 0.22)
 
-[node name="SettingsScreen" type="Control"]
+[sub_resource type="ShaderMaterial" id="Mat_scan"]
+shader = ExtResource("3_scan")
+shader_parameter/line_color = Color(0.98, 0.74, 0.36, 0.26)
+shader_parameter/intensity = 0.6
+shader_parameter/scan_density = 118.0
+shader_parameter/scan_speed = 0.11
+shader_parameter/block_density = 19.0
+
+[sub_resource type="ShaderMaterial" id="Mat_defect"]
+shader = ExtResource("4_defect")
+shader_parameter/frame_color = Color(0.98, 0.78, 0.42, 0.5)
+shader_parameter/intensity = 0.7
+shader_parameter/border_width = 0.012
+shader_parameter/gap_density = 22.0
+
+[node name="SettingsScreen" type="Control" unique_id=1553417530]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -36,183 +58,216 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_set")
 
-[node name="Backdrop" type="ColorRect" parent="."]
+[node name="Backdrop" type="ColorRect" parent="." unique_id=1025126771]
+material = SubResource("Mat_blur")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.7)
+color = Color(0.01, 0.008, 0.008, 0.5)
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -220.0
-offset_right = 260.0
-offset_bottom = 220.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(260, 220)
-theme_override_styles/panel = SubResource("SB_panel")
-
-[node name="Margin" type="MarginContainer" parent="Panel"]
+[node name="Panel" type="Control" parent="." unique_id=1811604856]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 36
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 36
-theme_override_constants/margin_bottom = 30
+pivot_offset = Vector2(360, 260)
 
-[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+[node name="Shell" type="Panel" parent="Panel" unique_id=1615331033]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_shell")
+
+[node name="FrameVFX" type="Panel" parent="Panel" unique_id=363936577]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_frame")
+
+[node name="ScanVFX" type="ColorRect" parent="Panel" unique_id=2113780658]
+material = SubResource("Mat_scan")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DefectVFX" type="ColorRect" parent="Panel" unique_id=1106090558]
+material = SubResource("Mat_defect")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=884279972]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 44
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 44
+theme_override_constants/margin_bottom = 34
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin" unique_id=1930889057]
 layout_mode = 2
 theme_override_constants/separation = 22
 
-[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+[node name="Title" type="Label" parent="Panel/Margin/VBox" unique_id=22204202]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.93, 1, 1)
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(1, 0.82, 0.42, 1)
+theme_override_font_sizes/font_size = 34
 text = "设置"
+horizontal_alignment = 1
 
-[node name="TitleSep" type="HSeparator" parent="Panel/Margin/VBox"]
+[node name="TitleSep" type="HSeparator" parent="Panel/Margin/VBox" unique_id=1516341060]
 layout_mode = 2
 
-[node name="MasterRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="MasterRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=878996922]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 28
 
-[node name="MasterLabel" type="Label" parent="Panel/Margin/VBox/MasterRow"]
-custom_minimum_size = Vector2(110, 0)
+[node name="MasterLabel" type="Label" parent="Panel/Margin/VBox/MasterRow" unique_id=1713583450]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.82, 0.9, 1)
-theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.92, 0.88, 0.78, 1)
+theme_override_font_sizes/font_size = 20
 text = "主音量"
 vertical_alignment = 1
 
-[node name="MasterSlider" type="HSlider" parent="Panel/Margin/VBox/MasterRow"]
-custom_minimum_size = Vector2(260, 0)
+[node name="MasterSlider" type="HSlider" parent="Panel/Margin/VBox/MasterRow" unique_id=1154627997]
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 1
+theme = ExtResource("5_slider")
 max_value = 1.0
 step = 0.01
 value = 0.8
-theme_override_styles/grabber_area = SubResource("SB_grabber")
-theme_override_styles/grabber_area_highlight = SubResource("SB_grabber")
 
-[node name="MasterValue" type="Label" parent="Panel/Margin/VBox/MasterRow"]
-custom_minimum_size = Vector2(50, 0)
+[node name="MasterValue" type="Label" parent="Panel/Margin/VBox/MasterRow" unique_id=2034342855]
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.78, 0.9, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.96, 0.93, 0.82, 1)
+theme_override_font_sizes/font_size = 18
 text = "80%"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="MusicRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="MusicRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=1768755918]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 28
 
-[node name="MusicLabel" type="Label" parent="Panel/Margin/VBox/MusicRow"]
-custom_minimum_size = Vector2(110, 0)
+[node name="MusicLabel" type="Label" parent="Panel/Margin/VBox/MusicRow" unique_id=1148039066]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.82, 0.9, 1)
-theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.92, 0.88, 0.78, 1)
+theme_override_font_sizes/font_size = 20
 text = "音乐"
 vertical_alignment = 1
 
-[node name="MusicSlider" type="HSlider" parent="Panel/Margin/VBox/MusicRow"]
-custom_minimum_size = Vector2(260, 0)
+[node name="MusicSlider" type="HSlider" parent="Panel/Margin/VBox/MusicRow" unique_id=1037351783]
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 1
+theme = ExtResource("5_slider")
 max_value = 1.0
 step = 0.01
 value = 0.8
-theme_override_styles/grabber_area = SubResource("SB_grabber")
-theme_override_styles/grabber_area_highlight = SubResource("SB_grabber")
 
-[node name="MusicValue" type="Label" parent="Panel/Margin/VBox/MusicRow"]
-custom_minimum_size = Vector2(50, 0)
+[node name="MusicValue" type="Label" parent="Panel/Margin/VBox/MusicRow" unique_id=8563455]
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.78, 0.9, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.96, 0.93, 0.82, 1)
+theme_override_font_sizes/font_size = 18
 text = "80%"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="SfxRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="SfxRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=706717653]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 28
 
-[node name="SfxLabel" type="Label" parent="Panel/Margin/VBox/SfxRow"]
-custom_minimum_size = Vector2(110, 0)
+[node name="SfxLabel" type="Label" parent="Panel/Margin/VBox/SfxRow" unique_id=1776005170]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.82, 0.9, 1)
-theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.92, 0.88, 0.78, 1)
+theme_override_font_sizes/font_size = 20
 text = "音效"
 vertical_alignment = 1
 
-[node name="SfxSlider" type="HSlider" parent="Panel/Margin/VBox/SfxRow"]
-custom_minimum_size = Vector2(260, 0)
+[node name="SfxSlider" type="HSlider" parent="Panel/Margin/VBox/SfxRow" unique_id=1253255855]
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 1
+theme = ExtResource("5_slider")
 max_value = 1.0
 step = 0.01
 value = 0.8
-theme_override_styles/grabber_area = SubResource("SB_grabber")
-theme_override_styles/grabber_area_highlight = SubResource("SB_grabber")
 
-[node name="SfxValue" type="Label" parent="Panel/Margin/VBox/SfxRow"]
-custom_minimum_size = Vector2(50, 0)
+[node name="SfxValue" type="Label" parent="Panel/Margin/VBox/SfxRow" unique_id=900484175]
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.78, 0.9, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.96, 0.93, 0.82, 1)
+theme_override_font_sizes/font_size = 18
 text = "80%"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="DisplayRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="DisplayRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=1228956556]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 28
 
-[node name="DisplayLabel" type="Label" parent="Panel/Margin/VBox/DisplayRow"]
-custom_minimum_size = Vector2(110, 0)
+[node name="DisplayLabel" type="Label" parent="Panel/Margin/VBox/DisplayRow" unique_id=2074465514]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.82, 0.9, 1)
-theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.92, 0.88, 0.78, 1)
+theme_override_font_sizes/font_size = 20
 text = "全屏"
 vertical_alignment = 1
 
-[node name="FullscreenCheck" type="CheckButton" parent="Panel/Margin/VBox/DisplayRow"]
+[node name="FullscreenCheck" type="CheckButton" parent="Panel/Margin/VBox/DisplayRow" unique_id=463423567]
 layout_mode = 2
 button_pressed = true
 
-[node name="Spacer" type="Control" parent="Panel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 8)
+[node name="Spacer" type="Control" parent="Panel/Margin/VBox" unique_id=1050915002]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ButtonRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="ButtonRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=1718157127]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 24
 alignment = 1
 
-[node name="ThanksButton" type="Button" parent="Panel/Margin/VBox/ButtonRow"]
-custom_minimum_size = Vector2(150, 44)
+[node name="ReturnButton" parent="Panel/Margin/VBox/ButtonRow" unique_id=1163438468 instance=ExtResource("6_btn")]
+custom_minimum_size = Vector2(170, 48)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "感谢"
+size_flags_horizontal = 2
+bb_text = "[color=#e8c070]返回"
 
-[node name="ReturnButton" type="Button" parent="Panel/Margin/VBox/ButtonRow"]
-custom_minimum_size = Vector2(150, 44)
+[node name="ThanksButton" parent="Panel/Margin/VBox/ButtonRow" unique_id=493234241 instance=ExtResource("6_btn")]
+custom_minimum_size = Vector2(170, 48)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "返回"
+size_flags_horizontal = 10
+bb_text = "[color=#e8c070]感谢"

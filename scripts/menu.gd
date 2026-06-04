@@ -16,6 +16,7 @@ extends Control
 @onready var _status_label: Label = $StatusLabel
 @onready var _subtitle: Label = $Subtitle
 @onready var _boot_flash: ColorRect = $BootFlash
+@onready var _start_fade: ColorRect = $StartFade
 @onready var _settings_screen = $SettingsScreen
 @onready var _thanks_screen = $ThanksScreen
 
@@ -36,14 +37,22 @@ func _ready() -> void:
 ## 开始/继续 文案与副标题
 func _refresh_primary() -> void:
 	if GameFlow.has_started():
-		_primary_button.text = "继续"
+		_set_primary_text("继续")
 		if GameFlow.has_finished_game():
 			_subtitle.text = "—— 它已经离开了。但你还可以再回来看看。"
 		else:
 			_subtitle.text = "—— 它还在第 %d 个地方等你。" % GameFlow.get_current_stage()
 	else:
-		_primary_button.text = "开始"
+		_set_primary_text("开始")
 		_subtitle.text = "—— 一个被困在游戏里的存在。"
+
+
+## ShaderButton 用 set_bbtext；普通 Button 退化用 text
+func _set_primary_text(label: String) -> void:
+	if _primary_button.has_method("set_bbtext"):
+		_primary_button.set_bbtext("[color=#e8c070]%s" % label)
+	else:
+		_primary_button.text = label
 
 
 ## 强杀恢复后的状态条
@@ -76,17 +85,14 @@ func _on_primary_pressed() -> void:
 ## "开始"后、游戏真正自我关闭前会 await 这个钩子。
 ## 把你的开场演出（动画 / 文字 / 音效 / 假装崩溃……）写在这里。
 ## 这是一个协程：用 await 控制演出时长，结束后游戏才会关闭。
+## 注意：UI 用固定节点（场景里的 StartFade），不要在脚本里 new 控件。
 func _start_performance(_reason: String) -> void:
-	# —— 占位：先做一个最简单的淡黑，确保流程能跑通 ——
-	# 设计可替换为任意演出；只要在演出结束处 return / await 完即可。
-	var flash := ColorRect.new()
-	flash.color = Color(0, 0, 0, 0)
-	flash.anchor_right = 1.0
-	flash.anchor_bottom = 1.0
-	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(flash)
+	# —— 占位：用场景里固定的 StartFade 节点做一个淡黑，确保流程能跑通 ——
+	# 设计可替换为任意演出；只要在演出结束处 await 完即可。
+	_start_fade.color.a = 0.0
+	_start_fade.visible = true
 	var tween := create_tween()
-	tween.tween_property(flash, "color:a", 1.0, 0.6)
+	tween.tween_property(_start_fade, "color:a", 1.0, 0.6)
 	await tween.finished
 	# TODO(设计): 在此接入真正的开场演出，演出跑完后游戏会自动关闭。
 

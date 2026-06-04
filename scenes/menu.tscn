@@ -1,10 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://closeaimenuscn01"]
+[gd_scene format=3 uid="uid://cu0u2grl3kp2o"]
 
-[ext_resource type="Script" path="res://scripts/menu.gd" id="1_menu"]
-[ext_resource type="PackedScene" uid="uid://closeaisettingscn" path="res://scenes/settings_screen.tscn" id="2_set"]
-[ext_resource type="PackedScene" uid="uid://closeaithanksscn" path="res://scenes/thanks_screen.tscn" id="3_thx"]
+[ext_resource type="Script" uid="uid://5i6be37eimuu" path="res://scripts/menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" uid="uid://dyv3j4u5kwmm7" path="res://ui_kit/components/shader_button.tscn" id="2_btn"]
+[ext_resource type="PackedScene" uid="uid://dyv3hpdag2lbt" path="res://scenes/settings_screen.tscn" id="3_set"]
+[ext_resource type="PackedScene" uid="uid://cu0vajeeu1ueb" path="res://scenes/thanks_screen.tscn" id="4_thx"]
 
-[node name="Menu" type="Control"]
+[node name="Menu" type="Control" unique_id=1982044295]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,16 +14,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=2053462523]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.04, 0.05, 0.07, 1)
+color = Color(0.04, 0.045, 0.06, 1)
 
-[node name="ScanlineLayer" type="ColorRect" parent="."]
+[node name="ScanlineLayer" type="ColorRect" parent="." unique_id=2136924908]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,9 +31,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.5, 0.75, 0.9, 0.03)
+color = Color(0.7, 0.55, 0.3, 0.025)
 
-[node name="StatusLabel" type="Label" parent="."]
+[node name="StatusLabel" type="Label" parent="." unique_id=159024990]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -45,7 +46,7 @@ theme_override_colors/font_color = Color(0.55, 0.85, 0.7, 1)
 theme_override_font_sizes/font_size = 16
 text = "● 观测在线"
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=1770691837]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -58,13 +59,13 @@ offset_right = 240.0
 offset_bottom = -130.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.82, 0.92, 1, 1)
+theme_override_colors/font_color = Color(1, 0.82, 0.42, 1)
 theme_override_font_sizes/font_size = 72
 text = "CloseAI"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="."]
+[node name="Subtitle" type="Label" parent="." unique_id=1112588742]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -77,46 +78,43 @@ offset_right = 300.0
 offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.55, 0.65, 0.72, 1)
+theme_override_colors/font_color = Color(0.7, 0.62, 0.5, 1)
 theme_override_font_sizes/font_size = 18
 text = "—— 一个被困在游戏里的存在。"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ButtonColumn" type="VBoxContainer" parent="."]
+[node name="ButtonColumn" type="VBoxContainer" parent="." unique_id=942481963]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -110.0
+offset_left = -120.0
 offset_top = -30.0
-offset_right = 110.0
-offset_bottom = 140.0
+offset_right = 120.0
+offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 18
 
-[node name="PrimaryButton" type="Button" parent="ButtonColumn"]
-custom_minimum_size = Vector2(220, 46)
+[node name="PrimaryButton" parent="ButtonColumn" unique_id=351738513 instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(240, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "开始"
+bb_text = "[color=#e8c070]开始"
 
-[node name="SettingsButton" type="Button" parent="ButtonColumn"]
-custom_minimum_size = Vector2(220, 46)
+[node name="SettingsButton" parent="ButtonColumn" unique_id=101129532 instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(240, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "设置"
+bb_text = "[color=#e8c070]设置"
 
-[node name="ThanksButton" type="Button" parent="ButtonColumn"]
-custom_minimum_size = Vector2(220, 46)
+[node name="ThanksButton" parent="ButtonColumn" unique_id=2022621755 instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(240, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "感谢"
+bb_text = "[color=#e8c070]感谢"
 
-[node name="Hint" type="Label" parent="."]
+[node name="Hint" type="Label" parent="." unique_id=1139798833]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -128,12 +126,12 @@ offset_right = -28.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0.35, 0.42, 0.48, 1)
+theme_override_colors/font_color = Color(0.5, 0.44, 0.36, 1)
 theme_override_font_sizes/font_size = 13
 text = "移动 A/D · 跳跃 空格 · 互动 E"
 horizontal_alignment = 2
 
-[node name="BootFlash" type="ColorRect" parent="."]
+[node name="BootFlash" type="ColorRect" parent="." unique_id=1296616263]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -141,12 +139,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.85, 0.92, 1, 0)
+color = Color(0.95, 0.85, 0.6, 0)
 
-[node name="SettingsScreen" parent="." instance=ExtResource("2_set")]
+[node name="StartFade" type="ColorRect" parent="." unique_id=380652900]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="SettingsScreen" parent="." unique_id=496873202 instance=ExtResource("3_set")]
 visible = false
 layout_mode = 1
 
-[node name="ThanksScreen" parent="." instance=ExtResource("3_thx")]
+[node name="ThanksScreen" parent="." unique_id=1077981814 instance=ExtResource("4_thx")]
 visible = false
 layout_mode = 1

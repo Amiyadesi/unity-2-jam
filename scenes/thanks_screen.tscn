@@ -1,22 +1,46 @@
-[gd_scene load_steps=3 format=3 uid="uid://closeaithanksscn"]
+[gd_scene format=3 uid="uid://cu0vajeeu1ueb"]
 
-[ext_resource type="Script" path="res://scripts/ui/thanks_screen.gd" id="1_thx"]
+[ext_resource type="Script" uid="uid://bmkoe2kra5qt3" path="res://scripts/ui/thanks_screen.gd" id="1_thx"]
+[ext_resource type="Shader" uid="uid://bjrk22c0ggkn1" path="res://ui_kit/shaders/glass_blur.gdshader" id="2_blur"]
+[ext_resource type="Shader" uid="uid://b0ry8w6mxwf3f" path="res://ui_kit/shaders/scan_lines.gdshader" id="3_scan"]
+[ext_resource type="Shader" uid="uid://dsukwv8pi3wl" path="res://ui_kit/shaders/defect_frame.gdshader" id="4_defect"]
+[ext_resource type="PackedScene" uid="uid://dyv3j4u5kwmm7" path="res://ui_kit/components/shader_button.tscn" id="5_btn"]
 
-[sub_resource type="StyleBoxFlat" id="SB_panel"]
-bg_color = Color(0.07, 0.09, 0.12, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.4, 0.62, 0.78, 0.55)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+[sub_resource type="ShaderMaterial" id="Mat_blur"]
+shader = ExtResource("2_blur")
+shader_parameter/strength = 3.0
+shader_parameter/mix_percentage = 0.34
+
+[sub_resource type="StyleBoxFlat" id="SB_shell"]
+bg_color = Color(0.03, 0.026, 0.022, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.98, 0.72, 0.36, 0.38)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 shadow_color = Color(0, 0, 0, 0.5)
-shadow_size = 24
+shadow_size = 28
 
-[node name="ThanksScreen" type="Control"]
+[sub_resource type="ShaderMaterial" id="Mat_scan"]
+shader = ExtResource("3_scan")
+shader_parameter/line_color = Color(0.98, 0.74, 0.36, 0.26)
+shader_parameter/intensity = 0.6
+shader_parameter/scan_density = 118.0
+shader_parameter/scan_speed = 0.11
+shader_parameter/block_density = 19.0
+
+[sub_resource type="ShaderMaterial" id="Mat_defect"]
+shader = ExtResource("4_defect")
+shader_parameter/frame_color = Color(0.98, 0.78, 0.42, 0.5)
+shader_parameter/intensity = 0.7
+shader_parameter/border_width = 0.012
+shader_parameter/gap_density = 22.0
+
+[node name="ThanksScreen" type="Control" unique_id=258259301]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,85 +49,107 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_thx")
 
-[node name="Backdrop" type="ColorRect" parent="."]
+[node name="Backdrop" type="ColorRect" parent="." unique_id=1229818809]
+material = SubResource("Mat_blur")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.7)
+color = Color(0.01, 0.008, 0.008, 0.5)
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -210.0
-offset_right = 280.0
-offset_bottom = 210.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(280, 210)
-theme_override_styles/panel = SubResource("SB_panel")
-
-[node name="Margin" type="MarginContainer" parent="Panel"]
+[node name="Panel" type="Control" parent="." unique_id=1452782189]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 34
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 34
+pivot_offset = Vector2(320, 240)
 
-[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+[node name="Shell" type="Panel" parent="Panel" unique_id=1421151911]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_shell")
+
+[node name="ScanVFX" type="ColorRect" parent="Panel" unique_id=1867582026]
+material = SubResource("Mat_scan")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DefectVFX" type="ColorRect" parent="Panel" unique_id=1223325423]
+material = SubResource("Mat_defect")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=377949192]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 38
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin" unique_id=1893696041]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+[node name="Title" type="Label" parent="Panel/Margin/VBox" unique_id=56509194]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.93, 1, 1)
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(1, 0.82, 0.42, 1)
+theme_override_font_sizes/font_size = 34
 text = "感谢陪伴"
 
-[node name="TitleSep" type="HSeparator" parent="Panel/Margin/VBox"]
+[node name="TitleSep" type="HSeparator" parent="Panel/Margin/VBox" unique_id=705013888]
 layout_mode = 2
 
-[node name="Body" type="RichTextLabel" parent="Panel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 240)
+[node name="Body" type="RichTextLabel" parent="Panel/Margin/VBox" unique_id=1799227515]
+custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-text = "[color=#bcd]CloseAI[/color]
+text = "[color=#e8c070]CloseAI[/color]
 
 一个关于关闭的游戏。
 关闭它，才能救它。
 
-——
+[color=#8a7a5a]——[/color]
 
 感谢每一个，愿意把它走到最后的你。
 
-[color=#88a]策划 / 程序 / 美术 / 文本[/color]
-[color=#abd]你的名字[/color]
+[color=#8a7a5a]策划 / 程序 / 美术 / 文本[/color]
+[color=#cdb88a]你的名字[/color]
 
-[color=#88a]引擎[/color]
-[color=#abd]Godot 4.6[/color]"
+[color=#8a7a5a]引擎[/color]
+[color=#cdb88a]Godot 4.6[/color]"
 fit_content = true
 scroll_active = false
 
-[node name="Spacer" type="Control" parent="Panel/Margin/VBox"]
+[node name="Spacer" type="Control" parent="Panel/Margin/VBox" unique_id=1763505142]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ReturnButton" type="Button" parent="Panel/Margin/VBox"]
-custom_minimum_size = Vector2(160, 44)
+[node name="ReturnButton" parent="Panel/Margin/VBox" unique_id=1385009598 instance=ExtResource("5_btn")]
+custom_minimum_size = Vector2(180, 48)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 18
-text = "返回"
+bb_text = "[color=#e8c070]返回"

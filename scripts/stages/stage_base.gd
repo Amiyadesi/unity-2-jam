@@ -30,6 +30,10 @@ class_name StageBase
 var _close_moment_started: bool = false
 var _stage_active: bool = false
 
+## 暂停界面（实例化固定模板场景，所有关卡共用）
+const PAUSE_SCENE := "res://scenes/pause_screen.tscn"
+var _pause_screen: Control
+
 
 func _ready() -> void:
 	if is_instance_valid(_player):
@@ -37,7 +41,22 @@ func _ready() -> void:
 	if _close_trigger != null:
 		_close_trigger.body_entered.connect(_on_close_trigger_entered)
 	GameFlow.set_current_stage(stage_index)
+	_spawn_pause_screen()
 	_run_enter_sequence.call_deferred()
+
+
+## 实例化固定模板暂停界面到独立 CanvasLayer（headless 跳过）
+func _spawn_pause_screen() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	if not ResourceLoader.exists(PAUSE_SCENE):
+		return
+	var layer := CanvasLayer.new()
+	layer.layer = 20
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(layer)
+	_pause_screen = load(PAUSE_SCENE).instantiate()
+	layer.add_child(_pause_screen)
 
 
 func _run_enter_sequence() -> void:

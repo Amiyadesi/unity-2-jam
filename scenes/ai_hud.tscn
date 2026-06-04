@@ -1,12 +1,38 @@
-[gd_scene load_steps=2 format=3 uid="uid://closeaiaihud001"]
+[gd_scene load_steps=3 format=3 uid="uid://closeaiaihud001"]
 
 [ext_resource type="Script" path="res://scripts/ui/ai_hud.gd" id="1_aihud"]
+
+[sub_resource type="StyleBoxFlat" id="SB_toast"]
+bg_color = Color(0.03, 0.026, 0.022, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.98, 0.72, 0.36, 0.42)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="SB_hint"]
+bg_color = Color(0.02, 0.035, 0.045, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.68, 0.82, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="AiHud" type="CanvasLayer"]
 layer = 10
 script = ExtResource("1_aihud")
 
-[node name="CloseHint" type="Label" parent="." unique_name_in_owner=true]
+[node name="CloseHint" type="Label" parent="."]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -15,37 +41,80 @@ offset_top = 40.0
 offset_right = 260.0
 offset_bottom = 76.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0.85, 0.92, 1, 1)
+theme_override_colors/font_color = Color(1, 0.86, 0.52, 1)
 theme_override_font_sizes/font_size = 22
-text = "现在……可以关掉这里了。"
+text = "它正在关闭这里……"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SubtitlePanel" type="Panel" parent="." unique_name_in_owner=true]
+[node name="ToastPanel" type="Panel" parent="."]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -380.0
-offset_top = -118.0
-offset_right = 380.0
-offset_bottom = -54.0
+offset_left = -390.0
+offset_top = -124.0
+offset_right = 390.0
+offset_bottom = -56.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/panel = SubResource("SB_toast")
 
-[node name="Subtitle" type="Label" parent="SubtitlePanel" unique_name_in_owner=true]
+[node name="Margin" type="MarginContainer" parent="ToastPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 18.0
-offset_right = -18.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.88, 0.93, 0.98, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 10
+
+[node name="ToastText" type="RichTextLabel" parent="ToastPanel/Margin"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_colors/default_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/normal_font_size = 20
 text = ""
-horizontal_alignment = 1
 vertical_alignment = 1
-autowrap_mode = 2
+
+[node name="HintPanel" type="Panel" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -64.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("SB_hint")
+
+[node name="Margin" type="MarginContainer" parent="HintPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 7
+
+[node name="HintText" type="RichTextLabel" parent="HintPanel/Margin"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_colors/default_color = Color(0.78, 0.9, 0.96, 1)
+theme_override_font_sizes/normal_font_size = 16
+text = ""
+vertical_alignment = 1

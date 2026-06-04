@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1yndxmrq5ikr"
-path="res://.godot/imported/female_super_character_spritesheet_raw.png-4375239f0a1244c404a4f55855d86324.ctex"
+uid="uid://0fpwwyonv1c6"
+path="res://.godot/imported/super character spritesheet.png-fa659286c339e36dd9453da10ebbf01b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/generated/female_super_character_spritesheet_raw.png"
-dest_files=["res://.godot/imported/female_super_character_spritesheet_raw.png-4375239f0a1244c404a4f55855d86324.ctex"]
+source_file="res://assets/super character spritesheet.png"
+dest_files=["res://.godot/imported/super character spritesheet.png-fa659286c339e36dd9453da10ebbf01b.ctex"]
 
 [params]
 

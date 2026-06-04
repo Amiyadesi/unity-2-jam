@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3 uid="uid://closeaishaderbtn1"]
+
+[ext_resource type="Script" path="res://ui_kit/components/shader_button.gd" id="1_sbtn"]
+
+[sub_resource type="StyleBoxFlat" id="SB_btn"]
+bg_color = Color(0.04, 0.035, 0.03, 0.55)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6, 0.45, 0.24, 0.7)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[node name="ShaderButton" type="Button"]
+custom_minimum_size = Vector2(220, 48)
+offset_right = 220.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 20
+text = "按钮"
+script = ExtResource("1_sbtn")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_btn")
+
+[node name="Label" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="resized" from="Label" to="." method="_on_label_resized"]

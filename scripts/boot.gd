@@ -15,9 +15,26 @@ extends Control
 
 func _ready() -> void:
 	_boot_label.modulate.a = 0.0
+	_enforce_display_mode()
 	await _play_boot_intro()
 	# 根据进度路由：未开始→菜单；通关→结局；游玩中→当前关卡
 	GameFlow.enter_after_boot()
+
+
+## 启动时按存档设置应用窗口模式（默认全屏）。
+## SettingsModule 在 global_loaded 时已 apply，但此处再确认一次，
+## 兜底窗口管理器/时序问题，保证默认全屏生效。
+func _enforce_display_mode() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	var mode := "fullscreen"
+	var ss := get_node_or_null("/root/SaveSystem")
+	if ss != null and ss.has_method("get_module"):
+		var settings = ss.get_module("settings")
+		if settings != null and settings.has_method("get_value"):
+			mode = str(settings.get_value("display_mode", "fullscreen"))
+	if mode == "fullscreen":
+		get_window().mode = Window.MODE_FULLSCREEN
 
 
 ## 黑屏 → 标题淡入 → 短暂停留 → 淡出
