@@ -26,6 +26,7 @@ GuiTransitions="*uid://lbwvyqfdnu7x"
 SoundManager="*uid://b2wllo35vbjaj"
 DialogueManager="*uid://c3rodes2l3gxb"
 GameFlow="*res://scripts/autoload/game_flow.gd"
+InfoFlow="*res://scripts/autoload/info_flow.gd"
 
 [debug]
 

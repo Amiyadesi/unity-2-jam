@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://closeaistage3scn"]
+[gd_scene load_steps=5 format=3 uid="uid://closeaistage3scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_3.gd" id="1_stage3"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
-[ext_resource type="PackedScene" uid="uid://closeaiaihud001" path="res://scenes/ai_hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://closeaienemy01" path="res://scenes/enemy.tscn" id="4_enemy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
@@ -47,8 +46,6 @@ position = Vector2(740, 576)
 
 [node name="Enemy3" parent="." instance=ExtResource("4_enemy")]
 position = Vector2(980, 576)
-
-[node name="AiHud" parent="." instance=ExtResource("3_hud")]
 
 [node name="DarkOverlay" type="CanvasLayer" parent="."]
 layer = 5

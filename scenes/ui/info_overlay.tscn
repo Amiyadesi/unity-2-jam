@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3 uid="uid://closeaiinfoovl1"]
+
+[ext_resource type="Script" path="res://scripts/infoflow/info_overlay.gd" id="1_ovl"]
+
+[node name="InfoOverlay" type="CanvasLayer"]
+layer = 110
+script = ExtResource("1_ovl")
+
+[node name="OverlayRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BreadcrumbFeed" type="Control" parent="OverlayRoot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HintFeed" type="Control" parent="OverlayRoot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

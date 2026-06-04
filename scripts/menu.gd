@@ -61,8 +61,8 @@ func _refresh_status() -> void:
 		_status_label.text = "● 检测到非正常退出 —— 你逃不掉的。"
 		_status_label.add_theme_color_override("font_color", Color(0.95, 0.45, 0.45))
 	else:
-		_status_label.text = "● 观测在线"
-		_status_label.add_theme_color_override("font_color", Color(0.55, 0.85, 0.7))
+		_status_label.text = ""
+		_status_label.add_theme_color_override("font_color", Color(0.6, 0.55, 0.78))
 
 
 # ──────────────────────────────────────────────

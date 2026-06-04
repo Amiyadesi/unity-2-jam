@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://closeaistage1scn"]
+[gd_scene load_steps=5 format=3 uid="uid://closeaistage1scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_1.gd" id="1_stage1"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
-[ext_resource type="PackedScene" uid="uid://closeaiaihud001" path="res://scenes/ai_hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://closeaiswitch01" path="res://scenes/switch.tscn" id="4_switch"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
@@ -48,4 +47,3 @@ position = Vector2(720, 564)
 [node name="Switch3" parent="." instance=ExtResource("4_switch")]
 position = Vector2(960, 564)
 
-[node name="AiHud" parent="." instance=ExtResource("3_hud")]

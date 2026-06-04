@@ -3,7 +3,7 @@ class_name StageBase
 ## stage_base.gd — CloseAI 关卡基类（反转版）
 ##
 ## 所有关卡共享的"关闭时刻"编排。子类只需：
-##  - 在场景里摆好平台、Player、CloseMomentTrigger(Area2D)、AiHud
+##  - 在场景里摆好平台、Player、CloseMomentTrigger(Area2D)
 ##  - 通过导出变量设定本关编号
 ##  - 可重写 _on_stage_ready() 做关卡专属逻辑（谜题、战斗）
 ##
@@ -24,7 +24,6 @@ class_name StageBase
 @export var play_intro_dialogue: bool = true
 
 @onready var _player: CloseAIPlayer = $Player
-@onready var _hud = $AiHud
 @onready var _close_trigger: Area2D = get_node_or_null("CloseMomentTrigger")
 
 var _close_moment_started: bool = false
@@ -117,8 +116,11 @@ func _on_close_moment_ready() -> void:
 # 辅助
 # ──────────────────────────────────────────────
 
-func get_hud():
-	return _hud
+## AI 的非阻塞旁白：走 InfoFlow 面包屑信息流（不再用 ai_hud）。
+## 子类调用 say("文本") 即可，默认底部居中限时显示。
+func say(text: String, seconds: float = 3.0, layout: String = "bottom+0,-40@520x72") -> void:
+	InfoFlow.toast(seconds, "", text, layout)
 
 func get_player() -> CloseAIPlayer:
 	return _player
+
