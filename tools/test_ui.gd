@@ -18,6 +18,17 @@ func _wait(t: float) -> void:
 	var timer := root.get_tree().create_timer(t)
 	await timer.timeout
 
+## 递归查找 overlay 里任何会拦截鼠标（mouse_filter != IGNORE）的 Control。
+## 返回第一个违规节点路径；全部 click-through 则返回 ""。
+func _find_input_catching(node: Node) -> String:
+	if node is Control and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+		return str(node.get_path())
+	for c in node.get_children():
+		var r := _find_input_catching(c)
+		if r != "":
+			return r
+	return ""
+
 func _run() -> void:
 	print("=== CloseAI UI + flight test ===")
 	await process_frame
@@ -37,6 +48,16 @@ func _run() -> void:
 	var thanks = menu.get_node_or_null("ThanksScreen")
 	_check("SettingsScreen present", settings != null)
 	_check("ThanksScreen present", thanks != null)
+
+	# 回归守护："overlay 挡住菜单按钮"——close_mock 等常驻 overlay 的所有
+	# 可见控件都必须 mouse_filter=IGNORE(2)，否则会挡住其覆盖范围内的按钮点击。
+	var mock_packed = load("res://scenes/close_mock.tscn")
+	var mock = mock_packed.instantiate()
+	var bad := _find_input_catching(mock)
+	_check("close_mock overlay is fully click-through", bad == "")
+	if bad != "":
+		print("    blocking node: ", bad)
+	mock.free()
 
 	# --- settings modal open/close ---
 	if settings != null and settings.has_method("open_modal"):

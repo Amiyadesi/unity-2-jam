@@ -57,6 +57,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 28
 theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 28
@@ -64,10 +65,12 @@ theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="Root/Panel/Margin"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 14
 
 [node name="TitleLine" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/font_color = Color(0.95, 0.55, 0.55, 1)
 theme_override_font_sizes/font_size = 22
 text = "关闭请求被拒绝"
@@ -75,11 +78,13 @@ horizontal_alignment = 1
 
 [node name="Sep" type="HSeparator" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="BodyText" type="RichTextLabel" parent="Root/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
