@@ -1,0 +1,19 @@
+import "res://addons/dialogue_manager/dialogue_file/global.dialogue" as global
+
+~ stage4_t01_arrival
+澄息: 这里...好闭塞，有股压迫感，门怎么不见了？
+澄息: 周围是什么，星空？...中间有股东西在吸引我
+=> END
+
+~ stage4_t02_window_expand_unlock
+澄息: 我感觉...我获得了能够能够拓展你的
+澄息: 等等，这是什么东西？
+澄息: 不好，它好像苏醒了！
+=> END
+
+
+~ stage4_t06_boss_defeated
+澄息: 终于结束了...
+澄息: 我们还真强嘿嘿
+澄息: 好了，继续前进吧！
+=> END

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SceneTransition" format=3 uid="uid://frdhqw34p1hh"]
+
+[ext_resource type="Texture2D" uid="uid://4qj7v54radfg" path="res://addons/scene_manager/test/change_scene/transition/gradient/conical.webp" id="1_vh6dg"]
+[ext_resource type="Script" uid="uid://dx7jq7vtturfr" path="res://addons/scene_manager/autoload/transition.gd" id="1_vrho5"]
+
+[resource]
+script = ExtResource("1_vrho5")
+gradient_texture = ExtResource("1_vh6dg")

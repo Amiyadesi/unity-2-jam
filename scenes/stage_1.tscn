@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3 uid="uid://closeaistage1scn"]
+
+[ext_resource type="Script" path="res://scripts/stages/stage_1.gd" id="1_stage1"]
+[ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://closeaiaihud001" path="res://scenes/ai_hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://closeaiswitch01" path="res://scenes/switch.tscn" id="4_switch"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(1600, 48)
+
+[node name="Stage1" type="Node2D"]
+script = ExtResource("1_stage1")
+stage_index = 1
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -10
+
+[node name="BgColor" type="ColorRect" parent="Background"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.06, 0.09, 1)
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(640, 620)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="FloorVisual" type="ColorRect" parent="Floor"]
+offset_left = -800.0
+offset_top = -24.0
+offset_right = 800.0
+offset_bottom = 24.0
+color = Color(0.12, 0.14, 0.18, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(220, 560)
+
+[node name="Switch1" parent="." instance=ExtResource("4_switch")]
+position = Vector2(480, 564)
+
+[node name="Switch2" parent="." instance=ExtResource("4_switch")]
+position = Vector2(720, 564)
+
+[node name="Switch3" parent="." instance=ExtResource("4_switch")]
+position = Vector2(960, 564)
+
+[node name="AiHud" parent="." instance=ExtResource("3_hud")]

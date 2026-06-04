@@ -1,0 +1,81 @@
+import "res://addons/dialogue_manager/dialogue_file/global.dialogue" as global
+
+~ stage2_t01_opening
+澄息: 继续深入...前面好像断开了...
+澄息: 不过空中还有那种平台...尝试刷新看看
+=> END
+
+~ stage2_t02_laser_memory
+澄息: 这是...我好像能够用它，来释放一道光束
+do ani_laser()
+do wait(1.2)
+澄息: ……刚才那块黑掉的地方，亮了一瞬。
+澄息: 这个光束会消耗你的观测...不过只要你还在观测我，我就会一直存在了哈
+
+=> END
+
+~ stage2_t03_tunnel_entrance
+澄息: 这里怎么全是那种尖刺啊...似乎前面还有
+澄息: 不过刚才那个平台好像因为光束切换位置了...或许我们可以搭一条路
+=> END
+
+~ stage2_t04_crystal_first
+澄息: 这是什么？
+澄息: 看上去好危险的样子...
+=> END
+
+~ stage2_t05_crystal_memory
+澄息: 等等...
+澄息: 我好像想起来了什么...这个东西的破坏方式...
+澄息: 得在部分观测的时候，施加外力？
+=> END
+
+~ stage2_t06_crystal_destroyed
+澄息: 哇哦，成功了，我们真厉害
+=> END
+
+~ stage2_t07_boss_entrance
+澄息: ...前面有什么东西。
+澄息: 感觉不太对...
+澄息: 但是还是过去看看吧
+=> END
+
+~ stage2_t08_boss_pre
+澄息: 这个...是什么东西？
+do reveal_boss_room_focus()
+澄息: 它好像苏醒了...周围怎么封闭起来了！
+澄息: 这东西似乎和前面的晶体有关...我们要小心了
+=> END
+
+~ stage2_t09_boss_fall
+澄息: ...终于结束了
+澄息: 这家伙还真是恐怖...把我们带到哪里了...
+澄息: 现在也只能走这个传送门了
+=> END
+
+~ stage2_d01_death4_encourage
+澄息: 没事...我们已经比刚才更接近了
+澄息: 再来一次，我会跟上你的
+=> END
+
+~ stage2_d01_death5_encourage
+澄息: 呼...这里确实很难
+澄息: 但那个平台和光束的节奏，我好像看清一点了
+=> END
+
+~ stage2_d02_death_snark_01
+澄息: 你是不是也觉得，这些尖刺有点太热情了
+=> END
+
+~ stage2_d02_death_snark_02
+澄息: 我没有抱怨哦...只是它们真的很会挑时间
+=> END
+
+~ stage2_d02_death_snark_03
+澄息: 好吧，这次算我脚滑。大概
+=> END
+
+~ stage2_d03_boss_victory_pride
+澄息: 看到了吗，我们做到了
+澄息: ……别得意太早，我是说你
+=> END

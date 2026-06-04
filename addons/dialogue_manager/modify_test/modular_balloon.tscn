@@ -1,0 +1,634 @@
+[gd_scene format=3 uid="uid://cdcqdvlloasul"]
+
+[ext_resource type="Script" uid="uid://mgtldmclk60c" path="res://addons/dialogue_manager/modify_test/modular_balloon.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://ckvgyvclnwggo" path="res://addons/dialogue_manager/dialogue_label.tscn" id="3_dialogue_label"]
+[ext_resource type="PackedScene" uid="uid://cq1hr3d7sj0vk" path="res://addons/dialogue_manager/modify_test/historylog.tscn" id="4_history_log"]
+[ext_resource type="Script" uid="uid://d0kpf181s7cfy" path="res://addons/richtext2/text_effects/anims/rte_back.gd" id="5_pviqj"]
+[ext_resource type="Script" uid="uid://bb52rsfwhkxbn" path="res://addons/dialogue_manager/dialogue_responses_menu.gd" id="5_responses_menu"]
+[ext_resource type="Script" uid="uid://b3bdsrfsghyle" path="res://addons/dialogue_manager/text_effects/dmfx_beat.gd" id="6_21g0n"]
+[ext_resource type="Script" uid="uid://bmdp0vplrdpx2" path="res://addons/dialogue_manager/modify_test/simple/human_texture.gd" id="6_human_texture"]
+[ext_resource type="Script" uid="uid://lueiihmlbsky" path="res://addons/dialogue_manager/modify_test/illustration/illustration_manager.gd" id="7_illustration_manager"]
+[ext_resource type="Script" uid="uid://cshtnd3isvgm7" path="res://addons/dialogue_manager/text_effects/dmfx_breathe.gd" id="7_yo0ww"]
+[ext_resource type="Script" uid="uid://daarvl64y1gt6" path="res://addons/dialogue_manager/modify_test/modules/flow_control_module.gd" id="8_flow"]
+[ext_resource type="Script" uid="uid://byva4jmdfgv5i" path="res://addons/richtext2/text_effects/anims/rte_console.gd" id="8_rrwpb"]
+[ext_resource type="Script" uid="uid://c25bl5fl6uqw5" path="res://addons/dialogue_manager/modify_test/modules/animation_module.gd" id="9_animation"]
+[ext_resource type="Script" uid="uid://dhbxvg36y8pfd" path="res://addons/richtext2/text_effects/effects/rte_curspull.gd" id="9_lerfo"]
+[ext_resource type="Script" uid="uid://4mittkdxo7ig" path="res://addons/richtext2/text_effects/effects/rte_cuss.gd" id="10_loolu"]
+[ext_resource type="Script" uid="uid://bkhgd71mimy7h" path="res://addons/dialogue_manager/modify_test/modules/typing_sound_module.gd" id="10_typing_sound"]
+[ext_resource type="AudioStream" path="res://assets/sfx/ui/dialogue_typewriter.wav" id="10_typewriter_wav"]
+[ext_resource type="Script" uid="uid://5hv4pjs1xcht" path="res://addons/richtext2/text_effects/anims/rte_fader.gd" id="11_3j3o5"]
+[ext_resource type="Script" uid="uid://bi4ru1v4yq4f" path="res://addons/dialogue_manager/modify_test/modules/history_module.gd" id="11_history"]
+[ext_resource type="Script" uid="uid://bw15kgjjsr5nt" path="res://addons/richtext2/text_effects/anims/rte_fallin.gd" id="12_dorth"]
+[ext_resource type="Script" uid="uid://cjalp6e8ydm1k" path="res://addons/dialogue_manager/modify_test/modules/save_module.gd" id="12_save"]
+[ext_resource type="Script" uid="uid://vyj7honaiwbx" path="res://addons/richtext2/text_effects/anims/rte_focus.gd" id="13_hvnv7"]
+[ext_resource type="Script" uid="uid://dpngcvhig2oid" path="res://addons/dialogue_manager/modify_test/modules/illustration_module.gd" id="13_illustration"]
+[ext_resource type="Script" uid="uid://d3pgq7ctx7ht3" path="res://addons/dialogue_manager/modify_test/modules/character_ui_module.gd" id="14_character_ui"]
+[ext_resource type="Script" uid="uid://qr22d0tdlk1k" path="res://addons/richtext2/text_effects/anims/rte_fromcursor.gd" id="14_s50go"]
+[ext_resource type="Script" uid="uid://bjkublintrwgy" path="res://addons/dialogue_manager/text_effects/dmfx_ghost.gd" id="15_excge"]
+[ext_resource type="Script" uid="uid://lrfhf3xbivhx" path="res://addons/richtext2/text_effects/anims/rte_growin.gd" id="16_mbm83"]
+[ext_resource type="Script" uid="uid://b61hhau76ckc3" path="res://addons/richtext2/text_effects/effects/rte_heart.gd" id="17_404ds"]
+[ext_resource type="Script" uid="uid://dwkp7y25mpc07" path="res://addons/dialogue_manager/text_effects/dmfx_hop.gd" id="18_in1ak"]
+[ext_resource type="Script" uid="uid://dof0tkhyta031" path="res://addons/richtext2/text_effects/effects/rte_jit.gd" id="19_egyxu"]
+[ext_resource type="Script" uid="uid://dtyrtol6f7wbv" path="res://addons/dialogue_manager/text_effects/dmfx_jit2.gd" id="20_xexym"]
+[ext_resource type="Script" uid="uid://de4o4demcpr3j" path="res://addons/richtext2/text_effects/effects/rte_jump.gd" id="21_wd6h7"]
+[ext_resource type="Script" uid="uid://ci0bplmwxvagt" path="res://addons/richtext2/text_effects/effects/rte_jump2.gd" id="22_ir4f6"]
+[ext_resource type="Script" uid="uid://dvu837eubxi58" path="res://addons/richtext2/text_effects/effects/rte_l33t.gd" id="23_8x3ea"]
+[ext_resource type="Script" uid="uid://d06b34emx1kyv" path="res://addons/dialogue_manager/text_effects/dmfx_off.gd" id="24_ii26b"]
+[ext_resource type="Script" uid="uid://bj1fx23o3brra" path="res://addons/richtext2/text_effects/anims/rte_offin.gd" id="25_uvj8o"]
+[ext_resource type="Script" uid="uid://d16jnf3xho2be" path="res://addons/richtext2/text_effects/anims/rte_prickle.gd" id="26_fn1rn"]
+[ext_resource type="Script" uid="uid://du1v6l7e8xn30" path="res://addons/richtext2/text_effects/effects/rte_rain.gd" id="27_ujmxk"]
+[ext_resource type="Script" uid="uid://bno832cshhwbv" path="res://addons/dialogue_manager/text_effects/dmfx_secret.gd" id="28_qnahx"]
+[ext_resource type="Script" uid="uid://dmlvymi7pxuwy" path="res://addons/richtext2/text_effects/anims/rte_redact.gd" id="28_xjgj8"]
+[ext_resource type="Script" uid="uid://beascr8kued20" path="res://addons/dialogue_manager/text_effects/dmfx_sin.gd" id="30_hx3rx"]
+[ext_resource type="Script" uid="uid://bjad8fxe1ee31" path="res://addons/dialogue_manager/text_effects/dmfx_sparkle.gd" id="31_gpyjy"]
+[ext_resource type="Script" uid="uid://bwydgipompl8i" path="res://addons/dialogue_manager/text_effects/dmfx_sway.gd" id="32_webjg"]
+[ext_resource type="Script" uid="uid://b3g6d7e17ptwi" path="res://addons/richtext2/text_effects/effects/rte_uwu.gd" id="33_etyku"]
+[ext_resource type="Script" uid="uid://b8k6548xtwyv6" path="res://addons/richtext2/text_effects/effects/rte_wack.gd" id="34_hx440"]
+[ext_resource type="Script" uid="uid://c6bj8ca2mj2ti" path="res://addons/dialogue_manager/text_effects/dmfx_wfc.gd" id="34_pviqj"]
+[ext_resource type="Script" uid="uid://beh7kaa580cli" path="res://addons/richtext2/text_effects/effects/rte_woo.gd" id="36_ju67t"]
+[ext_resource type="Script" uid="uid://b1n8ljkxq1ns" path="res://addons/richtext2/text_effects/effects/rte_wave.gd" id="37_cdfve"]
+
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_qnahx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_spyqn"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.329412, 0.329412, 0.329412, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ri4m3"]
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e0njw"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6, 0.6, 0.6, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qkmqt"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_qq3yp"]
+default_font_size = 20
+Button/styles/disabled = SubResource("StyleBoxFlat_spyqn")
+Button/styles/focus = SubResource("StyleBoxFlat_ri4m3")
+Button/styles/hover = SubResource("StyleBoxFlat_e0njw")
+Button/styles/normal = SubResource("StyleBoxFlat_e0njw")
+MarginContainer/constants/margin_bottom = 15
+MarginContainer/constants/margin_left = 30
+MarginContainer/constants/margin_right = 30
+MarginContainer/constants/margin_top = 15
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_qkmqt")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_21g0n"]
+bg_color = Color(0, 0, 0, 0.16470589)
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_yo0ww"]
+resource_name = "back"
+script = ExtResource("5_pviqj")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_rrwpb"]
+resource_name = "beat"
+script = ExtResource("6_21g0n")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_lerfo"]
+resource_name = "breathe"
+script = ExtResource("7_yo0ww")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_loolu"]
+resource_name = "console"
+script = ExtResource("8_rrwpb")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_3j3o5"]
+resource_name = "curspull"
+script = ExtResource("9_lerfo")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_dorth"]
+resource_name = "cuss"
+script = ExtResource("10_loolu")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_hvnv7"]
+resource_name = "fader"
+script = ExtResource("11_3j3o5")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_s50go"]
+resource_name = "fallin"
+script = ExtResource("12_dorth")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_excge"]
+resource_name = "focus"
+script = ExtResource("13_hvnv7")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_mbm83"]
+resource_name = "fromcursor"
+script = ExtResource("14_s50go")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_404ds"]
+resource_name = "ghost"
+script = ExtResource("15_excge")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_in1ak"]
+resource_name = "growin"
+script = ExtResource("16_mbm83")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_egyxu"]
+resource_name = "heart"
+script = ExtResource("17_404ds")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_xexym"]
+resource_name = "hop"
+script = ExtResource("18_in1ak")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_wd6h7"]
+resource_name = "jit"
+script = ExtResource("19_egyxu")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_ir4f6"]
+resource_name = "jit2"
+script = ExtResource("20_xexym")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_8x3ea"]
+resource_name = "jump"
+script = ExtResource("21_wd6h7")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_ii26b"]
+resource_name = "jump2"
+script = ExtResource("22_ir4f6")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_uvj8o"]
+resource_name = "l33t"
+script = ExtResource("23_8x3ea")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_fn1rn"]
+resource_name = "off"
+script = ExtResource("24_ii26b")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_ujmxk"]
+resource_name = "offin"
+script = ExtResource("25_uvj8o")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_xjgj8"]
+resource_name = "prickle"
+script = ExtResource("26_fn1rn")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_t2ewu"]
+resource_name = "rain"
+script = ExtResource("27_ujmxk")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_hx3rx"]
+resource_name = "redact"
+script = ExtResource("28_xjgj8")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_gpyjy"]
+resource_name = "secret"
+script = ExtResource("28_qnahx")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_webjg"]
+resource_name = "sin"
+script = ExtResource("30_hx3rx")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_etyku"]
+resource_name = "sparkle"
+script = ExtResource("31_gpyjy")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_hx440"]
+resource_name = "sway"
+script = ExtResource("32_webjg")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_vhxkn"]
+resource_name = "uwu"
+script = ExtResource("33_etyku")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_ju67t"]
+resource_name = "wack"
+script = ExtResource("34_hx440")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_cdfve"]
+resource_name = "wfc"
+script = ExtResource("34_pviqj")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_g6l3q"]
+resource_name = "woo"
+script = ExtResource("36_ju67t")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_k5id6"]
+resource_name = "www"
+script = ExtResource("37_cdfve")
+metadata/rt = 52863061604777
+metadata/text = "DialogueDialogue"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_auto"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.6, 0.35, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hist"]
+bg_color = Color(0.1, 0.15, 0.25, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.45, 0.7, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="ModularBalloon" type="CanvasLayer" unique_id=1386033202]
+layer = 100
+script = ExtResource("1_script")
+history_enabled = false
+auto_save_progress = false
+typing_sound = ExtResource("10_typewriter_wav")
+
+[node name="TalkSound" type="AudioStreamPlayer" parent="." unique_id=467482644]
+
+[node name="VoicePlayer" type="AudioStreamPlayer" parent="." unique_id=815329956]
+unique_name_in_owner = true
+
+[node name="Illustrations" type="Control" parent="." unique_id=896035091]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LeftIllustration" type="TextureRect" parent="Illustrations" unique_id=1419398609]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.2
+anchor_right = 0.2
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("6_human_texture")
+
+[node name="CenterIllustration" type="TextureRect" parent="Illustrations" unique_id=413038453]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.2
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_right = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("6_human_texture")
+
+[node name="RightIllustration" type="TextureRect" parent="Illustrations" unique_id=611990592]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.8
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("6_human_texture")
+
+[node name="Balloon" type="Control" parent="." unique_id=806762085]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_qq3yp")
+
+[node name="Margin" type="MarginContainer" parent="Balloon" unique_id=904209019]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -159.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 63
+
+[node name="BGTexture" type="TextureRect" parent="Balloon/Margin" unique_id=1263807015]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 8
+expand_mode = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="Balloon/Margin" unique_id=499236850]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_21g0n")
+
+[node name="HBox" type="HBoxContainer" parent="Balloon/Margin/PanelContainer" unique_id=1770083554]
+layout_mode = 2
+
+[node name="PortraitContainer" type="Control" parent="Balloon/Margin/PanelContainer/HBox" unique_id=1699586831]
+visible = false
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_vertical = 5
+
+[node name="HeadTexture" type="TextureRect" parent="Balloon/Margin/PanelContainer/HBox/PortraitContainer" unique_id=1194907126]
+unique_name_in_owner = true
+z_index = 9
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -1.0
+offset_right = 4.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 4
+
+[node name="PortraitTexture" type="TextureRect" parent="Balloon/Margin/PanelContainer/HBox/PortraitContainer" unique_id=1919854656]
+unique_name_in_owner = true
+z_index = 9
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="NameTexture" type="TextureRect" parent="Balloon/Margin/PanelContainer/HBox/PortraitContainer" unique_id=2103024846]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 155.0
+offset_top = 6.0
+offset_right = 231.0
+offset_bottom = 46.0
+scale = Vector2(1.28, 1.2)
+
+[node name="VBox" type="VBoxContainer" parent="Balloon/Margin/PanelContainer/HBox" unique_id=525732274]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CharacterLabel" type="RichTextLabel" parent="Balloon/Margin/PanelContainer/HBox/VBox" unique_id=2132078231]
+unique_name_in_owner = true
+self_modulate = Color(3, 3, 3, 1)
+z_index = 1
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 1
+theme_override_font_sizes/normal_font_size = 50
+bbcode_enabled = true
+text = "Character"
+fit_content = true
+scroll_active = false
+
+[node name="DialogueLabel" parent="Balloon/Margin/PanelContainer/HBox/VBox" unique_id=2058309905 instance=ExtResource("3_dialogue_label")]
+unique_name_in_owner = true
+z_index = 9
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 40
+text = "DialogueDialogue"
+custom_effects = [SubResource("RichTextEffect_yo0ww"), SubResource("RichTextEffect_rrwpb"), SubResource("RichTextEffect_lerfo"), SubResource("RichTextEffect_loolu"), SubResource("RichTextEffect_3j3o5"), SubResource("RichTextEffect_dorth"), SubResource("RichTextEffect_hvnv7"), SubResource("RichTextEffect_s50go"), SubResource("RichTextEffect_excge"), SubResource("RichTextEffect_mbm83"), SubResource("RichTextEffect_404ds"), SubResource("RichTextEffect_in1ak"), SubResource("RichTextEffect_egyxu"), SubResource("RichTextEffect_xexym"), SubResource("RichTextEffect_wd6h7"), SubResource("RichTextEffect_ir4f6"), SubResource("RichTextEffect_8x3ea"), SubResource("RichTextEffect_ii26b"), SubResource("RichTextEffect_uvj8o"), SubResource("RichTextEffect_fn1rn"), SubResource("RichTextEffect_ujmxk"), SubResource("RichTextEffect_xjgj8"), SubResource("RichTextEffect_t2ewu"), SubResource("RichTextEffect_hx3rx"), SubResource("RichTextEffect_gpyjy"), SubResource("RichTextEffect_webjg"), SubResource("RichTextEffect_etyku"), SubResource("RichTextEffect_hx440"), SubResource("RichTextEffect_vhxkn"), SubResource("RichTextEffect_ju67t"), SubResource("RichTextEffect_cdfve"), SubResource("RichTextEffect_g6l3q"), SubResource("RichTextEffect_k5id6")]
+
+[node name="Temp" type="Control" parent="Balloon/Margin/PanelContainer/HBox" unique_id=368279005]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="Balloon/Margin/PanelContainer/HBox" unique_id=1078665150]
+custom_minimum_size = Vector2(18, 10)
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="Progress" type="Polygon2D" parent="Balloon/Margin/PanelContainer/HBox/Control" unique_id=463258573]
+unique_name_in_owner = true
+polygon = PackedVector2Array(0, 0, 9, 9, 18, 0)
+
+[node name="Toolbar" type="HBoxContainer" parent="Balloon/Margin/PanelContainer" unique_id=613989164]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="AutoAdvanceIndicator" type="Label" parent="Balloon/Margin/PanelContainer/Toolbar" unique_id=536280414]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="SpeedIndicator" type="Label" parent="Balloon/Margin/PanelContainer/Toolbar" unique_id=262159767]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="AutoAdvanceButton" type="Button" parent="Balloon/Margin/PanelContainer/Toolbar" unique_id=1164686725]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_auto")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_auto")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_auto")
+toggle_mode = true
+text = "⟳ 自动"
+
+[node name="HistoryButton" type="Button" parent="Balloon/Margin/PanelContainer/Toolbar" unique_id=1109026803]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_hist")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hist")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hist")
+text = "📜 历史"
+
+[node name="HistoryLog" parent="Balloon" unique_id=1146584728 instance=ExtResource("4_history_log")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -250.0
+
+[node name="ResponsesMenu" type="VBoxContainer" parent="Balloon" unique_id=551303760 node_paths=PackedStringArray("response_template")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -40.0
+offset_right = 280.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 2
+alignment = 1
+script = ExtResource("5_responses_menu")
+response_template = NodePath("ResponseExample")
+
+[node name="ResponseExample" type="Button" parent="Balloon/ResponsesMenu" unique_id=2139410354]
+visible = false
+layout_mode = 2
+text = "选项示例"
+
+[node name="IllustrationManager" type="Node" parent="." unique_id=771306283]
+script = ExtResource("7_illustration_manager")
+
+[node name="FlowControlModule" type="Node" parent="." unique_id=1930675597]
+script = ExtResource("8_flow")
+
+[node name="AnimationModule" type="Node" parent="." unique_id=106604152]
+script = ExtResource("9_animation")
+
+[node name="TypingSoundModule" type="Node" parent="." unique_id=1920817707]
+script = ExtResource("10_typing_sound")
+
+[node name="HistoryModule" type="Node" parent="." unique_id=1759301537]
+script = ExtResource("11_history")
+is_enabled = false
+
+[node name="SaveModule" type="Node" parent="." unique_id=743937275]
+script = ExtResource("12_save")
+
+[node name="IllustrationModule" type="Node" parent="." unique_id=1740243931]
+script = ExtResource("13_illustration")
+
+[node name="CharacterUIModule" type="Node" parent="." unique_id=294683444]
+script = ExtResource("14_character_ui")
+
+[connection signal="gui_input" from="Balloon" to="." method="_on_balloon_gui_input"]
+[connection signal="toggled" from="Balloon/Margin/PanelContainer/Toolbar/AutoAdvanceButton" to="." method="_on_auto_advance_button_toggled"]
+[connection signal="pressed" from="Balloon/Margin/PanelContainer/Toolbar/HistoryButton" to="." method="_on_history_button_pressed"]

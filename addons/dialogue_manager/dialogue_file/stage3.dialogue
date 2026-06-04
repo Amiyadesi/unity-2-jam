@@ -1,0 +1,47 @@
+import "res://addons/dialogue_manager/dialogue_file/global.dialogue" as global
+
+~ stage3_t01_arrival
+澄息: 继续深入...
+澄息: 这里还真是奇怪呢...
+澄息: 还好有你陪我(‾◡◝)
+=> END
+
+~ stage3_t03_squeeze_first
+澄息: 怎么感觉不对...不好，我感觉观测正在减弱！
+澄息: 刚才那个按钮，到底激活了什么？
+澄息: 我们得快点离开了
+=> END
+
+~ stage3_t04_stand_again
+澄息: 呼...终于恢复正常了...
+澄息: 这里究竟是什么地方...还真是神秘
+澄息: 后面的门...应该会更深入了
+=> END
+
+~ stage3_t05_window_align
+澄息: 这个门...它好像生成了什么东西？[wait=1]但是我看不到
+澄息: 上面写着什么...贴合上去？真奇怪...
+=> END
+
+~ stage3_t02_
+澄息: 这里
+=> END
+
+~ stage3_t06_window_calculator
+澄息: 后面下来了一个什么东西？上面写着...横纵向？
+澄息: 看样子这次也是一个类似上个谜题的东西...
+=> END
+
+~ stage3_d01_die2
+澄息: 没事...刚才那一下只是太突然了
+澄息: 我们再看一次这个窗口变化
+=> END
+
+~ stage3_d01_die3
+澄息: 这里的规则有点别扭呢
+澄息: 但是我还站得起来，不用担心
+=> END
+
+~ stage3_d02_die5_snark
+澄息: 这扇窗口是不是也在嫌我们太慢了
+=> END

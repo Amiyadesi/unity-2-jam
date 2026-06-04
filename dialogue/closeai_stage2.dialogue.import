@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://dl3s8kkv2u3xa"
+path="res://.godot/imported/closeai_stage2.dialogue-7264712b4b48743d806495d9958375d5.tres"
+
+[deps]
+
+source_file="res://dialogue/closeai_stage2.dialogue"
+dest_files=["res://.godot/imported/closeai_stage2.dialogue-7264712b4b48743d806495d9958375d5.tres"]
+
+[params]
+
+defaults=true

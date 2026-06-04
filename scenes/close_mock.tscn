@@ -1,0 +1,86 @@
+[gd_scene load_steps=2 format=3 uid="uid://closeaimockscn01"]
+
+[ext_resource type="Script" path="res://scripts/ui/close_mock.gd" id="1_mock"]
+
+[node name="CloseMock" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_mock")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="GlitchA" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9, 0.1, 0.2, 0)
+
+[node name="GlitchB" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.1, 0.5, 0.95, 0)
+
+[node name="Panel" type="Panel" parent="Root"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -110.0
+offset_right = 280.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Root/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="Root/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLine" type="Label" parent="Root/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.55, 0.55, 1)
+theme_override_font_sizes/font_size = 22
+text = "关闭请求被拒绝"
+horizontal_alignment = 1
+
+[node name="Sep" type="HSeparator" parent="Root/Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="BodyText" type="RichTextLabel" parent="Root/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+text = "[center]你想关掉我？[/center]"

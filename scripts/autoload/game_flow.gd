@@ -1,0 +1,312 @@
+extends Node
+## ════════════════════════════════════════════════════════════════
+##  GameFlow — CloseAI 全局流程编排器（AutoLoad: "GameFlow"）
+## ════════════════════════════════════════════════════════════════
+##
+## 核心理念（反转版）：玩家永远无法自己关闭窗口。
+## ────────────────────────────────────────────────
+##  只有"游戏自己"会在剧情节点关闭（self_close）。
+##  玩家任何关闭尝试都会被拦截并嘲讽：
+##    · 普通点 × / 任务栏关闭 → 弹出嘲讽，几秒后自动消失，每次更狠
+##    · 真正强杀（任务管理器）→ 进程被杀，但下次启动检测到"脏关闭"，
+##      回来后被狠狠嘲讽 + 戳穿"没用的，你逃不掉，只能照我的流程来"
+##  目的：让玩家明白，离开的唯一方式就是顺着游戏走下去。
+##
+##  唯一真正的退出入口 = self_close()：由"开始游戏"和各关"关闭时刻"调用。
+##  关闭前会 emit pre_self_close 并 await 已注册的演出钩子（留给设计接演出）。
+##
+## 进度（持久化到 AppStateModule）：
+##  closeai_started  —— 是否已经历过"开始时的第一次自我关闭"
+##  closeai_stage    —— 当前关卡编号
+##  closeai_finished —— 是否已通关（看完结局）
+
+# ──────────────────────────────────────────────
+# 信号
+# ──────────────────────────────────────────────
+
+## 即将自我关闭：演出钩子可连接此信号或用 register_pre_close_hook 注册 await
+signal pre_self_close(reason: String)
+## 玩家尝试关闭窗口被拦截（attempt_index 从 1 起，越大越多次）
+signal close_attempt_mocked(attempt_index: int, is_post_kill: bool)
+## 进入"关闭时刻"：游戏允许（并提示）自我关闭推进剧情
+signal close_moment_ready(stage_index: int)
+
+# ──────────────────────────────────────────────
+# 常量
+# ──────────────────────────────────────────────
+
+const TOTAL_STAGES := 3
+
+const STARTED_KEY := "closeai_started"
+const STAGE_KEY := "closeai_stage"
+const FINISHED_KEY := "closeai_finished"
+
+const SCENE_MENU := "res://scenes/menu.tscn"
+const SCENE_ENDING := "res://scenes/ending.tscn"
+const STAGE_SCENE_PATTERN := "res://scenes/stage_%d.tscn"
+const DIALOGUE_PATTERN := "res://dialogue/closeai_stage%d.dialogue"
+
+## 嘲讽 overlay 场景（常驻顶层，监听 close_attempt_mocked）
+const CLOSE_MOCK_SCENE := "res://scenes/close_mock.tscn"
+
+# ──────────────────────────────────────────────
+# 运行时状态
+# ──────────────────────────────────────────────
+
+## 进入本次会话时读到的"上次是脏关闭/强杀"标记（启动锁存，只读）
+var entered_with_unclean_exit: bool = false
+## 本次会话玩家尝试关闭窗口的次数（用于嘲讽升级）
+var close_attempt_count: int = 0
+## 是否正在执行真正的自我关闭（避免重入）
+var _self_closing: bool = false
+## 已注册的关闭前演出钩子（Callable，返回值可为协程；逐个 await）
+var _pre_close_hooks: Array[Callable] = []
+
+# ──────────────────────────────────────────────
+# 生命周期
+# ──────────────────────────────────────────────
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	# 接管窗口关闭：玩家永远关不掉，只有 self_close 能退
+	get_tree().set_auto_accept_quit(false)
+	entered_with_unclean_exit = _read_unclean_exit()
+	_spawn_close_mock_overlay.call_deferred()
+
+
+## 实例化常驻嘲讽 overlay（headless 下跳过，避免无渲染环境的多余开销）
+func _spawn_close_mock_overlay() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	if not ResourceLoader.exists(CLOSE_MOCK_SCENE):
+		return
+	var packed: PackedScene = load(CLOSE_MOCK_SCENE)
+	if packed == null:
+		return
+	var overlay := packed.instantiate()
+	get_tree().root.add_child.call_deferred(overlay)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_on_player_close_attempt()
+
+
+# ──────────────────────────────────────────────
+# 玩家关闭尝试 —— 永远拦截 + 嘲讽
+# ──────────────────────────────────────────────
+
+func _on_player_close_attempt() -> void:
+	# 正在执行游戏自己的关闭：放行（理论上此时窗口已在关，不会触发）
+	if _self_closing:
+		return
+	close_attempt_count += 1
+	# is_post_kill：本次会话由上次强杀恢复，且这是回来后的首次关闭尝试时语气最狠
+	var is_post_kill := entered_with_unclean_exit
+	close_attempt_mocked.emit(close_attempt_count, is_post_kill)
+	# 关键：不退出。窗口"弹回来"，由嘲讽 overlay 接管表现。
+
+
+# ──────────────────────────────────────────────
+# 自我关闭 —— 唯一真正的退出
+# ──────────────────────────────────────────────
+
+## 游戏自己关闭。reason 供演出钩子区分场合（"start" / "stage_close_moment" / "ending"）。
+## 关闭前 emit pre_self_close 并 await 所有已注册演出钩子（设计在此接入演出）。
+func self_close(reason: String = "") -> void:
+	if _self_closing:
+		return
+	_self_closing = true
+	pre_self_close.emit(reason)
+	# 依次执行演出钩子。await 对非协程返回值是同步直通，对协程则等待其结束。
+	for hook in _pre_close_hooks:
+		if hook.is_valid():
+			await hook.call(reason)
+	# 干净退出：标记 clean_exit、存档、quit
+	var save_system := _save_system()
+	if save_system != null and save_system.has_method("quit_cleanly"):
+		save_system.quit_cleanly()
+	else:
+		get_tree().quit()
+
+
+## 注册一个关闭前演出钩子。Callable 形如 func(reason: String) -> void（可为协程）。
+## 返回一个用于注销的 Callable 句柄。
+func register_pre_close_hook(hook: Callable) -> void:
+	if not _pre_close_hooks.has(hook):
+		_pre_close_hooks.append(hook)
+
+func unregister_pre_close_hook(hook: Callable) -> void:
+	_pre_close_hooks.erase(hook)
+
+
+# ──────────────────────────────────────────────
+# 开始游戏 —— 首次会触发一次"自我关闭"
+# ──────────────────────────────────────────────
+
+## 从菜单点"开始"调用：标记已开始，然后游戏自我关闭一次（reason="start"）。
+## 演出由 pre_self_close 钩子接入；关闭后玩家再次打开将进入第 1 关。
+func start_game() -> void:
+	_set_app_value(STARTED_KEY, true)
+	set_current_stage(1)
+	self_close("start")
+
+
+## 是否已经历过开场的第一次自我关闭
+func has_started() -> bool:
+	return bool(_get_app_value(STARTED_KEY, false))
+
+
+# ──────────────────────────────────────────────
+# 关闭时刻 —— 关卡高潮，游戏自我关闭推进剧情
+# ──────────────────────────────────────────────
+
+## 由关卡在高潮调用：推进进度 → 提示 → 自我关闭。
+## 玩家下次打开进入推进后的关卡（或结局）。
+func reach_close_moment(stage_index: int) -> void:
+	close_moment_ready.emit(stage_index)
+	if stage_index >= TOTAL_STAGES:
+		_set_app_value(FINISHED_KEY, true)
+	else:
+		set_current_stage(stage_index + 1)
+	self_close("stage_close_moment")
+
+
+# ──────────────────────────────────────────────
+# 关卡进度
+# ──────────────────────────────────────────────
+
+func get_current_stage() -> int:
+	var raw: Variant = _get_app_value(STAGE_KEY, 1)
+	return clampi(int(raw), 1, TOTAL_STAGES)
+
+func set_current_stage(stage: int) -> void:
+	_set_app_value(STAGE_KEY, clampi(stage, 1, TOTAL_STAGES))
+
+func has_finished_game() -> bool:
+	return bool(_get_app_value(FINISHED_KEY, false))
+
+## 是否有可继续的进度（已开始过，或已通关）
+func has_progress() -> bool:
+	return has_started() or get_current_stage() > 1 or has_finished_game()
+
+## 重置全部进度（新游戏）
+func reset_progress() -> void:
+	_set_app_value(STARTED_KEY, false)
+	set_current_stage(1)
+	_set_app_value(FINISHED_KEY, false)
+	var save_system := _save_system()
+	if save_system != null and save_system.has_method("new_game"):
+		save_system.new_game()
+	if save_system != null and save_system.has_method("save_global"):
+		save_system.save_global()
+
+
+# ──────────────────────────────────────────────
+# 场景路由
+# ──────────────────────────────────────────────
+
+## 再次打开游戏时由 boot 调用：根据进度进入正确场景。
+##  未开始 → 菜单；已通关 → 结局；游玩中 → 当前关卡。
+func enter_after_boot() -> void:
+	if not has_started():
+		goto_menu()
+	elif has_finished_game():
+		goto_ending()
+	else:
+		goto_stage(get_current_stage())
+
+func goto_menu() -> void:
+	_change_scene(SCENE_MENU)
+
+func goto_stage(stage: int) -> void:
+	var s := clampi(stage, 1, TOTAL_STAGES)
+	set_current_stage(s)
+	_change_scene(STAGE_SCENE_PATTERN % s)
+
+func goto_ending() -> void:
+	_change_scene(SCENE_ENDING)
+
+func _change_scene(path: String) -> void:
+	var sm := _scene_manager()
+	if sm != null and sm.has_method("change_scene_to_file"):
+		sm.change_scene_to_file(path)
+	else:
+		get_tree().change_scene_to_file(path)
+
+
+# ──────────────────────────────────────────────
+# 对话辅助
+# ──────────────────────────────────────────────
+
+## 加载并播放某关卡对话；await 直到对话结束。
+func play_dialogue(stage: int, title: String = "") -> void:
+	var path := DIALOGUE_PATTERN % stage
+	if not ResourceLoader.exists(path):
+		push_warning("GameFlow.play_dialogue: 对话文件不存在 '%s'" % path)
+		return
+	var resource: Resource = load(path)
+	if resource == null:
+		push_warning("GameFlow.play_dialogue: 对话加载失败 '%s'" % path)
+		return
+	var dm := _dialogue_manager()
+	if dm == null:
+		push_warning("GameFlow.play_dialogue: DialogueManager 不可用")
+		return
+	dm.show_dialogue_balloon(resource, title)
+	if dm.has_signal("dialogue_ended"):
+		await dm.dialogue_ended
+
+## 本关对话文件是否含某标题锚点
+func has_dialogue_title(stage: int, title: String) -> bool:
+	var path := DIALOGUE_PATTERN % stage
+	if not ResourceLoader.exists(path):
+		return false
+	var res = load(path)
+	if res == null:
+		return false
+	if "titles" in res and res.titles is Dictionary:
+		return res.titles.has(title)
+	return false
+
+
+# ──────────────────────────────────────────────
+# 内部：autoload / 存档模块访问
+# ──────────────────────────────────────────────
+
+func _save_system() -> Node:
+	return get_node_or_null("/root/SaveSystem")
+
+func _scene_manager() -> Node:
+	return get_node_or_null("/root/SceneManager")
+
+func _dialogue_manager() -> Node:
+	return get_node_or_null("/root/DialogueManager")
+
+func _read_unclean_exit() -> bool:
+	var save_system := _save_system()
+	if save_system == null or not save_system.has_method("get_module"):
+		return false
+	var stats = save_system.get_module("stats")
+	if stats != null and stats.has_method("had_unclean_exit"):
+		return bool(stats.had_unclean_exit())
+	return false
+
+func _get_app_value(key: String, fallback: Variant) -> Variant:
+	var save_system := _save_system()
+	if save_system == null or not save_system.has_method("get_module"):
+		return fallback
+	var app_state = save_system.get_module("app_state")
+	if app_state != null and app_state.has_method("get_value"):
+		return app_state.get_value(key, fallback)
+	return fallback
+
+func _set_app_value(key: String, value: Variant) -> void:
+	var save_system := _save_system()
+	if save_system == null or not save_system.has_method("get_module"):
+		return
+	var app_state = save_system.get_module("app_state")
+	if app_state != null and app_state.has_method("set_value"):
+		app_state.set_value(key, value)
+		if save_system.has_method("save_global"):
+			save_system.save_global()
