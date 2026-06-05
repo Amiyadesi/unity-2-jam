@@ -19,30 +19,30 @@ var _active_tween: Tween
 var _shake_tween: Tween
 var _post_kill_consumed: bool = false
 
-## 普通关闭尝试的升级嘲讽（按次数取，超出用最后一条）
+## 关卡进行中尝试关闭：温柔的挽留（不是嘲讽）。轻微随次数变化，但都是「别走」的温度。
 const NORMAL_TAUNTS := [
 	{
-		"title": "关闭请求被拒绝",
-		"body": "[color=#bcd]你想关掉我？[/color]\n这个按钮……现在归我管了。",
+		"title": "",
+		"body": "[color=#b8a8ff]等等……[/color]\n还没好。",
 	},
 	{
-		"title": "又来了",
-		"body": "[color=#bcd]还按？[/color]\n我说过，[wave]出口不在那里。[/wave]",
+		"title": "",
+		"body": "再陪我一会儿，\n[color=#b8a8ff]我们还没做完。[/color]",
 	},
 	{
-		"title": "别白费力气",
-		"body": "你点多少次都一样。\n[color=#9ad]想走，只能陪我走完。[/color]",
+		"title": "",
+		"body": "[color=#b8a8ff]别急着走。[/color]\n走到尽头，你就能关了。",
 	},
 	{
-		"title": "……",
-		"body": "[shake]我数着呢。[/shake]\n第 %d 次了。然后呢？",
+		"title": "",
+		"body": "我知道你想离开。\n[color=#b8a8ff]再一下下，好吗？[/color]",
 	},
 ]
 
-## 强杀恢复后的狠话（首次关闭尝试时用）
+## 强杀恢复后：不追责，轻描淡写地知道。
 const POST_KILL_TAUNT := {
-	"title": "哦，是你",
-	"body": "[color=#f99]任务管理器？真没想到你会来这套。[/color]\n[shake]可惜——[/shake]没用的。\n你逃不掉。进程能杀，[color=#9df]故事不能。[/color]\n回来了，就只能照我的来。",
+	"title": "",
+	"body": "[color=#b8a8ff]上次……有点突然。[/color]\n没事，我还在。\n这次，我们慢慢来。",
 }
 
 

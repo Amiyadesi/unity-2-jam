@@ -5,7 +5,16 @@
 [ext_resource type="PackedScene" uid="uid://dyv3hpdag2lbt" path="res://scenes/settings_screen.tscn" id="3_set"]
 [ext_resource type="PackedScene" uid="uid://cu0vajeeu1ueb" path="res://scenes/thanks_screen.tscn" id="4_thx"]
 [ext_resource type="Texture2D" uid="uid://bfl5vknvaskjx" path="res://assets/ui/menu_bg.png" id="5_bg"]
-[ext_resource type="Texture2D" uid="uid://bawsabwjf5so3" path="res://assets/ui/title.png" id="6_title"]
+[ext_resource type="Shader" path="res://ui_kit/shaders/glitch_text.gdshader" id="6_glitch"]
+
+[sub_resource type="ShaderMaterial" id="Mat_glitch_title"]
+shader = ExtResource("6_glitch")
+shader_parameter/glow_color = Color(0.486, 0.357, 1, 1)
+shader_parameter/rgb_split = 0.004
+shader_parameter/scan_strength = 0.16
+shader_parameter/scan_density = 320.0
+shader_parameter/glitch_amount = 0.5
+shader_parameter/glow_strength = 1.1
 
 [node name="Menu" type="Control" unique_id=1982044295]
 layout_mode = 3
@@ -25,7 +34,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.03, 0.025, 0.04, 1)
 
-[node name="BgImage" type="TextureRect" parent="."]
+[node name="BgImage" type="TextureRect" parent="." unique_id=964851193]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,44 +67,26 @@ offset_bottom = 48.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.55, 0.85, 0.7, 1)
 theme_override_font_sizes/font_size = 16
-text = ""
 
 [node name="Title" type="Label" parent="." unique_id=1770691837]
+material = SubResource("Mat_glitch_title")
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -210.0
-offset_right = 240.0
+offset_left = -300.0
+offset_top = -230.0
+offset_right = 300.0
 offset_bottom = -130.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.42, 1)
-theme_override_font_sizes/font_size = 72
-text = ""
+theme_override_colors/font_color = Color(0.92, 0.93, 0.97, 1)
+theme_override_font_sizes/font_size = 96
+text = "CloseAI"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="TitleImage" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = -250.0
-offset_right = 220.0
-offset_bottom = -110.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("6_title")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="Subtitle" type="Label" parent="." unique_id=1112588742]
 layout_mode = 1

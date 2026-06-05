@@ -41,8 +41,9 @@ func _run() -> void:
 	_check("overlay instantiated", is_instance_valid(overlay))
 
 	var panel = overlay.get_node_or_null("Root/Panel")
-	var title = overlay.get_node_or_null("Root/Panel/Margin/VBox/TitleLine")
+	var body = overlay.get_node_or_null("Root/Panel/Margin/VBox/BodyText")
 	_check("overlay panel exists", panel != null)
+	_check("overlay body exists", body != null)
 	_check("overlay panel starts hidden", panel != null and panel.modulate.a < 0.01)
 
 	# 普通关闭尝试 1
@@ -52,28 +53,28 @@ func _run() -> void:
 	# 等面板闪入（tween 0.08s）
 	await create_timer_await(0.2)
 	_check("attempt 1 reveals panel", panel != null and panel.modulate.a > 0.5)
-	var title_1 = title.text if title != null else ""
+	var body_1 = body.text if body != null else ""
 
-	# 普通关闭尝试 2/3/4：标题应升级（与第1条不同）
+	# 普通关闭尝试 2/3：温柔挽留随次数变化（正文不同）
 	gf._on_player_close_attempt()
 	await create_timer_await(0.15)
 	gf._on_player_close_attempt()
 	await create_timer_await(0.15)
-	var title_later = title.text if title != null else ""
-	_check("taunt escalates (title changes)", title_1 != title_later)
+	var body_later = body.text if body != null else ""
+	_check("taunt varies by attempt (body changes)", body_1 != body_later)
 
-	# 强杀恢复：新建 overlay 验证 POST_KILL 狠话
+	# 强杀恢复：新建 overlay 验证 POST_KILL 文案（温柔版「上次……有点突然」）
 	overlay.queue_free()
 	await process_frame
 	var overlay2 = packed.instantiate()
 	root.add_child(overlay2)
 	await process_frame
-	var title2 = overlay2.get_node_or_null("Root/Panel/Margin/VBox/TitleLine")
+	var body2 = overlay2.get_node_or_null("Root/Panel/Margin/VBox/BodyText")
 	gf.entered_with_unclean_exit = true
 	gf.close_attempt_count = 0
 	gf._on_player_close_attempt()
 	await create_timer_await(0.2)
-	_check("post-kill taunt uses harsh title", title2 != null and title2.text == "哦，是你")
+	_check("post-kill uses gentle line", body2 != null and body2.text.find("有点突然") != -1)
 
 	overlay2.queue_free()
 	gf.entered_with_unclean_exit = false

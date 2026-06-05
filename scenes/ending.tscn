@@ -95,19 +95,3 @@ theme_override_font_sizes/font_size = 16
 text = "（有几次……你走得很急。不过我都记得。）"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="CloseButton" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -90.0
-offset_top = -86.0
-offset_right = 90.0
-offset_bottom = -42.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_font_sizes/font_size = 18
-text = "关闭"

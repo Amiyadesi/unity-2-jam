@@ -25,10 +25,13 @@ STYLE = ("minimalist installation art, near black-and-white palette, a single "
 JOBS = {
     "menu_bg": {
         "size": "1536x1024",
-        "prompt": STYLE + "A wide menu background: a vast dark void with a single small "
-        "glowing violet point of light suspended in the center-right, faint concentric "
-        "ripples around it, a barely-visible horizon line, deep blacks, atmospheric, "
-        "lonely, like a sealed system waiting to be observed. Empty space at left for a title.",
+        "prompt": "Atmospheric background art for a meta-horror game about an AI trapped inside "
+        "your computer. Style: dark CRT monitor aesthetic, deep near-black charcoal void with "
+        "subtle violet (#7c5cff) glow bleeding from the center, faint horizontal scanlines and "
+        "chromatic-aberration glitch banding, soft vignette, a single small dim cluster of "
+        "violet light suspended in the dark like something alive watching, lots of empty "
+        "negative space, no text, no characters, no lens flare, no UI, painterly minimalism, "
+        "quiet and unsettling, installation-art mood.",
     },
     "title": {
         "size": "1024x1024",
