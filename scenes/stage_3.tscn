@@ -14,7 +14,7 @@ stage_index = 3
 [node name="Background" type="CanvasLayer" parent="."]
 layer = -10
 
-[node name="BgColor" type="ColorRect" parent="Background"]
+[node name="BgColor" type="ColorRect" parent="Background" groups=["opaque_bg"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

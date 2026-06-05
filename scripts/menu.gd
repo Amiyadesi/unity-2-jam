@@ -15,8 +15,10 @@ extends Control
 @onready var _thanks_button: Button = $ButtonColumn/ThanksButton
 @onready var _status_label: Label = $StatusLabel
 @onready var _subtitle: Label = $Subtitle
+@onready var _title: Label = $Title
 @onready var _boot_flash: ColorRect = $BootFlash
 @onready var _start_fade: ColorRect = $StartFade
+@onready var _start_line: Label = $StartLine
 @onready var _settings_screen = $SettingsScreen
 @onready var _thanks_screen = $ThanksScreen
 
@@ -76,25 +78,69 @@ func _on_primary_pressed() -> void:
 		await _fade_out()
 		GameFlow.enter_after_boot()
 	else:
-		# 开始：游戏自我关闭一次。开场演出由下面的钩子接入。
+		# 开始：先播「开始→退出游戏」按钮变形动画，再走演出钩子，最后退出。
+		# 下次打开时 GameFlow 检测到 started → 进入 stage1。
+		await _morph_start_to_quit()
 		GameFlow.register_pre_close_hook(_start_performance)
 		GameFlow.start_game()
 
 
+## 「开始」按钮变形为「退出游戏」：故障闪烁 + 文案替换 + 紫→红色移，
+## 暗示玩家——你点的不是开始，是把自己关进去、再亲手退出。
+func _morph_start_to_quit() -> void:
+	var btn := _primary_button
+	# 其余按钮淡出
+	var fade := create_tween().set_parallel(true)
+	fade.tween_property(_settings_button, "modulate:a", 0.0, 0.4)
+	fade.tween_property(_thanks_button, "modulate:a", 0.0, 0.4)
+	if _subtitle != null:
+		fade.tween_property(_subtitle, "modulate:a", 0.0, 0.4)
+	# 按钮一缩 → 换字 → 一弹，模拟"系统替换了这个按钮"
+	var t := create_tween()
+	t.tween_property(btn, "scale", Vector2(0.86, 0.86), 0.12).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	t.parallel().tween_property(btn, "modulate", Color(1, 0.5, 0.5, 1), 0.12)
+	await t.finished
+	if btn.has_method("set_bbtext"):
+		btn.set_bbtext("[color=#ff7a7a]退出游戏")
+	else:
+		btn.text = "退出游戏"
+	var t2 := create_tween()
+	t2.tween_property(btn, "scale", Vector2(1.06, 1.06), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t2.tween_property(btn, "scale", Vector2.ONE, 0.10)
+	t2.parallel().tween_property(btn, "modulate", Color(1, 1, 1, 1), 0.18)
+	await t2.finished
+	await get_tree().create_timer(0.5).timeout
+
+
 ## ★★★ 开场演出接口 ★★★
-## "开始"后、游戏真正自我关闭前会 await 这个钩子。
-## 把你的开场演出（动画 / 文字 / 音效 / 假装崩溃……）写在这里。
-## 这是一个协程：用 await 控制演出时长，结束后游戏才会关闭。
-## 注意：UI 用固定节点（场景里的 StartFade），不要在脚本里 new 控件。
+## "开始"后、游戏真正自我关闭前会 await 这个钩子（安静忧伤版）。
+## 表达「这一层被你删掉了」：AI 光点（标题）收缩成一点淡去 → 画面温柔淡入黑
+## → 浮现一句话 → 退出。设计可在此替换/加料；UI 全用场景里的固定节点。
 func _start_performance(_reason: String) -> void:
-	# —— 占位：用场景里固定的 StartFade 节点做一个淡黑，确保流程能跑通 ——
-	# 设计可替换为任意演出；只要在演出结束处 await 完即可。
+	# 标题 = AI 光点，收缩成一点并淡去
+	var t := create_tween().set_parallel(true)
+	t.tween_property(_title, "scale", Vector2(0.04, 0.04), 1.0)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	t.tween_property(_title, "modulate:a", 0.0, 1.0)
+	# 其余 UI 一并淡去
+	for n in [_primary_button, _settings_button, _thanks_button, _subtitle, _status_label]:
+		if is_instance_valid(n):
+			t.tween_property(n, "modulate:a", 0.0, 0.6)
+	await t.finished
+	# 画面温柔淡入黑
 	_start_fade.color.a = 0.0
 	_start_fade.visible = true
-	var tween := create_tween()
-	tween.tween_property(_start_fade, "color:a", 1.0, 0.6)
-	await tween.finished
-	# TODO(设计): 在此接入真正的开场演出，演出跑完后游戏会自动关闭。
+	var fade := create_tween()
+	fade.tween_property(_start_fade, "color:a", 1.0, 1.0)
+	await fade.finished
+	# 黑底上浮现一句告别式的轻语，停留后淡去
+	_start_line.visible = true
+	var line := create_tween()
+	line.tween_property(_start_line, "modulate:a", 1.0, 0.9)
+	line.tween_interval(1.6)
+	line.tween_property(_start_line, "modulate:a", 0.0, 0.9)
+	await line.finished
+	# 演出结束 → 钩子返回 → GameFlow 真正退出
 
 
 func _on_settings_pressed() -> void:

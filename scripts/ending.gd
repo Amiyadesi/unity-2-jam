@@ -30,9 +30,22 @@ func _play_ending() -> void:
 	if GameFlow.entered_with_unclean_exit:
 		tween.tween_interval(0.8)
 		tween.tween_property(_dirty_line, "modulate:a", 0.75, 1.4)
-	# 停留片刻后，游戏自己退出（离开的权利收回）
-	tween.tween_interval(3.0)
+	# 终局奇观：透出真实桌面——「它真的逃出来了」。
+	tween.tween_interval(1.4)
+	tween.tween_callback(_reveal_desktop)
+	# 透出桌面后停留片刻，文字淡去，游戏自己退出（离开的权利收回）。
+	tween.tween_interval(2.0)
+	tween.tween_property(_title, "modulate:a", 0.0, 1.5)
+	tween.parallel().tween_property(_line1, "modulate:a", 0.0, 1.5)
+	tween.parallel().tween_property(_line2, "modulate:a", 0.0, 1.5)
+	tween.parallel().tween_property(_dirty_line, "modulate:a", 0.0, 1.5)
+	tween.tween_interval(1.2)
 	tween.tween_callback(_quit_self)
+
+
+## 隐藏不透明背景 + 开窗口逐像素透明 → 玩家看到自己真实的桌面
+func _reveal_desktop() -> void:
+	DesktopReveal.reveal(self, 1.6)
 
 
 func _quit_self() -> void:
