@@ -5,7 +5,7 @@ class_name CloseAIEnemy
 ## 设计要求：极简，不加血条以外的系统，只需巡逻 + 碰撞伤害。
 ## jam 友好实现：
 ##  - 在两点间水平巡逻
-##  - 玩家用 attack 键且在攻击范围内 → 敌人被击败（emit defeated）
+##  - 玩家攻击 hitbox 调用 take_hit() 后按 HP 判定击败（emit defeated）
 ##  - 敌人碰到玩家 → 把玩家弹开（接触伤害的轻量替代，不做扣血死亡）
 ##
 ## 放置：加入编组 "enemy"。stage_2 / stage_3 监听 defeated 信号统计清场。
@@ -15,22 +15,24 @@ signal defeated()
 ## 巡逻速度与范围（像素）
 @export var patrol_speed: float = 60.0
 @export var patrol_range: float = 120.0
-## 玩家攻击命中所需的最大距离
-@export var attack_reach: float = 64.0
 ## 弹开玩家的力度
 @export var knockback: float = 320.0
+## 被玩家 hitbox 命中的生命值。
+@export var hp: int = 1
 
 var _origin_x: float = 0.0
 var _dir: float = 1.0
 var _dead: bool = false
 
 
+## 初始化敌人编组和巡逻原点。
 func _ready() -> void:
 	add_to_group("enemy")
 	_origin_x = global_position.x
 	body_entered.connect(_on_body_entered)
 
 
+## 执行水平巡逻；死亡后停止。
 func _physics_process(delta: float) -> void:
 	if _dead:
 		return
@@ -38,20 +40,18 @@ func _physics_process(delta: float) -> void:
 	if absf(global_position.x - _origin_x) >= patrol_range:
 		_dir = -_dir
 		global_position.x = clampf(global_position.x, _origin_x - patrol_range, _origin_x + patrol_range)
-	_check_player_attack()
 
 
-## 玩家在范围内并按下 attack → 被击败
-func _check_player_attack() -> void:
-	if not Input.is_action_just_pressed("attack"):
+## 接收玩家 hitbox 伤害，HP 归零时消散。
+func take_hit(damage: int) -> void:
+	if _dead:
 		return
-	var players := get_tree().get_nodes_in_group("player")
-	for p in players:
-		if p is Node2D and global_position.distance_to(p.global_position) <= attack_reach:
-			_die()
-			return
+	hp -= damage
+	if hp <= 0:
+		_die()
 
 
+## 接触玩家时施加轻量击退。
 func _on_body_entered(body: Node) -> void:
 	if _dead:
 		return
@@ -64,6 +64,7 @@ func _on_body_entered(body: Node) -> void:
 		body.velocity.y = -120.0
 
 
+## 发出击败信号并淡出销毁。
 func _die() -> void:
 	_dead = true
 	defeated.emit()

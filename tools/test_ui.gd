@@ -95,6 +95,30 @@ func _run() -> void:
 		await p.play_action("untransform")
 		_check("untransform -> morphed false", p.morphed == false)
 	p.queue_free()
+	await process_frame
+
+	# --- energy HUD binds to authored player and updates fill/label ---
+	var holder := Node2D.new()
+	root.add_child(holder)
+	var hud_player = load("res://scenes/player.tscn").instantiate()
+	hud_player.name = "Player"
+	holder.add_child(hud_player)
+	hud_player.frozen = true
+	var hud = load("res://scenes/ui/energy_hud.tscn").instantiate()
+	hud.player_path = NodePath("../Player")
+	holder.add_child(hud)
+	await process_frame
+	await process_frame
+	_check("energy HUD instantiates", is_instance_valid(hud))
+	var hud_label = hud.get_node_or_null("Root/BarFrame/Label")
+	var hud_fill = hud.get_node_or_null("Root/BarFrame/FillClip/Fill")
+	_check("energy HUD label present", hud_label is Label)
+	_check("energy HUD fill present", hud_fill is ColorRect)
+	hud_player._set_energy(42.0)
+	await _wait(0.2)
+	_check("energy HUD label follows player energy", hud_label != null and hud_label.text == "42")
+	_check("energy HUD fill shrinks", hud_fill != null and hud_fill.size.x < 260.0)
+	holder.queue_free()
 
 	if gf: gf.reset_progress()
 	print("=== RESULT: %d/%d passed, %d failed ===" % [_checks - _failures, _checks, _failures])

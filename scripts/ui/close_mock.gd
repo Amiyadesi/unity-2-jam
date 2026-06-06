@@ -31,7 +31,7 @@ const NORMAL_TAUNTS := [
 	},
 	{
 		"title": "",
-		"body": "[color=#b8a8ff]别急着走。[/color]\n走到尽头，你就能关了。",
+		"body": "[color=#b8a8ff]别急着走。[/color]\n到时按钮会出现。",
 	},
 	{
 		"title": "",
@@ -55,6 +55,7 @@ func _ready() -> void:
 	GameFlow.close_attempt_mocked.connect(_on_close_attempt)
 
 
+## 选择本次关闭尝试对应的挽留文案。
 func _on_close_attempt(attempt_index: int, is_post_kill: bool) -> void:
 	var data: Dictionary
 	if is_post_kill and not _post_kill_consumed:
@@ -63,9 +64,10 @@ func _on_close_attempt(attempt_index: int, is_post_kill: bool) -> void:
 	else:
 		var idx := mini(attempt_index - 1, NORMAL_TAUNTS.size() - 1)
 		data = NORMAL_TAUNTS[idx]
-	_show_taunt(str(data.get("title", "")), str(data.get("body", "")) % attempt_index)
+	_show_taunt(str(data.get("title", "")), str(data.get("body", "")))
 
 
+## 显示挽留弹层并启动退场动画。
 func _show_taunt(title: String, body: String) -> void:
 	_title.text = title
 	_body.text = "[center]%s[/center]" % body
@@ -82,7 +84,7 @@ func _show_taunt(title: String, body: String) -> void:
 	_start_shake()
 
 
-## 红蓝错位闪烁，营造数字故障感
+## 红蓝错位闪烁，营造数字故障感。
 func _burst_glitch() -> void:
 	var t := create_tween().set_parallel(true)
 	t.tween_property(_glitch_a, "color:a", 0.5, 0.04)
@@ -91,6 +93,7 @@ func _burst_glitch() -> void:
 	t.tween_property(_glitch_b, "color:a", 0.0, 0.4)
 
 
+## 轻微抖动弹层，强化关闭被拦截的反馈。
 func _start_shake() -> void:
 	if _shake_tween != null and _shake_tween.is_valid():
 		_shake_tween.kill()

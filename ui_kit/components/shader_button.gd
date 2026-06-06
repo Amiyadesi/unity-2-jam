@@ -44,6 +44,7 @@ func _ready() -> void:
 	material.set("shader_parameter/size", size)
 	material.set("shader_parameter/time1", 1.0)
 	material.set("shader_parameter/time2", 0.0)
+	material.set("shader_parameter/glow", 0.0)
 	material.set("shader_parameter/center1", _center_click)
 	material.set("shader_parameter/center2", _center_hover)
 	var normal_style := get_theme_stylebox("normal")

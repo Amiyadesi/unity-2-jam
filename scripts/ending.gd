@@ -48,5 +48,7 @@ func _reveal_desktop() -> void:
 	DesktopReveal.reveal(self, 1.6)
 
 
+## 写入 OpenAI flag，然后沿用干净退出流程。
 func _quit_self() -> void:
+	GameFlow.mark_openai_revealed()
 	GameFlow.self_close("ending")

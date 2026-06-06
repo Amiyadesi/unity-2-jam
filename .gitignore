@@ -10,3 +10,9 @@
 # Python helper cache
 __pycache__/
 *.py[cod]
+
+# CLI context bus (multi-agent collaboration logs, not source)
+.cli-bus/
+
+# Local agent execution logs
+docs/plans/*.log

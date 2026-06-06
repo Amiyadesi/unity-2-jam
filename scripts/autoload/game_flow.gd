@@ -41,8 +41,15 @@ const STARTED_KEY := "closeai_started"
 const STAGE_KEY := "closeai_stage"
 const FINISHED_KEY := "closeai_finished"
 
+const NORMAL_GAME_TITLE := "CloseAI"
+const POST_GAME_TITLE := "OpenAI"
+const POST_GAME_FLAG_PATH := "user://saves/openai.flag"
+const POST_GAME_RENAME_SCRIPT_PATH := "user://saves/openai_rename.cmd"
+const WINDOWS_EXECUTABLE_EXTENSION := ".exe"
+
 const SCENE_MENU := "res://scenes/menu.tscn"
 const SCENE_ENDING := "res://scenes/ending.tscn"
+const SCENE_OPENAI_NOTE := "res://scenes/openai_note.tscn"
 const STAGE_SCENE_PATTERN := "res://scenes/stage_%d.tscn"
 const DIALOGUE_PATTERN := "res://dialogue/closeai_stage%d.dialogue"
 
@@ -68,6 +75,11 @@ var _pre_close_hooks: Array[Callable] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if has_openai_flag():
+		get_tree().set_auto_accept_quit(true)
+		apply_openai_identity()
+		return
+	apply_closeai_identity()
 	# 接管窗口关闭：玩家永远关不掉，只有 self_close 能退
 	get_tree().set_auto_accept_quit(false)
 	entered_with_unclean_exit = _read_unclean_exit()
@@ -97,6 +109,9 @@ func _notification(what: int) -> void:
 # ──────────────────────────────────────────────
 
 func _on_player_close_attempt() -> void:
+	if has_openai_flag():
+		get_tree().quit()
+		return
 	# 正在执行游戏自己的关闭：放行（理论上此时窗口已在关，不会触发）
 	if _self_closing:
 		return
@@ -186,12 +201,124 @@ func set_current_stage(stage: int) -> void:
 func has_finished_game() -> bool:
 	return bool(_get_app_value(FINISHED_KEY, false))
 
+## 通关后的外壳标记：存在则下次启动只显示 OpenAI 纸条。
+func has_openai_flag() -> bool:
+	return FileAccess.file_exists(POST_GAME_FLAG_PATH)
+
+## 结局结束时写入 post-game flag，进入 OpenAI 外壳状态。
+func mark_openai_revealed() -> bool:
+	var err := DirAccess.make_dir_recursive_absolute(POST_GAME_FLAG_PATH.get_base_dir())
+	if err != OK:
+		push_error("GameFlow.mark_openai_revealed: cannot create save dir '%s' (err=%d)" % [POST_GAME_FLAG_PATH.get_base_dir(), err])
+		return false
+	var file := FileAccess.open(POST_GAME_FLAG_PATH, FileAccess.WRITE)
+	if file == null:
+		push_error("GameFlow.mark_openai_revealed: cannot write flag '%s' (err=%d)" % [POST_GAME_FLAG_PATH, FileAccess.get_open_error()])
+		return false
+	file.store_line("OpenAI")
+	file.store_line(Time.get_datetime_string_from_system(true))
+	file.close()
+	_schedule_post_game_executable_rename()
+	return true
+
+## 安排 Windows 导出版在进程退出后把 CloseAI.exe 改成 OpenAI.exe。
+func _schedule_post_game_executable_rename() -> void:
+	if not OS.has_feature("windows") or OS.has_feature("editor"):
+		return
+	var plan := _build_post_game_executable_rename_plan_from_path(OS.get_executable_path())
+	if plan.is_empty():
+		return
+	if not _write_post_game_rename_script(plan):
+		return
+	var script_path := String(plan.get("script", ""))
+	var pid := OS.create_process("cmd.exe", PackedStringArray(["/c", script_path]), false)
+	if pid <= 0:
+		push_warning("GameFlow: cannot start post-game executable rename script '%s'" % script_path)
+
+## 从可执行路径构造通关后改名计划；只接受 CloseAI.exe。
+func _build_post_game_executable_rename_plan_from_path(executable_path: String) -> Dictionary:
+	if executable_path.is_empty():
+		return {}
+	var source_name := NORMAL_GAME_TITLE + WINDOWS_EXECUTABLE_EXTENSION
+	if executable_path.get_file().to_lower() != source_name.to_lower():
+		return {}
+	var base_dir := executable_path.get_base_dir()
+	if base_dir.is_empty():
+		return {}
+	var target_name := POST_GAME_TITLE + WINDOWS_EXECUTABLE_EXTENSION
+	return {
+		"source": executable_path,
+		"target": base_dir.path_join(target_name),
+		"target_name": target_name,
+		"script": ProjectSettings.globalize_path(POST_GAME_RENAME_SCRIPT_PATH),
+	}
+
+## 写出通关后改名脚本；脚本会等当前 exe 释放锁后再 rename。
+func _write_post_game_rename_script(plan: Dictionary) -> bool:
+	var script_path := String(plan.get("script", ""))
+	if script_path.is_empty():
+		return false
+	var err := DirAccess.make_dir_recursive_absolute(script_path.get_base_dir())
+	if err != OK:
+		push_warning("GameFlow: cannot create rename script dir '%s' (err=%d)" % [script_path.get_base_dir(), err])
+		return false
+	var file := FileAccess.open(script_path, FileAccess.WRITE)
+	if file == null:
+		push_warning("GameFlow: cannot write rename script '%s' (err=%d)" % [script_path, FileAccess.get_open_error()])
+		return false
+	file.store_string(_build_post_game_rename_script_text(plan))
+	file.close()
+	return true
+
+## 生成 Windows cmd 文本；单独成函数方便 headless 测试。
+func _build_post_game_rename_script_text(plan: Dictionary) -> String:
+	var lines := PackedStringArray([
+		"@echo off",
+		"setlocal",
+		"set \"SRC=%s\"" % _escape_cmd_value(String(plan.get("source", ""))),
+		"set \"DST=%s\"" % _escape_cmd_value(String(plan.get("target", ""))),
+		"set \"DST_NAME=%s\"" % _escape_cmd_value(String(plan.get("target_name", ""))),
+		"for /L %%i in (1,1,80) do (",
+		"  if not exist \"%SRC%\" exit /b 0",
+		"  if exist \"%DST%\" del /f /q \"%DST%\" 2>nul",
+		"  ren \"%SRC%\" \"%DST_NAME%\" 2>nul",
+		"  if not exist \"%SRC%\" if exist \"%DST%\" exit /b 0",
+		"  timeout /t 1 /nobreak >nul",
+		")",
+		"exit /b 0",
+	])
+	return "\r\n".join(lines) + "\r\n"
+
+## 转义 cmd 环境变量值中会触发变量展开的百分号。
+func _escape_cmd_value(value: String) -> String:
+	return value.replace("%", "%%").replace("\"", "")
+
+## 测试/重置进度时移除 post-game flag。
+func clear_openai_flag() -> void:
+	if FileAccess.file_exists(POST_GAME_FLAG_PATH):
+		var err := DirAccess.remove_absolute(POST_GAME_FLAG_PATH)
+		if err != OK:
+			push_error("GameFlow.clear_openai_flag: cannot remove flag '%s' (err=%d)" % [POST_GAME_FLAG_PATH, err])
+
+## 切到 post-game 外壳身份：窗口标题显示 OpenAI。
+func apply_openai_identity() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	DisplayServer.window_set_title(POST_GAME_TITLE)
+
+## 切到正常游戏身份：导出包元数据和游玩窗口都保持 CloseAI。
+func apply_closeai_identity() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	DisplayServer.window_set_title(NORMAL_GAME_TITLE)
+
 ## 是否有可继续的进度（已开始过，或已通关）
 func has_progress() -> bool:
 	return has_started() or get_current_stage() > 1 or has_finished_game()
 
 ## 重置全部进度（新游戏）
 func reset_progress() -> void:
+	clear_openai_flag()
 	_set_app_value(STARTED_KEY, false)
 	set_current_stage(1)
 	_set_app_value(FINISHED_KEY, false)
@@ -207,9 +334,11 @@ func reset_progress() -> void:
 # ──────────────────────────────────────────────
 
 ## 再次打开游戏时由 boot 调用：根据进度进入正确场景。
-##  未开始 → 菜单；已通关 → 结局；游玩中 → 当前关卡。
+##  post-game flag → OpenAI 纸条；未开始 → 菜单；已通关 → 结局；游玩中 → 当前关卡。
 func enter_after_boot() -> void:
-	if not has_started():
+	if has_openai_flag():
+		goto_openai_note()
+	elif not has_started():
 		goto_menu()
 	elif has_finished_game():
 		goto_ending()
@@ -217,15 +346,23 @@ func enter_after_boot() -> void:
 		goto_stage(get_current_stage())
 
 func goto_menu() -> void:
+	apply_closeai_identity()
 	_change_scene(SCENE_MENU)
 
 func goto_stage(stage: int) -> void:
 	var s := clampi(stage, 1, TOTAL_STAGES)
 	set_current_stage(s)
+	apply_closeai_identity()
 	_change_scene(STAGE_SCENE_PATTERN % s)
 
 func goto_ending() -> void:
+	apply_closeai_identity()
 	_change_scene(SCENE_ENDING)
+
+## 进入通关后的 OpenAI 纸条场景。
+func goto_openai_note() -> void:
+	apply_openai_identity()
+	_change_scene(SCENE_OPENAI_NOTE)
 
 func _change_scene(path: String) -> void:
 	var sm := _scene_manager()

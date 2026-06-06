@@ -14,8 +14,12 @@ extends Control
 @export var boot_duration: float = 1.1
 
 func _ready() -> void:
-	_boot_label.modulate.a = 0.0
 	_enforce_display_mode()
+	if GameFlow.has_openai_flag():
+		await get_tree().process_frame
+		GameFlow.enter_after_boot()
+		return
+	_boot_label.modulate.a = 0.0
 	await _play_boot_intro()
 	# 根据进度路由：未开始→菜单；通关→结局；游玩中→当前关卡
 	GameFlow.enter_after_boot()

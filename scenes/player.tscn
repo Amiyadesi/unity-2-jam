@@ -6,6 +6,12 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
 size = Vector2(20, 46)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_forward_hitbox"]
+size = Vector2(52, 38)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_side_hitbox"]
+size = Vector2(44, 36)
+
 [sub_resource type="Animation" id="Animation_reset"]
 length = 0.001
 tracks/0/type = "value"
@@ -353,6 +359,38 @@ position = Vector2(0, -24)
 color = Color(0.6, 0.82, 1, 1)
 energy = 0.5
 texture_scale = 0.4
+
+[node name="CombatHitboxes" type="Node2D" parent="Body"]
+
+[node name="ForwardHitbox" type="Area2D" parent="Body/CombatHitboxes"]
+position = Vector2(46, -24)
+collision_layer = 0
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body/CombatHitboxes/ForwardHitbox"]
+shape = SubResource("RectangleShape2D_forward_hitbox")
+disabled = true
+
+[node name="LeftHitbox" type="Area2D" parent="Body/CombatHitboxes"]
+position = Vector2(-42, -24)
+collision_layer = 0
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body/CombatHitboxes/LeftHitbox"]
+shape = SubResource("RectangleShape2D_side_hitbox")
+disabled = true
+
+[node name="RightHitbox" type="Area2D" parent="Body/CombatHitboxes"]
+position = Vector2(42, -24)
+collision_layer = 0
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body/CombatHitboxes/RightHitbox"]
+shape = SubResource("RectangleShape2D_side_hitbox")
+disabled = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1956852386]
 position = Vector2(0, -24)

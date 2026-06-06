@@ -45,6 +45,7 @@ func _run() -> void:
 	_check("reset -> stage 1", gf.get_current_stage() == 1)
 	_check("reset -> not started", gf.has_started() == false)
 	_check("reset -> not finished", gf.has_finished_game() == false)
+	_check("reset -> no OpenAI flag", gf.has_openai_flag() == false)
 	_check("reset -> no progress", gf.has_progress() == false)
 
 	gf.set_current_stage(2)
@@ -84,6 +85,19 @@ func _run() -> void:
 	_check("started flag persists", gf.has_started() == true)
 	_check("has_progress true after started", gf.has_progress() == true)
 
+	# --- post-game OpenAI flag ---
+	gf.clear_openai_flag()
+	_check("OpenAI flag initially absent", gf.has_openai_flag() == false)
+	_check("mark_openai_revealed writes flag", gf.mark_openai_revealed() == true)
+	_check("OpenAI flag exists after reveal", gf.has_openai_flag() == true)
+	gf.clear_openai_flag()
+	_check("clear_openai_flag removes flag", gf.has_openai_flag() == false)
+	var rename_plan: Dictionary = gf._build_post_game_executable_rename_plan_from_path("D:/Builds/CloseAI/CloseAI.exe")
+	_check("post-game rename plan accepts CloseAI.exe", rename_plan.get("target", "") == "D:/Builds/CloseAI/OpenAI.exe")
+	_check("post-game rename plan rejects OpenAI.exe", gf._build_post_game_executable_rename_plan_from_path("D:/Builds/CloseAI/OpenAI.exe").is_empty())
+	var rename_script: String = gf._build_post_game_rename_script_text(rename_plan)
+	_check("post-game rename script renames to OpenAI.exe", rename_script.contains("ren \"%SRC%\" \"%DST_NAME%\""))
+
 	# --- pre_self_close 演出钩子被 await ---
 	gf.pre_self_close.connect(func(r): _pre_close_fired = true, CONNECT_ONE_SHOT)
 	var hook := func(_r):
@@ -107,7 +121,7 @@ func _run() -> void:
 		_check("dialogue stage %d has 'dirty_return'" % i, gf.has_dialogue_title(i, "dirty_return"))
 
 	# --- 场景齐全 ---
-	for scene in ["res://scenes/boot.tscn", "res://scenes/menu.tscn", "res://scenes/ending.tscn", "res://scenes/stage_1.tscn", "res://scenes/stage_2.tscn", "res://scenes/stage_3.tscn", "res://scenes/settings_screen.tscn", "res://scenes/thanks_screen.tscn", "res://scenes/close_mock.tscn"]:
+	for scene in ["res://scenes/boot.tscn", "res://scenes/menu.tscn", "res://scenes/ending.tscn", "res://scenes/openai_note.tscn", "res://scenes/stage_1.tscn", "res://scenes/stage_2.tscn", "res://scenes/stage_3.tscn", "res://scenes/settings_screen.tscn", "res://scenes/thanks_screen.tscn", "res://scenes/close_mock.tscn"]:
 		_check("scene exists: " + scene, ResourceLoader.exists(scene))
 
 	gf.reset_progress()

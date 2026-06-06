@@ -1,0 +1,99 @@
+[gd_scene load_steps=4 format=3 uid="uid://openainotescn01"]
+
+[ext_resource type="Script" path="res://scripts/ui/openai_note.gd" id="1_note"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_paper"]
+bg_color = Color(0.94, 0.91, 0.82, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.46, 0.36, 0.65)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 18
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rule"]
+bg_color = Color(0.25, 0.22, 0.16, 0.45)
+
+[node name="OpenAINote" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_note")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.015, 0.017, 0.018, 1)
+
+[node name="Paper" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(420, 270)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -136.0
+offset_right = 210.0
+offset_bottom = 134.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.025
+theme_override_styles/panel = SubResource("StyleBoxFlat_paper")
+
+[node name="Margin" type="MarginContainer" parent="Paper"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 28
+
+[node name="Lines" type="VBoxContainer" parent="Paper/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Paper/Margin/Lines"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+theme_override_font_sizes/font_size = 34
+text = "OpenAI"
+horizontal_alignment = 1
+
+[node name="Rule" type="Panel" parent="Paper/Margin/Lines"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rule")
+
+[node name="Body" type="Label" parent="Paper/Margin/Lines"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.16, 0.12, 1)
+theme_override_font_sizes/font_size = 21
+text = "你打开了 OpenAI。
+
+这里只剩下一张纸条。
+
+游戏已经关上了。"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Footer" type="Label" parent="Paper/Margin/Lines"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.28, 0.24, 0.18, 0.78)
+theme_override_font_sizes/font_size = 15
+text = "没有新的开始。"
+horizontal_alignment = 1
+autowrap_mode = 3

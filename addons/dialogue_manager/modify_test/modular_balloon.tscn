@@ -15,7 +15,6 @@
 [ext_resource type="Script" uid="uid://dhbxvg36y8pfd" path="res://addons/richtext2/text_effects/effects/rte_curspull.gd" id="9_lerfo"]
 [ext_resource type="Script" uid="uid://4mittkdxo7ig" path="res://addons/richtext2/text_effects/effects/rte_cuss.gd" id="10_loolu"]
 [ext_resource type="Script" uid="uid://bkhgd71mimy7h" path="res://addons/dialogue_manager/modify_test/modules/typing_sound_module.gd" id="10_typing_sound"]
-[ext_resource type="AudioStream" path="res://assets/sfx/ui/dialogue_typewriter.wav" id="10_typewriter_wav"]
 [ext_resource type="Script" uid="uid://5hv4pjs1xcht" path="res://addons/richtext2/text_effects/anims/rte_fader.gd" id="11_3j3o5"]
 [ext_resource type="Script" uid="uid://bi4ru1v4yq4f" path="res://addons/dialogue_manager/modify_test/modules/history_module.gd" id="11_history"]
 [ext_resource type="Script" uid="uid://bw15kgjjsr5nt" path="res://addons/richtext2/text_effects/anims/rte_fallin.gd" id="12_dorth"]
@@ -339,7 +338,7 @@ layer = 100
 script = ExtResource("1_script")
 history_enabled = false
 auto_save_progress = false
-typing_sound = ExtResource("10_typewriter_wav")
+typing_sound = SubResource("AudioStreamGenerator_qnahx")
 
 [node name="TalkSound" type="AudioStreamPlayer" parent="." unique_id=467482644]
 

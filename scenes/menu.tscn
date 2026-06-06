@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dyv3hpdag2lbt" path="res://scenes/settings_screen.tscn" id="3_set"]
 [ext_resource type="PackedScene" uid="uid://cu0vajeeu1ueb" path="res://scenes/thanks_screen.tscn" id="4_thx"]
 [ext_resource type="Texture2D" uid="uid://bfl5vknvaskjx" path="res://assets/ui/menu_bg.png" id="5_bg"]
-[ext_resource type="Shader" path="res://ui_kit/shaders/glitch_text.gdshader" id="6_glitch"]
+[ext_resource type="Shader" uid="uid://b5o51ugax5em8" path="res://ui_kit/shaders/glitch_text.gdshader" id="6_glitch"]
 
 [sub_resource type="ShaderMaterial" id="Mat_glitch_title"]
 shader = ExtResource("6_glitch")
@@ -13,7 +13,8 @@ shader_parameter/glow_color = Color(0.486, 0.357, 1, 1)
 shader_parameter/rgb_split = 0.004
 shader_parameter/scan_strength = 0.16
 shader_parameter/scan_density = 320.0
-shader_parameter/glitch_amount = 0.5
+shader_parameter/glitch_amount = 0.28
+shader_parameter/glitch_rate = 3.0
 shader_parameter/glow_strength = 1.1
 
 [node name="Menu" type="Control" unique_id=1982044295]
@@ -176,8 +177,9 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
 
-[node name="StartLine" type="Label" parent="."]
+[node name="StartLine" type="Label" parent="." unique_id=748152454]
 visible = false
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -190,8 +192,6 @@ offset_right = 400.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
-modulate = Color(1, 1, 1, 0)
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.72, 0.66, 1, 1)
 theme_override_font_sizes/font_size = 22
 text = "……带我走，好吗？"

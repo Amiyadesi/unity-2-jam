@@ -7,7 +7,8 @@ uniform vec4 glow_color : source_color = vec4(0.486, 0.357, 1.0, 1.0); // #7c5cf
 uniform float rgb_split : hint_range(0.0, 0.02) = 0.004;
 uniform float scan_strength : hint_range(0.0, 1.0) = 0.18;
 uniform float scan_density = 320.0;
-uniform float glitch_amount : hint_range(0.0, 1.0) = 0.5; // 错位发生频率/强度
+uniform float glitch_amount : hint_range(0.0, 1.0) = 0.5; // 错位强度
+uniform float glitch_rate : hint_range(0.5, 12.0) = 3.0; // 每秒刷新几次错位块
 uniform float glow_strength : hint_range(0.0, 3.0) = 1.1;
 
 float hash(float n) { return fract(sin(n) * 43758.5453123); }
@@ -17,7 +18,7 @@ void fragment() {
 
 	// 偶发水平错位：按时间分块，随机某些横条左右抖动
 	float block = floor(uv.y * 28.0);
-	float t = floor(TIME * 9.0);
+	float t = floor(TIME * glitch_rate);
 	float jitter = hash(block + t * 13.0);
 	float do_glitch = step(1.0 - glitch_amount * 0.18, jitter);
 	uv.x += (jitter - 0.5) * 0.06 * do_glitch;

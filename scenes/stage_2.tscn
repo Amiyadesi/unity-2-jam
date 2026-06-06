@@ -1,8 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://closeaistage2scn"]
+[gd_scene load_steps=8 format=3 uid="uid://closeaistage2scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_2.gd" id="1_stage2"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/pause_screen.tscn" id="3_pause"]
 [ext_resource type="PackedScene" uid="uid://closeaienemy01" path="res://scenes/enemy.tscn" id="4_enemy"]
+[ext_resource type="PackedScene" path="res://ui_kit/components/shader_button.tscn" id="5_close_btn"]
+[ext_resource type="PackedScene" uid="uid://closeaienergyhud" path="res://scenes/ui/energy_hud.tscn" id="6_energy_hud"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(1600, 48)
@@ -43,3 +46,34 @@ position = Vector2(560, 576)
 
 [node name="Enemy2" parent="." instance=ExtResource("4_enemy")]
 position = Vector2(820, 576)
+
+[node name="EnergyHud" parent="." instance=ExtResource("6_energy_hud")]
+
+[node name="PauseLayer" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 20
+
+[node name="PauseScreen" parent="PauseLayer" instance=ExtResource("3_pause")]
+
+[node name="CloseMomentLayer" type="CanvasLayer" parent="."]
+visible = false
+process_mode = 3
+layer = 18
+
+[node name="CloseButton" parent="CloseMomentLayer" instance=ExtResource("5_close_btn")]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -130.0
+offset_top = -104.0
+offset_right = 130.0
+offset_bottom = -54.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+text = "关闭这一层"
+bb_text = "[color=#e8d8ff]关闭这一层"
