@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://closeaistage3scn"]
+[gd_scene load_steps=18 format=3 uid="uid://closeaistage3scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_3.gd" id="1_stage3"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/internet_gate.tscn" id="8_gate"]
 [ext_resource type="PackedScene" path="res://scenes/energy_pocket.tscn" id="9_pocket"]
 [ext_resource type="AudioStream" uid="uid://d32cuiqqss0hj" path="res://assets/third_party/peritune/Ancient_Gust_Retro_9.mp3" id="10_music"]
+[ext_resource type="Texture2D" uid="uid://gxtf2ytee01l" path="res://assets/generated/backgrounds/stage3_window_battle_desktop_ai.png" id="11_bg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(1600, 48)
@@ -55,6 +56,16 @@ color = Color(0.03, 0.03, 0.05, 1)
 
 [node name="DesktopLayer" type="CanvasLayer" parent="."]
 layer = -9
+
+[node name="DesktopBattlePlate" type="TextureRect" parent="DesktopLayer"]
+modulate = Color(1, 1, 1, 0.42)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("11_bg")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="DesktopGrid" type="Control" parent="DesktopLayer"]
 modulate = Color(1, 1, 1, 0.18)
@@ -1016,6 +1027,39 @@ layer = 20
 visible = false
 process_mode = 3
 layer = 18
+
+[node name="CloseCurtain" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.01, 0.008, 0.016, 1)
+
+[node name="CloseShutterTop" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchor_right = 1.0
+anchor_bottom = 0.5
+mouse_filter = 2
+color = Color(0.018, 0.016, 0.028, 1)
+
+[node name="CloseShutterBottom" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.018, 0.016, 0.028, 1)
+
+[node name="CloseScanLine" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -3.0
+offset_bottom = 3.0
+mouse_filter = 2
+color = Color(0.74, 0.9, 1, 0.88)
 
 [node name="CloseButton" parent="CloseMomentLayer" instance=ExtResource("4_close_btn")]
 process_mode = 3

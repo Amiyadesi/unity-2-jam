@@ -86,6 +86,9 @@ func _check_authored_stage_ui(inst: Node, scene_path: String) -> void:
 	_check("authored CloseMomentLayer: " + scene_path, close_layer != null)
 	_check("authored CloseMomentLayer/CloseButton: " + scene_path, close_button != null)
 	_check("CloseButton is ShaderButton: " + scene_path, close_button != null and close_button.has_method("set_bbtext"))
+	_check("authored close curtain: " + scene_path, inst.get_node_or_null("CloseMomentLayer/CloseCurtain") is ColorRect)
+	_check("authored close shutters: " + scene_path, inst.get_node_or_null("CloseMomentLayer/CloseShutterTop") is ColorRect and inst.get_node_or_null("CloseMomentLayer/CloseShutterBottom") is ColorRect)
+	_check("authored close scanline: " + scene_path, inst.get_node_or_null("CloseMomentLayer/CloseScanLine") is ColorRect)
 
 
 ## 确认战斗关卡 authored 能量 HUD，第 1 关教学不显示战斗 HUD。
@@ -1261,6 +1264,7 @@ func _check_stage_3_finale_nodes(inst: Node) -> void:
 	_check("stage_3 finale node guard passes", inst.has_method("_require_finale_nodes") and inst._require_finale_nodes())
 	_check("stage_3 authored finale hint", hint is Label)
 	_check("stage_3 authored desktop layer", inst.get_node_or_null("DesktopLayer/DesktopGrid") is Control)
+	_check("stage_3 authored generated desktop battle plate", _stage_3_generated_desktop_plate_authored(inst))
 	_check("stage_3 authored window frame gates", inst.get_node_or_null("WindowFrame/PhaseGateLeft") is CanvasItem and inst.get_node_or_null("WindowFrame/PhaseGateRight") is CanvasItem)
 	_check("stage_3 authored window battle arena", inst.has_method("_has_authored_window_battle_arena") and inst._has_authored_window_battle_arena())
 	_check("stage_3 authored arena bounds", _stage_3_arena_bounds_authored(inst))
@@ -1855,6 +1859,12 @@ func _stage_3_exit_route_guides_authored(inst: Node) -> bool:
 		if guide == null or guide.points.size() < 2:
 			return false
 	return true
+
+
+## 确认 Stage3 使用生成背景板填充真实窗口战斗底景。
+func _stage_3_generated_desktop_plate_authored(inst: Node) -> bool:
+	var plate := inst.get_node_or_null("DesktopLayer/DesktopBattlePlate") as TextureRect
+	return plate != null and plate.texture != null and plate.modulate.a > 0.2 and plate.expand_mode == TextureRect.EXPAND_IGNORE_SIZE
 
 
 ## 确认 Boss 击穿后出口读路和互联网门同步出现。

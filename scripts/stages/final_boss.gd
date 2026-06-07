@@ -190,8 +190,7 @@ func activate(player: Node) -> void:
 	_hide_request_telegraphs()
 	_request_timer = request_interval
 	show()
-	monitoring = true
-	_shape.disabled = false
+	_set_collision_active(true)
 	set_physics_process(true)
 	thresholds_changed.emit(max_hp, phase_two_threshold, phase_three_threshold)
 	health_changed.emit(_hp, max_hp)
@@ -203,9 +202,7 @@ func activate(player: Node) -> void:
 func deactivate() -> void:
 	_active = false
 	hide()
-	monitoring = false
-	if _shape != null:
-		_shape.disabled = true
+	_set_collision_active(false)
 	set_physics_process(false)
 	if _predecessor != null:
 		_predecessor.deactivate()
@@ -219,6 +216,18 @@ func deactivate() -> void:
 	_hide_phase_three_pressure_sweeps()
 	_reset_pending_request()
 	_hide_request_telegraphs()
+
+
+## 切换 Boss authored Area/Shape 状态；物理信号回调内关闭时必须 deferred。
+func _set_collision_active(active: bool, deferred: bool = false) -> void:
+	if deferred:
+		set_deferred("monitoring", active)
+		if _shape != null:
+			_shape.set_deferred("disabled", not active)
+		return
+	monitoring = active
+	if _shape != null:
+		_shape.disabled = not active
 
 
 ## 按阶段推进 Boss 动效和信息流请求。
@@ -631,7 +640,7 @@ func _enter_phase_two() -> void:
 	_predecessor.modulate.a = 1.0
 	if _predecessor_spawn != null:
 		_predecessor.global_position = _predecessor_spawn.global_position
-	_predecessor.activate(_player)
+	_predecessor.activate(_player, true)
 	_play_phase_burst(1.0)
 	_flash_shield()
 
@@ -1196,8 +1205,7 @@ func _play_phase_burst(speed_scale: float) -> void:
 ## Boss 被击穿，关闭碰撞并发出胜利信号。
 func _die() -> void:
 	_defeated = true
-	monitoring = false
-	_shape.disabled = true
+	_set_collision_active(false, true)
 	_set_dash_window_aim_active(false)
 	_reset_phase_three_pressure()
 	_hide_phase_three_pressure_sweeps()

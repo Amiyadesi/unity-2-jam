@@ -137,6 +137,7 @@ func _run() -> void:
 	var predecessor := boss.get_node_or_null("PredecessorAI") as Node2D
 	_check("predecessor uses authored spawn marker", predecessor != null and predecessor_spawn != null and predecessor.global_position.is_equal_approx(predecessor_spawn.global_position))
 	await _check_predecessor_ai_readability(predecessor)
+	await _check_player_hitbox_can_damage_predecessor(player, predecessor)
 	await _check_request_telegraph_flow(boss)
 	boss.take_hit(1)
 	await process_frame
@@ -146,7 +147,9 @@ func _run() -> void:
 
 	_check("predecessor exists", predecessor != null and predecessor.has_method("take_hit"))
 	if predecessor != null:
-		for _i in range(4):
+		for _i in range(predecessor.max_hp + 1):
+			if predecessor._dead:
+				break
 			predecessor.take_hit(1)
 			await process_frame
 	_check("predecessor defeated signal emitted", _predecessor_done)
@@ -336,11 +339,13 @@ func _check_request_card_energy_feedback(card: Node, player: Node) -> void:
 	card._on_body_entered(player)
 	await process_frame
 	_check("good request restores player energy", player.energy > 20.0)
+	_check("request card collision disables deferred after good hit", "monitoring" in card and not card.monitoring)
 	player.energy = 70.0
 	card.activate(Vector2.ZERO, Vector2.RIGHT * 100.0, false)
 	card._on_body_entered(player)
 	await process_frame
 	_check("bad request drains player energy", player.energy < 70.0)
+	_check("request card collision disables deferred after bad hit", "monitoring" in card and not card.monitoring)
 
 
 ## 确认前辈 AI 用主角同图变黑，并有可读冲刺状态。
@@ -351,6 +356,7 @@ func _check_predecessor_ai_readability(predecessor: Node) -> void:
 	var pred_sprite := predecessor.get_node_or_null("Body/Sprite2D") as Sprite2D
 	_check("predecessor uses player spritesheet", pred_sprite != null and pred_sprite.texture != null and pred_sprite.hframes == 17 and pred_sprite.vframes == 16)
 	_check("predecessor sprite is black recolor", pred_sprite != null and pred_sprite.modulate.r < 0.08 and pred_sprite.modulate.g < 0.08 and pred_sprite.modulate.b < 0.1)
+	_check("predecessor accepts player typed hit", predecessor.has_method("take_player_hit") and predecessor.take_player_hit(1, &"dash", null))
 	_check("predecessor exposes dash state", "_dash_state" in predecessor and predecessor._dash_state == &"chase")
 	predecessor._spawn_hold_left = 0.0
 	predecessor._dash_timer = 0.0
@@ -359,6 +365,44 @@ func _check_predecessor_ai_readability(predecessor: Node) -> void:
 	predecessor._physics_process(predecessor.dash_windup_seconds + 0.01)
 	_check("predecessor dash becomes active", predecessor._dash_state == &"active")
 
+
+## 确认玩家 authored dash hitbox 真的能打到前辈 AI。
+func _check_player_hitbox_can_damage_predecessor(player: Node, predecessor: Node) -> void:
+	if player == null or predecessor == null:
+		_check("player hitbox predecessor prerequisites", false)
+		return
+	var forward_hitbox := player.get_node_or_null("Body/CombatHitboxes/ForwardHitbox") as Area2D
+	_check("player hitbox predecessor forward hitbox exists", forward_hitbox != null)
+	if forward_hitbox == null:
+		return
+	var old_player_position: Vector2 = player.global_position
+	var old_player_velocity: Vector2 = player.velocity
+	var old_predecessor_process: bool = predecessor.is_physics_processing()
+	predecessor.set_physics_process(false)
+	player.global_position = Vector2.ZERO
+	player.morphed = true
+	player.velocity = Vector2.RIGHT * player.dash_speed
+	player._camera_dash_dir = Vector2.RIGHT
+	player._action_playing = false
+	player.frozen = false
+	player._dash_attack_timer = player.dash_hitbox_duration
+	var hitboxes: Array[Area2D] = [forward_hitbox]
+	player._hit_targets.clear()
+	var hp_before: int = predecessor._hp
+	predecessor.global_position = forward_hitbox.global_position + Vector2(84.0, 0.0)
+	await physics_frame
+	player._start_hitbox_window(hitboxes, player.dash_hitbox_duration)
+	player._dash_attack_timer = player.dash_hitbox_duration
+	for _i in range(12):
+		player._physics_process(0.016)
+		await physics_frame
+		if predecessor._hp < hp_before:
+			break
+	_check("player dash hitbox damages predecessor", predecessor._hp < hp_before)
+	player._disable_all_hitboxes()
+	player.global_position = old_player_position
+	player.velocity = old_player_velocity
+	predecessor.set_physics_process(old_predecessor_process)
 
 ## 记录 Boss 请求预告启动。
 func _on_request_telegraph_started(spawn_name: StringName, _good: bool) -> void:

@@ -209,6 +209,10 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 	var collision_shape := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	_check("flight uses floating collision mode", player.motion_mode == CharacterBody2D.MOTION_MODE_FLOATING)
 	_check("flight root collision stays upright", collision_shape != null and is_equal_approx(collision_shape.rotation, 0.0))
+	_check("flight visual angle right is world angle", absf(wrapf(player._fly_visual_angle(Vector2.RIGHT) - 0.0, -PI, PI)) < 0.02)
+	_check("flight visual angle down is world angle", absf(wrapf(player._fly_visual_angle(Vector2.DOWN) - PI * 0.5, -PI, PI)) < 0.02)
+	_check("flight visual angle left is world angle", absf(absf(wrapf(player._fly_visual_angle(Vector2.LEFT), -PI, PI)) - PI) < 0.02)
+	_check("flight visual angle up is world angle", absf(wrapf(player._fly_visual_angle(Vector2.UP) + PI * 0.5, -PI, PI)) < 0.02)
 	player.velocity = Vector2(player.FLY_SPEED, 0.0)
 	player._update_camera_lookahead(0.12)
 	_check("flight camera opens view lightly", camera.zoom.x < player.camera_zoom_ground.x and camera.zoom.x > player.camera_zoom_dash.x)
@@ -218,15 +222,15 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 	player.velocity = Vector2(player.FLY_SPEED, 0.0)
 	player._update_facing_fly(0.2)
 	var right_rotation := body.rotation
-	_check("active right flight rotates sideways", absf(wrapf(right_rotation - player._fly_visual_angle(Vector2.RIGHT), -PI, PI)) < 0.02)
+	_check("active right flight faces right", absf(wrapf(right_rotation, -PI, PI)) < 0.02)
 	body.rotation = 0.0
 	player._fly_angle = PI
 	player._last_fly_input = Vector2.LEFT
 	player.velocity = Vector2(-player.FLY_SPEED, 0.0)
 	player._update_facing_fly(0.2)
 	var left_rotation := body.rotation
-	_check("active left flight rotates sideways", absf(wrapf(left_rotation - player._fly_visual_angle(Vector2.LEFT), -PI, PI)) < 0.02)
-	_check("left/right flight rotations mirror", absf(wrapf(left_rotation + right_rotation, -PI, PI)) < 0.02)
+	_check("active left flight faces left", absf(absf(wrapf(left_rotation, -PI, PI)) - PI) < 0.02)
+	_check("left/right flight rotations oppose", absf(absf(wrapf(left_rotation - right_rotation, -PI, PI)) - PI) < 0.02)
 	body.rotation = 0.0
 	player._fly_angle = 0.0
 	player._last_fly_input = Vector2.ZERO

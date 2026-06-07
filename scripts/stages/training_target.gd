@@ -54,9 +54,7 @@ func _require_authored_nodes() -> bool:
 ## Enables or disables this target for the current tutorial step.
 func set_enabled(value: bool) -> void:
 	_enabled = value and not _completed
-	monitoring = _enabled
-	if _shape != null:
-		_shape.disabled = not _enabled
+	_set_collision_active(_enabled)
 	if _visual != null:
 		_visual.modulate.a = 1.0 if _enabled else 0.22
 	if _core != null:
@@ -129,9 +127,7 @@ func _restart_flash(color: Color) -> void:
 func _complete(attack_kind: StringName, source: Node) -> void:
 	_completed = true
 	_enabled = false
-	monitoring = false
-	if _shape != null:
-		_shape.disabled = true
+	_set_collision_active(false, true)
 	if source != null and reward_energy > 0.0 and source.has_method("restore_energy"):
 		source.restore_energy(reward_energy)
 	completed.emit(self, attack_kind)
@@ -141,3 +137,15 @@ func _complete(attack_kind: StringName, source: Node) -> void:
 		_complete_tween.kill()
 	_complete_tween = create_tween()
 	_complete_tween.tween_property(self, "modulate:a", 0.0, 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
+## Switches authored target collision; completion may run inside a physics signal.
+func _set_collision_active(active: bool, deferred: bool = false) -> void:
+	if deferred:
+		set_deferred("monitoring", active)
+		if _shape != null:
+			_shape.set_deferred("disabled", not active)
+		return
+	monitoring = active
+	if _shape != null:
+		_shape.disabled = not active

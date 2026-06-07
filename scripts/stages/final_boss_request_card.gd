@@ -45,19 +45,28 @@ func activate(start_position: Vector2, velocity: Vector2, was_good: bool) -> voi
 	_active = true
 	_apply_kind_style()
 	show()
-	monitoring = true
-	_shape.disabled = false
+	_set_collision_active(true)
 	set_physics_process(true)
 
 
 ## 关闭请求卡并放回池里。
-func deactivate() -> void:
+func deactivate(deferred: bool = false) -> void:
 	_active = false
 	hide()
-	monitoring = false
-	if _shape != null:
-		_shape.disabled = true
+	_set_collision_active(false, deferred)
 	set_physics_process(false)
+
+
+## 切换 authored Area/Shape 状态；物理信号回调里必须延后，避免 flushing queries 报错。
+func _set_collision_active(active: bool, deferred: bool = false) -> void:
+	if deferred:
+		set_deferred("monitoring", active)
+		if _shape != null:
+			_shape.set_deferred("disabled", not active)
+		return
+	monitoring = active
+	if _shape != null:
+		_shape.disabled = not active
 
 
 ## 推进飞行与寿命，到期自动回收。
@@ -114,4 +123,4 @@ func _on_body_entered(body: Node) -> void:
 				body.apply_knockback(dir * bad_knockback)
 		hurt_player.emit(body)
 		resolved.emit(false, body)
-	deactivate()
+	deactivate(true)

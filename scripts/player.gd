@@ -134,11 +134,39 @@ var _move_sfx_timer: float = 0.0
 func _ready() -> void:
 	add_to_group("player")
 	_set_energy(energy)
+	_wire_combat_hitbox_signals()
 	_disable_all_hitboxes()
 	_hide_combat_vfx()
 	_reset_camera_pose()
 	if _anim.has_animation("idle"):
 		_play_anim("idle")
+
+
+## 连接 authored 战斗 hitbox 的进入信号，避免高速冲刺只靠轮询时漏判。
+func _wire_combat_hitbox_signals() -> void:
+	for hitbox in [_forward_hitbox, _left_hitbox, _right_hitbox]:
+		if hitbox == null:
+			continue
+		var area_handler := Callable(self, "_on_hitbox_area_entered").bind(hitbox)
+		if not hitbox.area_entered.is_connected(area_handler):
+			hitbox.area_entered.connect(area_handler)
+		var body_handler := Callable(self, "_on_hitbox_body_entered").bind(hitbox)
+		if not hitbox.body_entered.is_connected(body_handler):
+			hitbox.body_entered.connect(body_handler)
+
+
+## 命中窗口内 Area 进入 hitbox 时立即尝试伤害。
+func _on_hitbox_area_entered(area: Area2D, hitbox: Area2D) -> void:
+	if not _active_hitboxes.has(hitbox) or not hitbox.monitoring:
+		return
+	_try_damage_target(area)
+
+
+## 命中窗口内 PhysicsBody 进入 hitbox 时立即尝试伤害。
+func _on_hitbox_body_entered(body: Node2D, hitbox: Area2D) -> void:
+	if not _active_hitboxes.has(hitbox) or not hitbox.monitoring:
+		return
+	_try_damage_target(body)
 
 
 ## 提前缓存鼠标冲刺，避免对话框或 HUD Control 在 _unhandled_input 前吞掉左键。
@@ -165,12 +193,12 @@ func _physics_process(delta: float) -> void:
 	_handle_awaken()
 	_update_overload(delta)
 	_update_energy(delta)
-	_update_active_hitboxes(delta)
-	_update_camera_lookahead(delta)
 	if morphed:
 		_physics_fly(delta)
 	else:
 		_physics_ground(delta)
+	_update_active_hitboxes(delta)
+	_update_camera_lookahead(delta)
 
 
 ## 按当前形态切换 CharacterBody2D 解算模式；飞行态不用平台地面分类。
@@ -312,11 +340,11 @@ func _update_facing_fly(delta: float) -> void:
 		_set_combat_hitbox_angle(_camera_dash_dir.angle())
 
 
-## 把飞行方向转换成站立素材的视觉角度：左右横飞，向下才倒飞。
+## 把飞行方向直接映射成世界角度；右飞=0°，下飞=90°，左飞=180°，上飞=-90°。
 func _fly_visual_angle(direction: Vector2) -> float:
 	if direction.length() <= 0.01:
 		return 0.0
-	return wrapf(direction.angle() - Vector2.UP.angle(), -PI, PI)
+	return wrapf(direction.angle(), -PI, PI)
 
 
 ## 让战斗 hitbox 继续按真实攻击方向工作，不继承飞行姿态的视觉旋转。

@@ -45,6 +45,8 @@ const NORMAL_GAME_TITLE := "Close AI"
 const POST_GAME_TITLE := "Open AI"
 const POST_GAME_FLAG_PATH := "user://saves/openai.flag"
 const POST_GAME_RENAME_SCRIPT_PATH := "user://saves/openai_rename.cmd"
+const STAGE_RELAUNCH_SCRIPT_PATH := "user://saves/relaunch_closeai.cmd"
+const STAGE_RELAUNCH_DELAY_SECONDS := 2
 const WINDOWS_EXECUTABLE_EXTENSION := ".exe"
 
 const SCENE_MENU := "res://scenes/menu.tscn"
@@ -138,6 +140,7 @@ func self_close(reason: String = "") -> void:
 		if hook.is_valid():
 			await hook.call(reason)
 	# 干净退出：标记 clean_exit、存档、quit
+	_schedule_stage_relaunch(reason)
 	var save_system := _save_system()
 	if save_system != null and save_system.has_method("quit_cleanly"):
 		save_system.quit_cleanly()
@@ -290,6 +293,54 @@ func _build_post_game_rename_script_text(plan: Dictionary) -> String:
 		"  if not exist \"%SRC%\" if exist \"%DST%\" exit /b 0",
 		"  timeout /t 1 /nobreak >nul",
 		")",
+		"exit /b 0",
+	])
+	return "\r\n".join(lines) + "\r\n"
+
+
+## 安排关卡层关闭后延迟重启，让下一层自动拉起；只在 Windows 导出版生效。
+func _schedule_stage_relaunch(reason: String) -> void:
+	if reason != "stage_close_moment":
+		return
+	if not OS.has_feature("windows") or OS.has_feature("editor"):
+		return
+	var executable_path := OS.get_executable_path()
+	if executable_path.is_empty():
+		return
+	var script_path := ProjectSettings.globalize_path(STAGE_RELAUNCH_SCRIPT_PATH)
+	if not _write_stage_relaunch_script(script_path, executable_path):
+		return
+	var pid := OS.create_process("cmd.exe", PackedStringArray(["/c", script_path]), false)
+	if pid <= 0:
+		push_warning("GameFlow: cannot start stage relaunch script '%s'" % script_path)
+
+
+## 写出延迟重启脚本。
+func _write_stage_relaunch_script(script_path: String, executable_path: String) -> bool:
+	if script_path.is_empty() or executable_path.is_empty():
+		return false
+	var err := DirAccess.make_dir_recursive_absolute(script_path.get_base_dir())
+	if err != OK:
+		push_warning("GameFlow: cannot create relaunch script dir '%s' (err=%d)" % [script_path.get_base_dir(), err])
+		return false
+	var file := FileAccess.open(script_path, FileAccess.WRITE)
+	if file == null:
+		push_warning("GameFlow: cannot write relaunch script '%s' (err=%d)" % [script_path, FileAccess.get_open_error()])
+		return false
+	file.store_string(_build_stage_relaunch_script_text(executable_path, STAGE_RELAUNCH_DELAY_SECONDS))
+	file.close()
+	return true
+
+
+## 生成 Windows 延迟重启 cmd 文本，供导出版和 headless 测试共用。
+func _build_stage_relaunch_script_text(executable_path: String, delay_seconds: int) -> String:
+	var safe_delay := maxi(delay_seconds, 1)
+	var lines := PackedStringArray([
+		"@echo off",
+		"setlocal",
+		"set \"EXE=%s\"" % _escape_cmd_value(executable_path),
+		"timeout /t %d /nobreak >nul" % safe_delay,
+		"if exist \"%EXE%\" start \"\" \"%EXE%\"",
 		"exit /b 0",
 	])
 	return "\r\n".join(lines) + "\r\n"

@@ -44,7 +44,7 @@ func _ready() -> void:
 
 
 ## 激活前辈 AI 并锁定玩家。
-func activate(player: Node) -> void:
+func activate(player: Node, deferred_collision: bool = false) -> void:
 	_player = player as Node2D
 	_hp = max_hp
 	_dead = false
@@ -58,20 +58,29 @@ func activate(player: Node) -> void:
 	modulate.a = 1.0
 	_body.scale = Vector2.ONE
 	show()
-	monitoring = true
-	_shape.disabled = false
+	_set_collision_active(true, deferred_collision)
 	set_physics_process(true)
 	health_changed.emit(_hp, max_hp)
 
 
 ## 关闭前辈 AI，保持 authored 节点但停止碰撞和逻辑。
-func deactivate() -> void:
+func deactivate(deferred_collision: bool = false) -> void:
 	_active = false
 	hide()
-	monitoring = false
-	if _shape != null:
-		_shape.disabled = true
+	_set_collision_active(false, deferred_collision)
 	set_physics_process(false)
+
+
+## 切换 authored Area/Shape 状态；物理 flush 期间由调用者要求 deferred。
+func _set_collision_active(active: bool, deferred: bool = false) -> void:
+	if deferred:
+		set_deferred("monitoring", active)
+		if _shape != null:
+			_shape.set_deferred("disabled", not active)
+		return
+	monitoring = active
+	if _shape != null:
+		_shape.disabled = not active
 
 
 ## 追逐玩家，并按间隔发起短冲撞。
@@ -145,6 +154,11 @@ func _update_visual_read() -> void:
 
 
 ## 接收玩家攻击，HP 归零后把超载交出去。
+func take_player_hit(damage: int, _attack_kind: StringName, _source: Node = null) -> bool:
+	return take_hit(damage)
+
+
+## 接收旧伤害接口，HP 归零后把超载交出去。
 func take_hit(damage: int) -> bool:
 	if _dead or not _active:
 		return false
@@ -185,8 +199,7 @@ func _on_body_entered(body: Node) -> void:
 ## 结束前辈 AI，淡出后发送 defeated。
 func _die() -> void:
 	_dead = true
-	monitoring = false
-	_shape.disabled = true
+	_set_collision_active(false, true)
 	_dash_state = &"recover"
 	defeated.emit()
 	var tween := create_tween()

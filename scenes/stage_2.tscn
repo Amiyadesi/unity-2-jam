@@ -1194,6 +1194,39 @@ process_mode = 3
 layer = 18
 visible = false
 
+[node name="CloseCurtain" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.01, 0.008, 0.016, 1)
+
+[node name="CloseShutterTop" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchor_right = 1.0
+anchor_bottom = 0.5
+mouse_filter = 2
+color = Color(0.018, 0.016, 0.028, 1)
+
+[node name="CloseShutterBottom" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.018, 0.016, 0.028, 1)
+
+[node name="CloseScanLine" type="ColorRect" parent="CloseMomentLayer"]
+modulate = Color(1, 1, 1, 0)
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -3.0
+offset_bottom = 3.0
+mouse_filter = 2
+color = Color(0.74, 0.9, 1, 0.88)
+
 [node name="CloseButton" parent="CloseMomentLayer" unique_id=1386214100 instance=ExtResource("5_close_btn")]
 process_mode = 3
 anchors_preset = 7

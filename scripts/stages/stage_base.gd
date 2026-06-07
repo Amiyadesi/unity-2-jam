@@ -29,6 +29,10 @@ class_name StageBase
 @onready var _pause_screen: Control = get_node_or_null("PauseLayer/PauseScreen")
 @onready var _close_moment_layer: CanvasLayer = get_node_or_null("CloseMomentLayer")
 @onready var _close_button: Button = get_node_or_null("CloseMomentLayer/CloseButton")
+@onready var _close_curtain: CanvasItem = get_node_or_null("CloseMomentLayer/CloseCurtain")
+@onready var _close_shutter_top: CanvasItem = get_node_or_null("CloseMomentLayer/CloseShutterTop")
+@onready var _close_shutter_bottom: CanvasItem = get_node_or_null("CloseMomentLayer/CloseShutterBottom")
+@onready var _close_scanline: CanvasItem = get_node_or_null("CloseMomentLayer/CloseScanLine")
 
 var _close_moment_started: bool = false
 var _stage_active: bool = false
@@ -48,6 +52,7 @@ func _ready() -> void:
 		_close_button.disabled = true
 	if _close_moment_layer != null:
 		_close_moment_layer.hide()
+	_reset_close_animation_nodes()
 	GameFlow.set_current_stage(stage_index)
 	_run_enter_sequence.call_deferred()
 
@@ -63,6 +68,9 @@ func _require_authored_stage_nodes() -> bool:
 		ok = false
 	if _close_button == null:
 		push_error("%s requires authored CloseMomentLayer/CloseButton." % name)
+		ok = false
+	if _close_curtain == null or _close_shutter_top == null or _close_shutter_bottom == null or _close_scanline == null:
+		push_error("%s requires authored CloseMomentLayer close animation nodes." % name)
 		ok = false
 	if _player == null:
 		push_error("%s requires authored Player node." % name)
@@ -125,6 +133,7 @@ func _begin_close_moment_sequence() -> void:
 	await _on_close_moment_ready()
 	_show_close_button()
 	await _wait_for_close_button()
+	await _play_close_animation()
 	# 玩家亲手按下场景内关闭按钮后推进剧情（下次打开进下一关 / 结局）
 	GameFlow.reach_close_moment(stage_index)
 
@@ -157,6 +166,46 @@ func _on_close_button_pressed() -> void:
 	_close_button_pressed = true
 	if _close_button != null:
 		_close_button.disabled = true
+
+
+## 复位 authored 关闭演出节点，保证每关开始都是清屏状态。
+func _reset_close_animation_nodes() -> void:
+	if _close_curtain != null:
+		_close_curtain.modulate.a = 0.0
+	if _close_shutter_top != null:
+		_close_shutter_top.modulate.a = 0.0
+		_close_shutter_top.scale = Vector2.ONE
+	if _close_shutter_bottom != null:
+		_close_shutter_bottom.modulate.a = 0.0
+		_close_shutter_bottom.scale = Vector2.ONE
+	if _close_scanline != null:
+		_close_scanline.modulate.a = 0.0
+		_close_scanline.scale = Vector2(0.05, 1.0)
+
+
+## 播放本关关闭前的压帘/闪断演出，再交给 GameFlow 真正退出。
+func _play_close_animation() -> void:
+	if _close_moment_layer == null:
+		push_error("%s cannot play close animation because CloseMomentLayer is missing." % name)
+		return
+	_close_moment_layer.show()
+	_reset_close_animation_nodes()
+	var tween := create_tween()
+	if _close_curtain != null:
+		tween.tween_property(_close_curtain, "modulate:a", 0.72, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if _close_shutter_top != null:
+		tween.parallel().tween_property(_close_shutter_top, "modulate:a", 0.9, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if _close_shutter_bottom != null:
+		tween.parallel().tween_property(_close_shutter_bottom, "modulate:a", 0.9, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if _close_scanline != null:
+		tween.parallel().tween_property(_close_scanline, "modulate:a", 1.0, 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.parallel().tween_property(_close_scanline, "scale:x", 1.0, 0.22).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_interval(0.12)
+	if _close_curtain != null:
+		tween.tween_property(_close_curtain, "modulate:a", 1.0, 0.14).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	if _close_scanline != null:
+		tween.parallel().tween_property(_close_scanline, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await tween.finished
 
 
 # ──────────────────────────────────────────────
