@@ -4,7 +4,8 @@ extends SceneTree
 
 var _failures: int = 0
 var _checks: int = 0
-var _phases: Array[String] = []
+var _phase_ids: Array[int] = []
+var _phase_labels: Array[String] = []
 var _boss_health: Array[int] = []
 var _predecessor_done: bool = false
 var _request_started_events: Array[StringName] = []
@@ -94,6 +95,7 @@ func _run() -> void:
 	_check("boss authored phase three reads", boss.has_method("_has_authored_phase_three_reads") and boss._has_authored_phase_three_reads())
 	_check("boss authored phase three pressure", boss.has_method("_has_authored_phase_three_pressure") and boss._has_authored_phase_three_pressure())
 	await _check_request_card_kind_reads(boss)
+	await _check_request_card_energy_feedback(boss.get_node_or_null("RequestPool/RequestCard1"), player)
 	_check("gate starts hidden", gate is CanvasItem and not (gate as CanvasItem).visible)
 	_check("gate has activate", gate.has_method("activate"))
 	if hud_scene != null:
@@ -114,7 +116,8 @@ func _run() -> void:
 	boss.connect("defeated", Callable(self, "_on_boss_defeated"))
 	boss.activate(player)
 	await process_frame
-	_check("boss starts phase one", _phases.size() >= 1 and _phases[0].contains("一阶段"))
+	_check("boss starts first combat state", _phase_ids.size() >= 1 and _phase_ids[0] == 1)
+	_check("boss phase labels avoid explicit stage names", _phase_labels.all(func(label: String) -> bool: return _label_hides_stage_number(label)))
 	await _check_phase_pressure_flow(boss, player)
 	boss.request_good_pattern = PackedByteArray([0, 1])
 	boss._spawn_index = 1
@@ -126,13 +129,14 @@ func _run() -> void:
 	for _i in range(4):
 		boss.take_hit(1)
 		await process_frame
-	_check("boss enters phase two at threshold", _phases.any(func(label: String) -> bool: return label.contains("二阶段")))
+	_check("boss enters request state at threshold", _phase_ids.has(2))
 	var phase_burst := boss.get_node_or_null("CombatVFX/PhaseBurst") as GPUParticles2D
 	_check("boss phase burst emits on phase change", phase_burst != null and phase_burst.emitting)
 	var hp_after_phase_two: int = _boss_health.back()
 	var predecessor_spawn := boss.get_node_or_null("PredecessorSpawn") as Marker2D
 	var predecessor := boss.get_node_or_null("PredecessorAI") as Node2D
 	_check("predecessor uses authored spawn marker", predecessor != null and predecessor_spawn != null and predecessor.global_position.is_equal_approx(predecessor_spawn.global_position))
+	await _check_predecessor_ai_readability(predecessor)
 	await _check_request_telegraph_flow(boss)
 	boss.take_hit(1)
 	await process_frame
@@ -154,7 +158,8 @@ func _run() -> void:
 	for _i in range(4):
 		boss.take_hit(1)
 		await process_frame
-	_check("boss enters phase three", _phases.any(func(label: String) -> bool: return label.contains("三阶段")))
+	_check("boss enters dash-window state", _phase_ids.has(3))
+	_check("all boss phase labels avoid explicit stage names", _phase_labels.all(func(label: String) -> bool: return _label_hides_stage_number(label)))
 	var dash_window_ring := boss.get_node_or_null("CombatVFX/DashWindowRing") as CanvasItem
 	var core_open_cue := boss.get_node_or_null("CombatVFX/CoreOpenCue") as CanvasItem
 	var closed_window_cue := boss.get_node_or_null("CombatVFX/ClosedWindowCue") as CanvasItem
@@ -278,8 +283,17 @@ func _run() -> void:
 
 
 ## 记录 Boss 阶段。
-func _on_phase_changed(_phase: int, label: String) -> void:
-	_phases.append(label)
+func _on_phase_changed(phase: int, label: String) -> void:
+	_phase_ids.append(phase)
+	_phase_labels.append(label)
+
+
+## 确认 Boss 状态文本不把“一/二/三阶段”直接摆给玩家。
+func _label_hides_stage_number(label: String) -> bool:
+	for token in ["一阶段", "二阶段", "三阶段", "阶段"]:
+		if label.contains(token):
+			return false
+	return true
 
 
 ## 记录 Boss 血量。
@@ -310,6 +324,40 @@ func _check_request_card_kind_reads(boss: Node) -> void:
 	await process_frame
 	_check("bad request says avoid", good_halo != null and not good_halo.visible and bad_hazard != null and bad_hazard.visible and label != null and label.text == "避开")
 	card.deactivate()
+
+
+## 确认请求卡碰撞会真实改变玩家能量，而不只发 Boss 信号。
+func _check_request_card_energy_feedback(card: Node, player: Node) -> void:
+	if card == null or player == null:
+		_check("request card energy prerequisites", false)
+		return
+	player.energy = 20.0
+	card.activate(Vector2.ZERO, Vector2.RIGHT * 100.0, true)
+	card._on_body_entered(player)
+	await process_frame
+	_check("good request restores player energy", player.energy > 20.0)
+	player.energy = 70.0
+	card.activate(Vector2.ZERO, Vector2.RIGHT * 100.0, false)
+	card._on_body_entered(player)
+	await process_frame
+	_check("bad request drains player energy", player.energy < 70.0)
+
+
+## 确认前辈 AI 用主角同图变黑，并有可读冲刺状态。
+func _check_predecessor_ai_readability(predecessor: Node) -> void:
+	if predecessor == null:
+		_check("predecessor readability prerequisites", false)
+		return
+	var pred_sprite := predecessor.get_node_or_null("Body/Sprite2D") as Sprite2D
+	_check("predecessor uses player spritesheet", pred_sprite != null and pred_sprite.texture != null and pred_sprite.hframes == 17 and pred_sprite.vframes == 16)
+	_check("predecessor sprite is black recolor", pred_sprite != null and pred_sprite.modulate.r < 0.08 and pred_sprite.modulate.g < 0.08 and pred_sprite.modulate.b < 0.1)
+	_check("predecessor exposes dash state", "_dash_state" in predecessor and predecessor._dash_state == &"chase")
+	predecessor._spawn_hold_left = 0.0
+	predecessor._dash_timer = 0.0
+	predecessor._physics_process(0.016)
+	_check("predecessor dash has windup", predecessor._dash_state == &"windup")
+	predecessor._physics_process(predecessor.dash_windup_seconds + 0.01)
+	_check("predecessor dash becomes active", predecessor._dash_state == &"active")
 
 
 ## 记录 Boss 请求预告启动。

@@ -9,15 +9,19 @@ signal defeated()
 
 @export var max_hp: int = 4
 @export var chase_speed: float = 190.0
-@export var dash_speed: float = 520.0
-@export var dash_interval: float = 1.4
+@export var dash_speed: float = 720.0
+@export var dash_interval: float = 1.15
+@export var dash_windup_seconds: float = 0.28
+@export var dash_active_seconds: float = 0.22
+@export var dash_recover_seconds: float = 0.34
 @export var spawn_hold_seconds: float = 0.35
 @export var contact_energy_damage: float = 14.0
 @export var contact_knockback: float = 420.0
 
 @onready var _shape: CollisionShape2D = $CollisionShape2D
 @onready var _body: Node2D = $Body
-@onready var _core: ColorRect = $Body/Core
+@onready var _sprite: Sprite2D = $Body/Sprite2D
+@onready var _core: CanvasItem = $Body/Core
 @onready var _trail: Line2D = $Body/Trail
 
 var _player: Node2D
@@ -25,6 +29,9 @@ var _hp: int = 0
 var _active: bool = false
 var _dead: bool = false
 var _dash_timer: float = 0.0
+var _dash_state: StringName = &"chase"
+var _dash_state_timer: float = 0.0
+var _dash_dir: Vector2 = Vector2.RIGHT
 var _contact_cooldown: float = 0.0
 var _spawn_hold_left: float = 0.0
 
@@ -43,8 +50,13 @@ func activate(player: Node) -> void:
 	_dead = false
 	_active = true
 	_dash_timer = dash_interval
+	_dash_state = &"chase"
+	_dash_state_timer = 0.0
+	_dash_dir = Vector2.RIGHT
 	_contact_cooldown = 0.0
 	_spawn_hold_left = spawn_hold_seconds
+	modulate.a = 1.0
+	_body.scale = Vector2.ONE
 	show()
 	monitoring = true
 	_shape.disabled = false
@@ -75,32 +87,83 @@ func _physics_process(delta: float) -> void:
 	if to_player.length() <= 0.01:
 		return
 	var dir := to_player.normalized()
+	_update_dash_state(delta, dir)
+	_update_visual_read()
+
+
+## 推进追逐、蓄力、冲刺和硬直，让前辈的高速冲撞有可读窗口。
+func _update_dash_state(delta: float, dir: Vector2) -> void:
+	match _dash_state:
+		&"windup":
+			_dash_state_timer = maxf(_dash_state_timer - delta, 0.0)
+			_body.rotation = _dash_dir.angle()
+			if _dash_state_timer <= 0.0:
+				_dash_state = &"active"
+				_dash_state_timer = dash_active_seconds
+			return
+		&"active":
+			_dash_state_timer = maxf(_dash_state_timer - delta, 0.0)
+			global_position += _dash_dir * dash_speed * delta
+			_body.rotation = _dash_dir.angle()
+			if _dash_state_timer <= 0.0:
+				_dash_state = &"recover"
+				_dash_state_timer = dash_recover_seconds
+			return
+		&"recover":
+			_dash_state_timer = maxf(_dash_state_timer - delta, 0.0)
+			global_position += _dash_dir * chase_speed * 0.25 * delta
+			_body.rotation = _dash_dir.angle()
+			if _dash_state_timer <= 0.0:
+				_dash_state = &"chase"
+				_dash_timer = dash_interval
+			return
 	_dash_timer -= delta
-	var speed := chase_speed
 	if _dash_timer <= 0.0:
-		speed = dash_speed
-		_dash_timer = dash_interval
-	global_position += dir * speed * delta
+		_dash_state = &"windup"
+		_dash_state_timer = dash_windup_seconds
+		_dash_dir = dir
+		return
+	global_position += dir * chase_speed * delta
 	_body.rotation = dir.angle()
-	_trail.modulate.a = 0.9 if speed >= dash_speed else 0.45
+
+
+## 根据当前冲刺状态调整 authored 贴图、核心和拖尾读法。
+func _update_visual_read() -> void:
+	match _dash_state:
+		&"windup":
+			_body.scale = Vector2(1.12, 0.88)
+			_trail.modulate.a = 0.72
+		&"active":
+			_body.scale = Vector2(1.26, 0.82)
+			_trail.modulate.a = 1.0
+		&"recover":
+			_body.scale = Vector2(0.92, 1.08)
+			_trail.modulate.a = 0.62
+		_:
+			_body.scale = Vector2.ONE
+			_trail.modulate.a = 0.42
 
 
 ## 接收玩家攻击，HP 归零后把超载交出去。
-func take_hit(damage: int) -> void:
+func take_hit(damage: int) -> bool:
 	if _dead or not _active:
-		return
+		return false
 	_hp = maxi(_hp - damage, 0)
 	health_changed.emit(_hp, max_hp)
 	_flash_hit()
 	if _hp <= 0:
 		_die()
+	return true
 
 
 ## 命中闪烁提示玩家这也是可击败目标。
 func _flash_hit() -> void:
 	var tween := create_tween()
-	tween.tween_property(_core, "color", Color(0.96, 0.98, 1.0, 1.0), 0.05)
-	tween.tween_property(_core, "color", Color(0.55, 0.78, 1.0, 0.92), 0.16)
+	tween.tween_property(_sprite, "modulate", Color(0.94, 0.96, 1.0, 1.0), 0.05)
+	tween.tween_property(_sprite, "modulate", Color(0.02, 0.025, 0.035, 1.0), 0.16)
+	if _core != null:
+		tween.parallel().tween_property(_core, "modulate:a", 0.9, 0.05)
+		tween.tween_property(_core, "modulate:a", 0.32, 0.16)
 
 
 ## 与玩家接触时扣能量并弹开。
@@ -124,6 +187,7 @@ func _die() -> void:
 	_dead = true
 	monitoring = false
 	_shape.disabled = true
+	_dash_state = &"recover"
 	defeated.emit()
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, 0.45)

@@ -14,6 +14,9 @@ extends Control
 
 func _ready() -> void:
 	for n in [_title, _line1, _line2, _dirty_line]:
+		if n == null:
+			push_error("ending.gd: missing scene node")
+			continue
 		n.modulate.a = 0.0
 	_dirty_line.visible = GameFlow.entered_with_unclean_exit
 	_play_ending()

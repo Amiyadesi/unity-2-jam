@@ -203,17 +203,30 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 		player.dash_whiffed.disconnect(whiff_handler)
 	player._camera_dash_timer = 0.0
 	player.morphed = true
+	player._update_motion_mode()
 	player._action_playing = false
 	player.frozen = false
+	var collision_shape := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	_check("flight uses floating collision mode", player.motion_mode == CharacterBody2D.MOTION_MODE_FLOATING)
+	_check("flight root collision stays upright", collision_shape != null and is_equal_approx(collision_shape.rotation, 0.0))
 	player.velocity = Vector2(player.FLY_SPEED, 0.0)
 	player._update_camera_lookahead(0.12)
 	_check("flight camera opens view lightly", camera.zoom.x < player.camera_zoom_ground.x and camera.zoom.x > player.camera_zoom_dash.x)
+	body.rotation = 0.0
+	player._fly_angle = 0.0
+	player._last_fly_input = Vector2.RIGHT
+	player.velocity = Vector2(player.FLY_SPEED, 0.0)
+	player._update_facing_fly(0.2)
+	var right_rotation := body.rotation
+	_check("active right flight rotates sideways", absf(wrapf(right_rotation - player._fly_visual_angle(Vector2.RIGHT), -PI, PI)) < 0.02)
 	body.rotation = 0.0
 	player._fly_angle = PI
 	player._last_fly_input = Vector2.LEFT
 	player.velocity = Vector2(-player.FLY_SPEED, 0.0)
 	player._update_facing_fly(0.2)
-	_check("active left flight rotates sideways", absf(wrapf(body.rotation - player._fly_visual_angle(Vector2.LEFT), -PI, PI)) < 0.02)
+	var left_rotation := body.rotation
+	_check("active left flight rotates sideways", absf(wrapf(left_rotation - player._fly_visual_angle(Vector2.LEFT), -PI, PI)) < 0.02)
+	_check("left/right flight rotations mirror", absf(wrapf(left_rotation + right_rotation, -PI, PI)) < 0.02)
 	body.rotation = 0.0
 	player._fly_angle = 0.0
 	player._last_fly_input = Vector2.ZERO
@@ -230,6 +243,8 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 	player.correct_flight_pose()
 	_check("pause correction forces upright hover", is_equal_approx(body.rotation, 0.0) and body.scale.x > 0.0)
 	player.morphed = false
+	player._update_motion_mode()
+	_check("ground uses grounded collision mode", player.motion_mode == CharacterBody2D.MOTION_MODE_GROUNDED)
 	player.velocity = Vector2.ZERO
 	for _i in range(12):
 		player._update_camera_lookahead(0.12)

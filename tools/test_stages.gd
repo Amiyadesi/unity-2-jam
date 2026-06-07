@@ -385,7 +385,7 @@ func _stage_1_only_hazard_reads_visible(inst: Node, active_names: Array) -> bool
 	return true
 
 
-## 确认第 2 关觉醒/飞行/冲刺训练对象与高低差白盒已 authored。
+## 确认第 2 关觉醒/飞行/冲刺训练对象与封闭空战场已 authored。
 func _check_stage_2_flight_training(inst: Node) -> void:
 	var marker := inst.get_node_or_null("FlightTraining/AwakenMarker")
 	var dash_target := inst.get_node_or_null("FlightTraining/DashTarget")
@@ -416,16 +416,9 @@ func _check_stage_2_flight_training(inst: Node) -> void:
 	_check("stage_2 dash chain forms zigzag", _stage_2_dash_chain_forms_zigzag(inst))
 	_check("stage_2 authored layered background", _stage_2_layered_background_authored(inst))
 	_check("stage_2 authored pacing zones", _stage_2_pacing_zones_authored(inst))
-	_check("stage_2 authored PlatformLow", inst.get_node_or_null("PlatformLow") is StaticBody2D)
-	_check("stage_2 authored PlatformMid", inst.get_node_or_null("PlatformMid") is StaticBody2D)
-	_check("stage_2 authored PlatformHigh", inst.get_node_or_null("PlatformHigh") is StaticBody2D)
-	_check("stage_2 authored rest platform A", inst.get_node_or_null("PlatformRestA") is StaticBody2D)
-	_check("stage_2 authored rest platform B", inst.get_node_or_null("PlatformRestB") is StaticBody2D)
-	_check("stage_2 authored break lane platform", inst.get_node_or_null("PlatformBreakLane") is StaticBody2D)
-	_check("stage_2 authored recovery platforms", _stage_2_recovery_platforms_authored(inst))
-	_check("stage_2 authored platform read edges", _stage_2_platform_read_edges_authored(inst))
-	_check("stage_2 whitebox route has recovery landings", _stage_2_whitebox_route_has_recovery_landings(inst))
-	_check("stage_2 dash target is above low platform", _stage_2_dash_target_above_low_platform(inst))
+	_check("stage_2 has no route platforms", _stage_2_has_no_route_platforms(inst))
+	_check("stage_2 dash target floats above start", _stage_2_dash_target_floats_above_start(inst))
+	_check("stage_2 start dialogue teaches awakening and dash", _dialogue_title_mentions("res://dialogue/closeai_stage2.dialogue", "start", ["Shift", "左键", "觉醒"]))
 	_check("stage_2 authored EnemyWaves root", inst.get_node_or_null("EnemyWaves") is Node2D)
 	_check("stage_2 has three authored enemy wave containers", _stage_2_has_authored_enemy_waves(inst))
 	_check("stage_2 enemies start authored disabled", _stage_2_enemies_start_disabled(inst))
@@ -452,11 +445,43 @@ func _check_stage_2_flight_training(inst: Node) -> void:
 	_check("stage_2 close route starts disabled", _stage_2_close_route_enabled(inst) == false)
 
 
-## 确认冲刺训练靶放在空中路线高处，形成斜向冲刺目标。
-func _stage_2_dash_target_above_low_platform(inst: Node) -> bool:
+## 确认冲刺训练靶悬在出生点上方，形成真正空中冲撞目标。
+func _stage_2_dash_target_floats_above_start(inst: Node) -> bool:
 	var dash_target := inst.get_node_or_null("FlightTraining/DashTarget") as Node2D
-	var low := inst.get_node_or_null("PlatformLow") as Node2D
-	return dash_target != null and low != null and dash_target.global_position.y < low.global_position.y
+	var player := inst.get_node_or_null("Player") as Node2D
+	return dash_target != null and player != null and dash_target.global_position.y < player.global_position.y - 120.0
+
+
+## 确认 Stage2 根节点没有路线 StaticBody2D，避免飞行教学退回平台跳。
+func _stage_2_has_no_route_platforms(inst: Node) -> bool:
+	for child in inst.get_children():
+		if child is StaticBody2D:
+			var node_name := String(child.name)
+			if node_name.begins_with("Platform") or node_name == "Floor":
+				return false
+	return true
+
+
+## 确认指定 dialogue 标题内包含教程关键词。
+func _dialogue_title_mentions(path: String, title: String, needles: Array[String]) -> bool:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return false
+	var in_title := false
+	var body := ""
+	while not file.eof_reached():
+		var line := file.get_line()
+		if line.begins_with("~ "):
+			in_title = line.strip_edges() == "~ " + title
+			continue
+		if in_title:
+			if line.begins_with("=>"):
+				break
+			body += line + "\n"
+	for needle in needles:
+		if not body.contains(needle):
+			return false
+	return true
 
 
 ## 确认 Stage2 飞行房间四周有 authored 真实碰撞墙。
@@ -521,43 +546,6 @@ func _stage_2_dash_chain_forms_zigzag(inst: Node) -> bool:
 	return first != null and a != null and b != null and c != null and first.global_position.y < a.global_position.y and b.global_position.y < a.global_position.y and b.global_position.y < c.global_position.y
 
 
-## 确认 Stage2 新增恢复平台都 authored，不靠脚本临时生成落点。
-func _stage_2_recovery_platforms_authored(inst: Node) -> bool:
-	for platform_name in ["PlatformForkHigh", "PlatformForkLow", "PlatformDropRecover", "PlatformAngleRecover", "PlatformBreakRecover"]:
-		var platform := inst.get_node_or_null(platform_name) as StaticBody2D
-		if platform == null:
-			return false
-		if not platform.get_node_or_null("CollisionShape2D") is CollisionShape2D:
-			return false
-		if not platform.get_node_or_null("TopEdge") is ColorRect:
-			return false
-		if not platform.get_node_or_null("UndersideShadow") is ColorRect:
-			return false
-	return true
-
-
-## 确认 Stage2 白盒路线真的有高低分叉和撞空恢复落脚。
-func _stage_2_whitebox_route_has_recovery_landings(inst: Node) -> bool:
-	var high := inst.get_node_or_null("PlatformForkHigh") as Node2D
-	var low := inst.get_node_or_null("PlatformForkLow") as Node2D
-	var drop := inst.get_node_or_null("PlatformDropRecover") as Node2D
-	var angle := inst.get_node_or_null("PlatformAngleRecover") as Node2D
-	var break_recover := inst.get_node_or_null("PlatformBreakRecover") as Node2D
-	var chain_a := inst.get_node_or_null("FlightTraining/DashChainTargets/ChainTargetA") as Node2D
-	var chain_b := inst.get_node_or_null("FlightTraining/DashChainTargets/ChainTargetB") as Node2D
-	var low_reset := inst.get_node_or_null("FlightTraining/RecoveryMarkers/LowReset") as Node2D
-	var drop_marker := inst.get_node_or_null("FlightTraining/RecoveryMarkers/DropRecover") as Node2D
-	var angle_rest := inst.get_node_or_null("EnemyWaveGuides/SafeRestPoints/AngleRest") as Node2D
-	var break_rest := inst.get_node_or_null("EnemyWaveGuides/SafeRestPoints/BreakRest") as Node2D
-	if high == null or low == null or drop == null or angle == null or break_recover == null or chain_a == null or chain_b == null or low_reset == null or drop_marker == null or angle_rest == null or break_rest == null:
-		return false
-	var fork_span := low.global_position.y - high.global_position.y
-	var drop_catches_chain_a := drop.global_position.x < chain_a.global_position.x and absf(drop.global_position.y - chain_a.global_position.y) < 90.0
-	var angle_catches_chain_b := angle.global_position.x < chain_b.global_position.x and angle.global_position.y > chain_b.global_position.y + 180.0
-	var marker_alignment := absf(low.global_position.x - low_reset.global_position.x) <= 40.0 and absf(drop.global_position.x - drop_marker.global_position.x) <= 40.0 and absf(angle.global_position.x - angle_rest.global_position.x) <= 40.0 and absf(break_recover.global_position.x - break_rest.global_position.x) <= 40.0
-	return fork_span >= 200.0 and drop_catches_chain_a and angle_catches_chain_b and marker_alignment
-
-
 ## 确认第 2 关背景有飞行/冲刺层次，不只是单色底。
 func _stage_2_layered_background_authored(inst: Node) -> bool:
 	var background := inst.get_node_or_null("Background") as CanvasLayer
@@ -594,23 +582,6 @@ func _stage_2_pacing_zones_authored(inst: Node) -> bool:
 	for frame_name in ["LiftSafeFrame", "DashChainFrame", "EnemyWaveFrame"]:
 		var frame := zones.get_node_or_null(frame_name) as Line2D
 		if frame == null or frame.points.size() < 4:
-			return false
-	return true
-
-
-## 确认第 2 关平台同样有 authored 顶沿和底影，飞行训练时可读可落点。
-func _stage_2_platform_read_edges_authored(inst: Node) -> bool:
-	for platform_name in ["Floor", "PlatformLow", "PlatformMid", "PlatformHigh", "PlatformRestA", "PlatformRestB", "PlatformBreakLane", "PlatformForkHigh", "PlatformForkLow", "PlatformDropRecover", "PlatformAngleRecover", "PlatformBreakRecover"]:
-		var platform := inst.get_node_or_null(platform_name)
-		if platform == null:
-			return false
-		var top_edge := platform.get_node_or_null("TopEdge") as ColorRect
-		var shadow := platform.get_node_or_null("UndersideShadow") as ColorRect
-		if top_edge == null or shadow == null:
-			return false
-		if top_edge.offset_bottom > 0.0 or shadow.offset_top < 0.0:
-			return false
-		if top_edge.color.a < 0.6 or shadow.color.a < 0.45:
 			return false
 	return true
 

@@ -161,6 +161,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## 每个物理帧更新觉醒/能量/战斗，再执行当前形态移动。
 func _physics_process(delta: float) -> void:
+	_update_motion_mode()
 	_handle_awaken()
 	_update_overload(delta)
 	_update_energy(delta)
@@ -170,6 +171,13 @@ func _physics_process(delta: float) -> void:
 		_physics_fly(delta)
 	else:
 		_physics_ground(delta)
+
+
+## 按当前形态切换 CharacterBody2D 解算模式；飞行态不用平台地面分类。
+func _update_motion_mode() -> void:
+	var target_mode := CharacterBody2D.MOTION_MODE_FLOATING if morphed else CharacterBody2D.MOTION_MODE_GROUNDED
+	if motion_mode != target_mode:
+		motion_mode = target_mode
 
 
 # ──────────────────────────────────────────────

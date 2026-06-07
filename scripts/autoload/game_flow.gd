@@ -425,6 +425,9 @@ func play_dialogue(stage: int, title: String = "") -> void:
 	if dm == null:
 		push_warning("GameFlow.play_dialogue: DialogueManager 不可用")
 		return
+	if title != "" and not ("titles" in resource and resource.titles is Dictionary and resource.titles.has(title)):
+		push_error("GameFlow.play_dialogue: 标题 '%s' 不存在于 '%s'" % [title, resource.resource_path])
+		return
 	dm.show_dialogue_balloon(resource, title)
 	if dm.has_signal("dialogue_ended"):
 		await dm.dialogue_ended

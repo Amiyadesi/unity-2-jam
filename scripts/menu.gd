@@ -121,6 +121,8 @@ func _morph_start_to_quit() -> void:
 ## 表达「这一层被你删掉了」：AI 光点（标题）收缩成一点淡去 → 画面温柔淡入黑
 ## → 浮现一句话 → 退出。设计可在此替换/加料；UI 全用场景里的固定节点。
 func _start_performance(_reason: String) -> void:
+	if _start_line == null:
+		push_error("Menu: $StartLine missing"); return
 	# 标题 = AI 光点，收缩成一点并淡去
 	var t := create_tween().set_parallel(true)
 	t.tween_property(_title, "scale", Vector2(0.04, 0.04), 1.0)\

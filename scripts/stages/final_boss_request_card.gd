@@ -5,8 +5,8 @@ class_name FinalBossRequestCard
 ## 这是 authored 弹幕模板：Boss 只激活场景里预放的卡片，不运行时手搓节点。
 ## 善意请求触碰后给玩家能量；恶意请求触碰后扣能量并记一次失误。
 
-signal resolved(was_good: bool)
-signal hurt_player()
+signal resolved(was_good: bool, body: Node)
+signal hurt_player(body: Node)
 
 @export var good_energy_reward: float = 18.0
 @export var bad_energy_damage: float = 16.0
@@ -103,7 +103,7 @@ func _on_body_entered(body: Node) -> void:
 	if _was_good:
 		if body.has_method("restore_energy"):
 			body.restore_energy(good_energy_reward)
-		resolved.emit(true)
+		resolved.emit(true, body)
 	else:
 		if body.has_method("drain_energy"):
 			body.drain_energy(bad_energy_damage)
@@ -112,6 +112,6 @@ func _on_body_entered(body: Node) -> void:
 			if body_2d != null:
 				var dir: Vector2 = (body_2d.global_position - global_position).normalized()
 				body.apply_knockback(dir * bad_knockback)
-		hurt_player.emit()
-		resolved.emit(false)
+		hurt_player.emit(body)
+		resolved.emit(false, body)
 	deactivate()

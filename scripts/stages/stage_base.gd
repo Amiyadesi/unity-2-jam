@@ -64,6 +64,9 @@ func _require_authored_stage_nodes() -> bool:
 	if _close_button == null:
 		push_error("%s requires authored CloseMomentLayer/CloseButton." % name)
 		ok = false
+	if _player == null:
+		push_error("%s requires authored Player node." % name)
+		ok = false
 	return ok
 
 
@@ -119,7 +122,7 @@ func _begin_close_moment_sequence() -> void:
 		_player.set_frozen(true)
 	# 播放关闭时刻对话
 	await GameFlow.play_dialogue(stage_index, "close_moment")
-	_on_close_moment_ready()
+	await _on_close_moment_ready()
 	_show_close_button()
 	await _wait_for_close_button()
 	# 玩家亲手按下场景内关闭按钮后推进剧情（下次打开进下一关 / 结局）
@@ -129,6 +132,7 @@ func _begin_close_moment_sequence() -> void:
 ## [virtual] 子类重写：关闭时刻对话后、自我关闭前的收尾（变暗、静音等）
 func _on_close_moment_ready() -> void:
 	pass
+
 
 
 ## 显示 authored 关闭按钮并交给玩家点击。

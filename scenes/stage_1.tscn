@@ -29,6 +29,7 @@ size = Vector2(420, 110)
 
 [node name="Stage1" type="Node2D" unique_id=1920495996]
 script = ExtResource("1_stage1")
+stage_index = 1
 stage_music = ExtResource("8_music")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=2014507540]

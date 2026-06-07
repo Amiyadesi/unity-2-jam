@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://closeaistage3scn"]
+[gd_scene load_steps=17 format=3 uid="uid://closeaistage3scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_3.gd" id="1_stage3"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]

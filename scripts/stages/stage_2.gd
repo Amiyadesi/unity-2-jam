@@ -20,20 +20,7 @@ const SPEED_GATE_LINE_NAMES = ["ApproachRail", "CommitGate", "ExitWake"]
 const AIR_COMBAT_ROOM_NAMES = ["LowRoom", "AngleRoom", "BreakRoom"]
 const AIR_COMBAT_TIMING_LINE_NAMES = ["ApproachTick", "CommitWindow", "ExitTick"]
 const RECOVERY_MARKER_NAMES = ["ForkHigh", "LowReset", "DropRecover"]
-const WHITEBOX_PLATFORM_NAMES = [
-	"Floor",
-	"PlatformLow",
-	"PlatformMid",
-	"PlatformHigh",
-	"PlatformRestA",
-	"PlatformRestB",
-	"PlatformBreakLane",
-	"PlatformForkHigh",
-	"PlatformForkLow",
-	"PlatformDropRecover",
-	"PlatformAngleRecover",
-	"PlatformBreakRecover",
-]
+const ROUTE_PLATFORM_PREFIXES = ["Platform", "Floor"]
 
 @export var enemies_to_clear: int = 0  # 0 = 自动统计场景内 enemy 数量
 @export var flight_move_seconds_required: float = 0.7
@@ -119,7 +106,7 @@ func _on_stage_ready() -> void:
 		player.dash_whiffed.connect(_on_player_dash_whiffed)
 	player.restore_energy(player.max_energy)
 	_step = Step.AWAKEN
-	say("按 [color=#a99cff]Shift[/color]。这次，不一样了。试试。", 4.0)
+	say("按 [color=#a99cff]Shift[/color] 觉醒，进入飞行。\n之后用鼠标瞄准，按 [color=#a99cff]左键[/color] 高速冲撞。", 5.2)
 
 
 ## 每帧推进 Stage2 飞行移动训练。
@@ -145,8 +132,8 @@ func _require_training_nodes() -> bool:
 	if _recovery_markers == null or not _has_authored_recovery_markers():
 		push_error("%s requires authored FlightTraining/RecoveryMarkers for fork/reset/drop recovery." % name)
 		ok = false
-	if not _has_authored_whitebox_platforms():
-		push_error("%s requires authored Stage2 whitebox platforms with collision and readable edges." % name)
+	if not _has_no_route_platforms():
+		push_error("%s should teach free flight with ArenaBounds only; remove route platforms from the authored scene." % name)
 		ok = false
 	if _dash_chain_root == null or not _has_authored_dash_chain_targets():
 		push_error("%s requires authored FlightTraining/DashChainTargets with at least 2 dash targets." % name)
@@ -314,20 +301,15 @@ func _has_authored_recovery_markers() -> bool:
 	return true
 
 
-## 确认 Stage2 白盒平台都 authored，并带碰撞、顶沿、底影。
-func _has_authored_whitebox_platforms() -> bool:
-	for platform_name in WHITEBOX_PLATFORM_NAMES:
-		var platform := get_node_or_null(platform_name) as StaticBody2D
-		if platform == null:
-			return false
-		if not platform.get_node_or_null("CollisionShape2D") is CollisionShape2D:
-			return false
-		var top_edge := platform.get_node_or_null("TopEdge") as ColorRect
-		var shadow := platform.get_node_or_null("UndersideShadow") as ColorRect
-		if top_edge == null or shadow == null:
-			return false
-		if top_edge.offset_bottom > 0.0 or shadow.offset_top < 0.0:
-			return false
+## 确认 Stage2 不再用中途落脚平台教学，碰撞只由封闭 ArenaBounds 承担。
+func _has_no_route_platforms() -> bool:
+	for child in get_children():
+		if not child is StaticBody2D:
+			continue
+		var child_name := String(child.name)
+		for prefix in ROUTE_PLATFORM_PREFIXES:
+			if child_name.begins_with(prefix):
+				return false
 	return true
 
 

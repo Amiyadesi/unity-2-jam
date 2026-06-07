@@ -1,27 +1,16 @@
-[gd_scene load_steps=18 format=3 uid="uid://closeaistage2scn"]
+[gd_scene format=3 uid="uid://cu0u8vd6pbueb"]
 
-[ext_resource type="Script" path="res://scripts/stages/stage_2.gd" id="1_stage2"]
-[ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://le5igra2ufkc" path="res://scripts/stages/stage_2.gd" id="1_stage2"]
+[ext_resource type="PackedScene" uid="uid://c2msrb0gq8u3a" path="res://scenes/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://scenes/pause_screen.tscn" id="3_pause"]
-[ext_resource type="PackedScene" uid="uid://closeaienemy01" path="res://scenes/enemy.tscn" id="4_enemy"]
-[ext_resource type="PackedScene" path="res://ui_kit/components/shader_button.tscn" id="5_close_btn"]
-[ext_resource type="PackedScene" uid="uid://closeaienergyhud" path="res://scenes/ui/energy_hud.tscn" id="6_energy_hud"]
-[ext_resource type="PackedScene" path="res://scenes/training_target.tscn" id="7_target"]
-[ext_resource type="PackedScene" path="res://scenes/energy_pocket.tscn" id="8_pocket"]
+[ext_resource type="PackedScene" uid="uid://cemyhd0l3lhuq" path="res://scenes/enemy.tscn" id="4_enemy"]
+[ext_resource type="PackedScene" uid="uid://dyv3j4u5kwmm7" path="res://ui_kit/components/shader_button.tscn" id="5_close_btn"]
+[ext_resource type="PackedScene" uid="uid://cu0utpiiq7jv0" path="res://scenes/ui/energy_hud.tscn" id="6_energy_hud"]
+[ext_resource type="PackedScene" uid="uid://dqb345w3nynvn" path="res://scenes/training_target.tscn" id="7_target"]
+[ext_resource type="PackedScene" uid="uid://d0omqeqxu8lyp" path="res://scenes/energy_pocket.tscn" id="8_pocket"]
+[ext_resource type="Texture2D" uid="uid://dnklj40a8lnj3" path="res://assets/generated/backgrounds/stage2_network_corridor.png" id="9_bg"]
 [ext_resource type="AudioStream" uid="uid://dvrnx6a8m7vxc" path="res://assets/third_party/peritune/Ancient_Gust_Retro_6.mp3" id="9_music"]
-[ext_resource type="Texture2D" path="res://assets/generated/backgrounds/stage2_network_corridor.png" id="9_bg"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
-size = Vector2(2100, 48)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
-size = Vector2(260, 40)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform_small"]
-size = Vector2(190, 34)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform_narrow"]
-size = Vector2(142, 30)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_vertical"]
 size = Vector2(52, 720)
@@ -32,21 +21,21 @@ size = Vector2(2100, 52)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_close_trigger"]
 size = Vector2(110, 160)
 
-[node name="Stage2" type="Node2D"]
+[node name="Stage2" type="Node2D" unique_id=836043299]
 script = ExtResource("1_stage2")
 stage_index = 2
 stage_music = ExtResource("9_music")
 
-[node name="Background" type="CanvasLayer" parent="."]
+[node name="Background" type="CanvasLayer" parent="." unique_id=87066209]
 layer = -10
 
-[node name="BgColor" type="ColorRect" parent="Background" groups=["opaque_bg"]]
+[node name="BgColor" type="ColorRect" parent="Background" unique_id=83115682 groups=["opaque_bg"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.06, 0.06, 0.1, 1)
 
-[node name="NetworkCorridorPlate" type="TextureRect" parent="Background"]
+[node name="NetworkCorridorPlate" type="TextureRect" parent="Background" unique_id=1977532807]
 modulate = Color(1, 1, 1, 0.52)
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,7 +47,7 @@ texture = ExtResource("9_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="HorizonBand" type="ColorRect" parent="Background"]
+[node name="HorizonBand" type="ColorRect" parent="Background" unique_id=1879856436]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -66,7 +55,7 @@ offset_top = 116.0
 offset_bottom = -368.0
 color = Color(0.09, 0.13, 0.2, 0.62)
 
-[node name="LiftGlow" type="ColorRect" parent="Background"]
+[node name="LiftGlow" type="ColorRect" parent="Background" unique_id=951303686]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -74,7 +63,7 @@ offset_top = 260.0
 offset_bottom = -392.0
 color = Color(0.24, 0.48, 0.62, 0.16)
 
-[node name="DashGlow" type="ColorRect" parent="Background"]
+[node name="DashGlow" type="ColorRect" parent="Background" unique_id=1673461169]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -82,45 +71,45 @@ offset_top = 184.0
 offset_bottom = -470.0
 color = Color(0.48, 0.3, 0.82, 0.13)
 
-[node name="WakeScanA" type="Line2D" parent="Background"]
+[node name="WakeScanA" type="Line2D" parent="Background" unique_id=857451514]
 points = PackedVector2Array(0, 206, 1280, 164)
 width = 2.0
 default_color = Color(0.46, 0.9, 1, 0.16)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="WakeScanB" type="Line2D" parent="Background"]
+[node name="WakeScanB" type="Line2D" parent="Background" unique_id=2032459951]
 points = PackedVector2Array(0, 428, 1280, 396)
 width = 2.0
 default_color = Color(1, 0.62, 0.86, 0.12)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="WorldBackdrop" type="Node2D" parent="."]
+[node name="WorldBackdrop" type="Node2D" parent="." unique_id=500013837]
 z_index = -35
 
-[node name="LiftMemoryBand" type="ColorRect" parent="WorldBackdrop"]
+[node name="LiftMemoryBand" type="ColorRect" parent="WorldBackdrop" unique_id=1801109167]
 offset_left = 220.0
 offset_top = 452.0
 offset_right = 860.0
 offset_bottom = 462.0
 color = Color(0.38, 0.86, 1, 0.13)
 
-[node name="DashMemoryBand" type="ColorRect" parent="WorldBackdrop"]
+[node name="DashMemoryBand" type="ColorRect" parent="WorldBackdrop" unique_id=922613611]
 offset_left = 900.0
 offset_top = 258.0
 offset_right = 1660.0
 offset_bottom = 268.0
 color = Color(0.58, 0.44, 1, 0.13)
 
-[node name="CombatMemoryBand" type="ColorRect" parent="WorldBackdrop"]
+[node name="CombatMemoryBand" type="ColorRect" parent="WorldBackdrop" unique_id=873813031]
 offset_left = 1120.0
 offset_top = 502.0
 offset_right = 1820.0
 offset_bottom = 512.0
 color = Color(1, 0.46, 0.72, 0.12)
 
-[node name="DistantWakeLine" type="Line2D" parent="WorldBackdrop"]
+[node name="DistantWakeLine" type="Line2D" parent="WorldBackdrop" unique_id=67750740]
 points = PackedVector2Array(180, 500, 520, 438, 810, 452, 1045, 304, 1210, 430, 1395, 248, 1585, 430, 1840, 390)
 width = 3.0
 default_color = Color(0.45, 0.58, 0.96, 0.18)
@@ -128,31 +117,31 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PacingZones" type="Node2D" parent="."]
+[node name="PacingZones" type="Node2D" parent="." unique_id=1746945534]
 z_index = -8
 
-[node name="LiftSafeZone" type="ColorRect" parent="PacingZones"]
+[node name="LiftSafeZone" type="ColorRect" parent="PacingZones" unique_id=1178551794]
 offset_left = 292.0
 offset_top = 394.0
 offset_right = 852.0
 offset_bottom = 566.0
 color = Color(0.22, 0.62, 0.78, 0.13)
 
-[node name="DashChainPeakZone" type="ColorRect" parent="PacingZones"]
+[node name="DashChainPeakZone" type="ColorRect" parent="PacingZones" unique_id=952869440]
 offset_left = 980.0
 offset_top = 216.0
 offset_right = 1648.0
 offset_bottom = 482.0
 color = Color(0.58, 0.38, 0.95, 0.12)
 
-[node name="EnemyWavePeakZone" type="ColorRect" parent="PacingZones"]
+[node name="EnemyWavePeakZone" type="ColorRect" parent="PacingZones" unique_id=1802116618]
 offset_left = 1080.0
 offset_top = 376.0
 offset_right = 1728.0
 offset_bottom = 536.0
 color = Color(1, 0.34, 0.62, 0.1)
 
-[node name="LiftSafeFrame" type="Line2D" parent="PacingZones"]
+[node name="LiftSafeFrame" type="Line2D" parent="PacingZones" unique_id=1903785901]
 points = PackedVector2Array(292, 566, 520, 505, 720, 410, 852, 394)
 width = 3.0
 default_color = Color(0.42, 0.9, 1, 0.2)
@@ -160,7 +149,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashChainFrame" type="Line2D" parent="PacingZones"]
+[node name="DashChainFrame" type="Line2D" parent="PacingZones" unique_id=899849570]
 points = PackedVector2Array(1045, 304, 1210, 430, 1395, 248, 1585, 430, 1648, 482)
 width = 4.0
 default_color = Color(0.9, 0.78, 1, 0.18)
@@ -168,7 +157,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="EnemyWaveFrame" type="Line2D" parent="PacingZones"]
+[node name="EnemyWaveFrame" type="Line2D" parent="PacingZones" unique_id=771719292]
 points = PackedVector2Array(1110, 468, 1210, 414, 1395, 236, 1645, 428, 1728, 536)
 width = 4.0
 default_color = Color(1, 0.5, 0.74, 0.18)
@@ -176,73 +165,44 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Floor" type="StaticBody2D" parent="."]
-position = Vector2(910, 620)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
-shape = SubResource("RectangleShape2D_floor")
 
-[node name="FloorVisual" type="ColorRect" parent="Floor"]
-offset_left = -1050.0
-offset_top = -24.0
-offset_right = 1050.0
-offset_bottom = 24.0
-color = Color(0.13, 0.14, 0.2, 1)
 
-[node name="TopEdge" type="ColorRect" parent="Floor"]
-offset_left = -1050.0
-offset_top = -29.0
-offset_right = 1050.0
-offset_bottom = -20.0
-color = Color(0.4, 0.58, 0.78, 0.72)
 
-[node name="UndersideShadow" type="ColorRect" parent="Floor"]
-offset_left = -1050.0
-offset_top = 18.0
-offset_right = 1050.0
-offset_bottom = 34.0
-color = Color(0.01, 0.014, 0.034, 0.52)
-
-[node name="ArenaBounds" type="Node2D" parent="."]
+[node name="ArenaBounds" type="Node2D" parent="." unique_id=2128752648]
 z_index = 9
 
-[node name="LeftWall" type="StaticBody2D" parent="ArenaBounds"]
+[node name="LeftWall" type="StaticBody2D" parent="ArenaBounds" unique_id=1550582470]
 position = Vector2(-64, 360)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/LeftWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/LeftWall" unique_id=619099441]
 shape = SubResource("RectangleShape2D_arena_wall_vertical")
 
-[node name="RightWall" type="StaticBody2D" parent="ArenaBounds"]
+[node name="RightWall" type="StaticBody2D" parent="ArenaBounds" unique_id=260868253]
 position = Vector2(1996, 360)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/RightWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/RightWall" unique_id=1827438415]
 shape = SubResource("RectangleShape2D_arena_wall_vertical")
 
-[node name="Ceiling" type="StaticBody2D" parent="ArenaBounds"]
+[node name="Ceiling" type="StaticBody2D" parent="ArenaBounds" unique_id=506153268]
 position = Vector2(960, 58)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/Ceiling"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/Ceiling" unique_id=655286921]
 shape = SubResource("RectangleShape2D_arena_wall_horizontal")
 
-[node name="FloorClamp" type="StaticBody2D" parent="ArenaBounds"]
+[node name="FloorClamp" type="StaticBody2D" parent="ArenaBounds" unique_id=2001705158]
 position = Vector2(960, 760)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/FloorClamp"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/FloorClamp" unique_id=2112936914]
 shape = SubResource("RectangleShape2D_arena_wall_horizontal")
 
-[node name="BoundaryReads" type="Node2D" parent="ArenaBounds"]
+[node name="BoundaryReads" type="Node2D" parent="ArenaBounds" unique_id=340737800]
 
-[node name="TopPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads"]
+[node name="TopPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads" unique_id=841006055]
 points = PackedVector2Array(0, 84, 460, 84, 960, 58, 1460, 84, 1920, 84)
 width = 5.0
 default_color = Color(1, 0.34, 0.52, 0.34)
@@ -250,7 +210,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LeftPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads"]
+[node name="LeftPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads" unique_id=1130357904]
 points = PackedVector2Array(0, 86, 0, 260, -64, 360, 0, 520, 0, 732)
 width = 5.0
 default_color = Color(1, 0.34, 0.52, 0.3)
@@ -258,7 +218,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="RightPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads"]
+[node name="RightPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads" unique_id=131335438]
 points = PackedVector2Array(1920, 86, 1920, 260, 1996, 360, 1920, 520, 1920, 732)
 width = 5.0
 default_color = Color(0.58, 0.92, 1, 0.32)
@@ -266,7 +226,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BottomPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads"]
+[node name="BottomPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads" unique_id=1966386542]
 points = PackedVector2Array(0, 732, 520, 744, 960, 760, 1420, 744, 1920, 732)
 width = 5.0
 default_color = Color(0.58, 0.92, 1, 0.22)
@@ -274,37 +234,37 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FlightTraining" type="Node2D" parent="."]
+[node name="FlightTraining" type="Node2D" parent="." unique_id=1878097329]
 
-[node name="AwakenMarker" type="Marker2D" parent="FlightTraining"]
+[node name="AwakenMarker" type="Marker2D" parent="FlightTraining" unique_id=173658973]
 position = Vector2(330, 520)
 
-[node name="RouteMarkers" type="Node2D" parent="FlightTraining"]
+[node name="RouteMarkers" type="Node2D" parent="FlightTraining" unique_id=1130738098]
 
-[node name="LiftStart" type="Marker2D" parent="FlightTraining/RouteMarkers"]
+[node name="LiftStart" type="Marker2D" parent="FlightTraining/RouteMarkers" unique_id=509066368]
 position = Vector2(520, 505)
 
-[node name="HoverPocket" type="Marker2D" parent="FlightTraining/RouteMarkers"]
+[node name="HoverPocket" type="Marker2D" parent="FlightTraining/RouteMarkers" unique_id=722105010]
 position = Vector2(720, 410)
 
-[node name="DashLine" type="Marker2D" parent="FlightTraining/RouteMarkers"]
+[node name="DashLine" type="Marker2D" parent="FlightTraining/RouteMarkers" unique_id=707523682]
 position = Vector2(965, 300)
 
-[node name="RecoveryMarkers" type="Node2D" parent="FlightTraining"]
+[node name="RecoveryMarkers" type="Node2D" parent="FlightTraining" unique_id=514846117]
 
-[node name="ForkHigh" type="Marker2D" parent="FlightTraining/RecoveryMarkers"]
+[node name="ForkHigh" type="Marker2D" parent="FlightTraining/RecoveryMarkers" unique_id=339095793]
 position = Vector2(900, 300)
 
-[node name="LowReset" type="Marker2D" parent="FlightTraining/RecoveryMarkers"]
+[node name="LowReset" type="Marker2D" parent="FlightTraining/RecoveryMarkers" unique_id=503743045]
 position = Vector2(875, 548)
 
-[node name="DropRecover" type="Marker2D" parent="FlightTraining/RecoveryMarkers"]
+[node name="DropRecover" type="Marker2D" parent="FlightTraining/RecoveryMarkers" unique_id=1523557076]
 position = Vector2(1095, 472)
 
-[node name="DashLaneGuides" type="Node2D" parent="FlightTraining"]
+[node name="DashLaneGuides" type="Node2D" parent="FlightTraining" unique_id=1705753725]
 z_index = 7
 
-[node name="LiftGuide" type="Line2D" parent="FlightTraining/DashLaneGuides"]
+[node name="LiftGuide" type="Line2D" parent="FlightTraining/DashLaneGuides" unique_id=592590341]
 visible = false
 points = PackedVector2Array(330, 520, 520, 505, 720, 410, 965, 300)
 width = 3.0
@@ -313,7 +273,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FirstDashGuide" type="Line2D" parent="FlightTraining/DashLaneGuides"]
+[node name="FirstDashGuide" type="Line2D" parent="FlightTraining/DashLaneGuides" unique_id=1341661972]
 visible = false
 points = PackedVector2Array(965, 300, 1045, 304)
 width = 5.0
@@ -321,7 +281,7 @@ default_color = Color(0.9, 0.96, 1, 0.42)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainGuideA" type="Line2D" parent="FlightTraining/DashLaneGuides"]
+[node name="ChainGuideA" type="Line2D" parent="FlightTraining/DashLaneGuides" unique_id=1870874965]
 visible = false
 points = PackedVector2Array(1045, 304, 1210, 430)
 width = 5.0
@@ -329,7 +289,7 @@ default_color = Color(0.72, 0.85, 1, 0.36)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainGuideB" type="Line2D" parent="FlightTraining/DashLaneGuides"]
+[node name="ChainGuideB" type="Line2D" parent="FlightTraining/DashLaneGuides" unique_id=1706956293]
 visible = false
 points = PackedVector2Array(1210, 430, 1395, 248)
 width = 5.0
@@ -337,7 +297,7 @@ default_color = Color(1, 0.82, 0.55, 0.36)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainGuideC" type="Line2D" parent="FlightTraining/DashLaneGuides"]
+[node name="ChainGuideC" type="Line2D" parent="FlightTraining/DashLaneGuides" unique_id=135560940]
 visible = false
 points = PackedVector2Array(1395, 248, 1585, 430)
 width = 5.0
@@ -345,7 +305,7 @@ default_color = Color(0.72, 0.85, 1, 0.36)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BreakLaneGuide" type="Line2D" parent="FlightTraining/DashLaneGuides"]
+[node name="BreakLaneGuide" type="Line2D" parent="FlightTraining/DashLaneGuides" unique_id=1126924193]
 visible = false
 points = PackedVector2Array(1585, 430, 1645, 428)
 width = 6.0
@@ -353,10 +313,10 @@ default_color = Color(1, 0.56, 0.74, 0.42)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="VerticalRouteReads" type="Node2D" parent="FlightTraining"]
+[node name="VerticalRouteReads" type="Node2D" parent="FlightTraining" unique_id=837790947]
 z_index = 6
 
-[node name="HighLowForkRead" type="Line2D" parent="FlightTraining/VerticalRouteReads"]
+[node name="HighLowForkRead" type="Line2D" parent="FlightTraining/VerticalRouteReads" unique_id=358123892]
 visible = false
 points = PackedVector2Array(720, 410, 900, 270, 1045, 304, 1210, 430, 1395, 248)
 width = 3.0
@@ -365,7 +325,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DropRecoveryRead" type="Line2D" parent="FlightTraining/VerticalRouteReads"]
+[node name="DropRecoveryRead" type="Line2D" parent="FlightTraining/VerticalRouteReads" unique_id=436163407]
 visible = false
 points = PackedVector2Array(1210, 430, 1190, 454, 1110, 468, 1040, 442)
 width = 4.0
@@ -374,7 +334,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="EnergyRhythmRead" type="Line2D" parent="FlightTraining/VerticalRouteReads"]
+[node name="EnergyRhythmRead" type="Line2D" parent="FlightTraining/VerticalRouteReads" unique_id=1540017227]
 visible = false
 points = PackedVector2Array(1045, 304, 1190, 454, 1395, 274, 1590, 468, 1645, 428)
 width = 3.0
@@ -383,14 +343,14 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashConfirmReads" type="Node2D" parent="FlightTraining"]
+[node name="DashConfirmReads" type="Node2D" parent="FlightTraining" unique_id=894706841]
 z_index = 9
 
-[node name="FirstDashConfirm" type="Node2D" parent="FlightTraining/DashConfirmReads"]
+[node name="FirstDashConfirm" type="Node2D" parent="FlightTraining/DashConfirmReads" unique_id=54103139]
 visible = false
 position = Vector2(1045, 304)
 
-[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/FirstDashConfirm"]
+[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/FirstDashConfirm" unique_id=23438996]
 points = PackedVector2Array(-26, 0, -10, -24, 18, -22, 36, 0, 18, 22, -10, 24, -26, 0)
 width = 3.0
 default_color = Color(0.92, 0.98, 1, 0.74)
@@ -398,25 +358,25 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/FirstDashConfirm"]
+[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/FirstDashConfirm" unique_id=870996214]
 points = PackedVector2Array(-18, -20, 22, 18)
 width = 4.0
 default_color = Color(1, 0.94, 0.72, 0.82)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/FirstDashConfirm"]
+[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/FirstDashConfirm" unique_id=730479284]
 points = PackedVector2Array(18, 10, 165, 126)
 width = 5.0
 default_color = Color(0.62, 0.92, 1, 0.52)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainConfirmA" type="Node2D" parent="FlightTraining/DashConfirmReads"]
+[node name="ChainConfirmA" type="Node2D" parent="FlightTraining/DashConfirmReads" unique_id=2053311166]
 visible = false
 position = Vector2(1210, 430)
 
-[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmA"]
+[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmA" unique_id=822803568]
 points = PackedVector2Array(-26, 0, -10, -24, 18, -22, 36, 0, 18, 22, -10, 24, -26, 0)
 width = 3.0
 default_color = Color(0.92, 0.98, 1, 0.74)
@@ -424,25 +384,25 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmA"]
+[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmA" unique_id=1316407150]
 points = PackedVector2Array(-18, 20, 24, -18)
 width = 4.0
 default_color = Color(1, 0.94, 0.72, 0.82)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmA"]
+[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmA" unique_id=1079488589]
 points = PackedVector2Array(18, -10, 185, -182)
 width = 5.0
 default_color = Color(1, 0.78, 0.48, 0.52)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainConfirmB" type="Node2D" parent="FlightTraining/DashConfirmReads"]
+[node name="ChainConfirmB" type="Node2D" parent="FlightTraining/DashConfirmReads" unique_id=682082085]
 visible = false
 position = Vector2(1395, 248)
 
-[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmB"]
+[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmB" unique_id=104492486]
 points = PackedVector2Array(-26, 0, -10, -24, 18, -22, 36, 0, 18, 22, -10, 24, -26, 0)
 width = 3.0
 default_color = Color(0.92, 0.98, 1, 0.74)
@@ -450,25 +410,25 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmB"]
+[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmB" unique_id=1608131175]
 points = PackedVector2Array(-18, -20, 24, 18)
 width = 4.0
 default_color = Color(1, 0.94, 0.72, 0.82)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmB"]
+[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmB" unique_id=1461263397]
 points = PackedVector2Array(18, 10, 190, 182)
 width = 5.0
 default_color = Color(0.62, 0.92, 1, 0.52)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainConfirmC" type="Node2D" parent="FlightTraining/DashConfirmReads"]
+[node name="ChainConfirmC" type="Node2D" parent="FlightTraining/DashConfirmReads" unique_id=575053839]
 visible = false
 position = Vector2(1585, 430)
 
-[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmC"]
+[node name="BurstRing" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmC" unique_id=1170249580]
 points = PackedVector2Array(-26, 0, -10, -24, 18, -22, 36, 0, 18, 22, -10, 24, -26, 0)
 width = 3.0
 default_color = Color(0.92, 0.98, 1, 0.74)
@@ -476,28 +436,28 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmC"]
+[node name="HitSlash" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmC" unique_id=278225391]
 points = PackedVector2Array(-18, -20, 24, 18)
 width = 4.0
 default_color = Color(1, 0.94, 0.72, 0.82)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmC"]
+[node name="NextRay" type="Line2D" parent="FlightTraining/DashConfirmReads/ChainConfirmC" unique_id=1568904679]
 points = PackedVector2Array(18, 0, 60, -2)
 width = 6.0
 default_color = Color(1, 0.56, 0.74, 0.58)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashWhiffReads" type="Node2D" parent="FlightTraining"]
+[node name="DashWhiffReads" type="Node2D" parent="FlightTraining" unique_id=176644970]
 z_index = 10
 
-[node name="FirstDashWhiff" type="Node2D" parent="FlightTraining/DashWhiffReads"]
+[node name="FirstDashWhiff" type="Node2D" parent="FlightTraining/DashWhiffReads" unique_id=1693257742]
 visible = false
 position = Vector2(1045, 304)
 
-[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/FirstDashWhiff"]
+[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/FirstDashWhiff" unique_id=69067096]
 points = PackedVector2Array(-68, -28, -20, -12, 34, -24)
 width = 4.0
 default_color = Color(1, 0.42, 0.56, 0.68)
@@ -505,7 +465,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/FirstDashWhiff"]
+[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/FirstDashWhiff" unique_id=1694669108]
 points = PackedVector2Array(-58, 28, -8, 10, 48, 24)
 width = 4.0
 default_color = Color(0.58, 0.82, 1, 0.54)
@@ -513,7 +473,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/FirstDashWhiff"]
+[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/FirstDashWhiff" unique_id=195248576]
 points = PackedVector2Array(18, 0, 86, 48, 118, 112)
 width = 3.0
 default_color = Color(0.95, 0.7, 1, 0.36)
@@ -521,11 +481,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainWhiffA" type="Node2D" parent="FlightTraining/DashWhiffReads"]
+[node name="ChainWhiffA" type="Node2D" parent="FlightTraining/DashWhiffReads" unique_id=2119133634]
 visible = false
 position = Vector2(1210, 430)
 
-[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffA"]
+[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffA" unique_id=2060594460]
 points = PackedVector2Array(-70, -26, -18, -8, 38, -18)
 width = 4.0
 default_color = Color(1, 0.42, 0.56, 0.68)
@@ -533,7 +493,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffA"]
+[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffA" unique_id=7617814]
 points = PackedVector2Array(-56, 30, -4, 12, 48, 28)
 width = 4.0
 default_color = Color(0.58, 0.82, 1, 0.54)
@@ -541,7 +501,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffA"]
+[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffA" unique_id=832899622]
 points = PackedVector2Array(20, -4, 112, -76, 162, -160)
 width = 3.0
 default_color = Color(1, 0.76, 0.45, 0.38)
@@ -549,11 +509,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainWhiffB" type="Node2D" parent="FlightTraining/DashWhiffReads"]
+[node name="ChainWhiffB" type="Node2D" parent="FlightTraining/DashWhiffReads" unique_id=1571926753]
 visible = false
 position = Vector2(1395, 248)
 
-[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffB"]
+[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffB" unique_id=409692104]
 points = PackedVector2Array(-68, -28, -18, -10, 40, -24)
 width = 4.0
 default_color = Color(1, 0.42, 0.56, 0.68)
@@ -561,7 +521,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffB"]
+[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffB" unique_id=1150188035]
 points = PackedVector2Array(-58, 28, -8, 8, 50, 24)
 width = 4.0
 default_color = Color(0.58, 0.82, 1, 0.54)
@@ -569,7 +529,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffB"]
+[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffB" unique_id=1452473424]
 points = PackedVector2Array(20, 4, 112, 82, 168, 168)
 width = 3.0
 default_color = Color(0.95, 0.7, 1, 0.36)
@@ -577,11 +537,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainWhiffC" type="Node2D" parent="FlightTraining/DashWhiffReads"]
+[node name="ChainWhiffC" type="Node2D" parent="FlightTraining/DashWhiffReads" unique_id=771734978]
 visible = false
 position = Vector2(1585, 430)
 
-[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffC"]
+[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffC" unique_id=118435313]
 points = PackedVector2Array(-70, -26, -18, -8, 36, -20)
 width = 4.0
 default_color = Color(1, 0.42, 0.56, 0.68)
@@ -589,7 +549,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffC"]
+[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffC" unique_id=2146813918]
 points = PackedVector2Array(-58, 28, -6, 10, 42, 24)
 width = 4.0
 default_color = Color(0.58, 0.82, 1, 0.54)
@@ -597,7 +557,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffC"]
+[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/ChainWhiffC" unique_id=1728499941]
 points = PackedVector2Array(18, 0, 58, 18, 106, 12)
 width = 3.0
 default_color = Color(1, 0.52, 0.72, 0.38)
@@ -605,11 +565,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="WaveWhiff" type="Node2D" parent="FlightTraining/DashWhiffReads"]
+[node name="WaveWhiff" type="Node2D" parent="FlightTraining/DashWhiffReads" unique_id=768996341]
 visible = false
 position = Vector2(1810, 390)
 
-[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/WaveWhiff"]
+[node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/WaveWhiff" unique_id=1962628692]
 points = PackedVector2Array(-88, -34, -24, -10, 48, -24)
 width = 5.0
 default_color = Color(1, 0.38, 0.46, 0.68)
@@ -617,7 +577,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/WaveWhiff"]
+[node name="ScatterB" type="Line2D" parent="FlightTraining/DashWhiffReads/WaveWhiff" unique_id=887530153]
 points = PackedVector2Array(-78, 34, -10, 12, 58, 30)
 width = 5.0
 default_color = Color(0.58, 0.82, 1, 0.54)
@@ -625,7 +585,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/WaveWhiff"]
+[node name="LostRoute" type="Line2D" parent="FlightTraining/DashWhiffReads/WaveWhiff" unique_id=291565739]
 points = PackedVector2Array(12, 0, 80, -12, 140, 28)
 width = 4.0
 default_color = Color(0.95, 0.7, 1, 0.38)
@@ -633,10 +593,10 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="MomentumReads" type="Node2D" parent="FlightTraining"]
+[node name="MomentumReads" type="Node2D" parent="FlightTraining" unique_id=1734372517]
 z_index = 8
 
-[node name="FirstToChainA" type="Line2D" parent="FlightTraining/MomentumReads"]
+[node name="FirstToChainA" type="Line2D" parent="FlightTraining/MomentumReads" unique_id=548162331]
 visible = false
 points = PackedVector2Array(1045, 304, 1210, 430)
 width = 7.0
@@ -644,7 +604,7 @@ default_color = Color(0.56, 0.96, 1, 0.62)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainAToB" type="Line2D" parent="FlightTraining/MomentumReads"]
+[node name="ChainAToB" type="Line2D" parent="FlightTraining/MomentumReads" unique_id=573301067]
 visible = false
 points = PackedVector2Array(1210, 430, 1395, 248)
 width = 7.0
@@ -652,7 +612,7 @@ default_color = Color(1, 0.74, 0.42, 0.62)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainBToC" type="Line2D" parent="FlightTraining/MomentumReads"]
+[node name="ChainBToC" type="Line2D" parent="FlightTraining/MomentumReads" unique_id=1586106942]
 visible = false
 points = PackedVector2Array(1395, 248, 1585, 430)
 width = 7.0
@@ -660,7 +620,7 @@ default_color = Color(0.56, 0.96, 1, 0.62)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChainCToBreak" type="Line2D" parent="FlightTraining/MomentumReads"]
+[node name="ChainCToBreak" type="Line2D" parent="FlightTraining/MomentumReads" unique_id=560660556]
 visible = false
 points = PackedVector2Array(1585, 430, 1645, 428)
 width = 8.0
@@ -668,375 +628,100 @@ default_color = Color(1, 0.52, 0.72, 0.66)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashTarget" parent="FlightTraining" instance=ExtResource("7_target")]
+[node name="DashTarget" parent="FlightTraining" unique_id=687870575 instance=ExtResource("7_target")]
 position = Vector2(1045, 304)
 required_attack_kind = "dash"
 reward_energy = 30.0
 
-[node name="DashChainTargets" type="Node2D" parent="FlightTraining"]
+[node name="DashChainTargets" type="Node2D" parent="FlightTraining" unique_id=580037410]
 
-[node name="ChainTargetA" parent="FlightTraining/DashChainTargets" instance=ExtResource("7_target")]
+[node name="ChainTargetA" parent="FlightTraining/DashChainTargets" unique_id=1715591657 instance=ExtResource("7_target")]
 position = Vector2(1210, 430)
 required_attack_kind = "dash"
 reward_energy = 36.0
 
-[node name="ChainTargetB" parent="FlightTraining/DashChainTargets" instance=ExtResource("7_target")]
+[node name="ChainTargetB" parent="FlightTraining/DashChainTargets" unique_id=1706191906 instance=ExtResource("7_target")]
 position = Vector2(1395, 248)
 required_attack_kind = "dash"
 reward_energy = 36.0
 
-[node name="ChainTargetC" parent="FlightTraining/DashChainTargets" instance=ExtResource("7_target")]
+[node name="ChainTargetC" parent="FlightTraining/DashChainTargets" unique_id=190120092 instance=ExtResource("7_target")]
 position = Vector2(1585, 430)
 required_attack_kind = "dash"
 reward_energy = 42.0
 
-[node name="EnergyPockets" type="Node2D" parent="FlightTraining"]
+[node name="EnergyPockets" type="Node2D" parent="FlightTraining" unique_id=65714095]
 
-[node name="PocketA" parent="FlightTraining/EnergyPockets" instance=ExtResource("8_pocket")]
+[node name="PocketA" parent="FlightTraining/EnergyPockets" unique_id=1297526173 instance=ExtResource("8_pocket")]
 position = Vector2(1190, 454)
 
-[node name="PocketB" parent="FlightTraining/EnergyPockets" instance=ExtResource("8_pocket")]
+[node name="PocketB" parent="FlightTraining/EnergyPockets" unique_id=232669139 instance=ExtResource("8_pocket")]
 position = Vector2(1395, 274)
 
-[node name="PocketC" parent="FlightTraining/EnergyPockets" instance=ExtResource("8_pocket")]
+[node name="PocketC" parent="FlightTraining/EnergyPockets" unique_id=1417950250 instance=ExtResource("8_pocket")]
 position = Vector2(1590, 468)
 
-[node name="PlatformLow" type="StaticBody2D" parent="."]
-position = Vector2(560, 520)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformLow"]
-shape = SubResource("RectangleShape2D_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformLow"]
-offset_left = -130.0
-offset_top = -20.0
-offset_right = 130.0
-offset_bottom = 20.0
-color = Color(0.15, 0.15, 0.24, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformLow"]
-offset_left = -130.0
-offset_top = -25.0
-offset_right = 130.0
-offset_bottom = -18.0
-color = Color(0.48, 0.82, 0.96, 0.82)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformLow"]
-offset_left = -130.0
-offset_top = 16.0
-offset_right = 130.0
-offset_bottom = 30.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformMid" type="StaticBody2D" parent="."]
-position = Vector2(790, 430)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformMid"]
-shape = SubResource("RectangleShape2D_platform_small")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformMid"]
-offset_left = -95.0
-offset_top = -17.0
-offset_right = 95.0
-offset_bottom = 17.0
-color = Color(0.15, 0.15, 0.24, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformMid"]
-offset_left = -95.0
-offset_top = -22.0
-offset_right = 95.0
-offset_bottom = -16.0
-color = Color(0.48, 0.82, 0.96, 0.82)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformMid"]
-offset_left = -95.0
-offset_top = 14.0
-offset_right = 95.0
-offset_bottom = 28.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformHigh" type="StaticBody2D" parent="."]
-position = Vector2(1015, 336)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformHigh"]
-shape = SubResource("RectangleShape2D_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformHigh"]
-offset_left = -130.0
-offset_top = -20.0
-offset_right = 130.0
-offset_bottom = 20.0
-color = Color(0.15, 0.15, 0.24, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformHigh"]
-offset_left = -130.0
-offset_top = -25.0
-offset_right = 130.0
-offset_bottom = -18.0
-color = Color(0.48, 0.82, 0.96, 0.82)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformHigh"]
-offset_left = -130.0
-offset_top = 16.0
-offset_right = 130.0
-offset_bottom = 30.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformRestA" type="StaticBody2D" parent="."]
-position = Vector2(1190, 454)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformRestA"]
-shape = SubResource("RectangleShape2D_platform_narrow")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformRestA"]
-offset_left = -71.0
-offset_top = -15.0
-offset_right = 71.0
-offset_bottom = 15.0
-color = Color(0.16, 0.17, 0.27, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformRestA"]
-offset_left = -71.0
-offset_top = -20.0
-offset_right = 71.0
-offset_bottom = -14.0
-color = Color(0.7, 0.86, 1, 0.82)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformRestA"]
-offset_left = -71.0
-offset_top = 12.0
-offset_right = 71.0
-offset_bottom = 25.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformRestB" type="StaticBody2D" parent="."]
-position = Vector2(1395, 274)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformRestB"]
-shape = SubResource("RectangleShape2D_platform_narrow")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformRestB"]
-offset_left = -71.0
-offset_top = -15.0
-offset_right = 71.0
-offset_bottom = 15.0
-color = Color(0.16, 0.17, 0.27, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformRestB"]
-offset_left = -71.0
-offset_top = -20.0
-offset_right = 71.0
-offset_bottom = -14.0
-color = Color(0.7, 0.86, 1, 0.82)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformRestB"]
-offset_left = -71.0
-offset_top = 12.0
-offset_right = 71.0
-offset_bottom = 25.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformBreakLane" type="StaticBody2D" parent="."]
-position = Vector2(1590, 468)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformBreakLane"]
-shape = SubResource("RectangleShape2D_platform_small")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformBreakLane"]
-offset_left = -95.0
-offset_top = -17.0
-offset_right = 95.0
-offset_bottom = 17.0
-color = Color(0.18, 0.17, 0.29, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformBreakLane"]
-offset_left = -95.0
-offset_top = -22.0
-offset_right = 95.0
-offset_bottom = -16.0
-color = Color(1, 0.66, 0.88, 0.84)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformBreakLane"]
-offset_left = -95.0
-offset_top = 14.0
-offset_right = 95.0
-offset_bottom = 28.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformForkHigh" type="StaticBody2D" parent="."]
-position = Vector2(900, 324)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformForkHigh"]
-shape = SubResource("RectangleShape2D_platform_narrow")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformForkHigh"]
-offset_left = -71.0
-offset_top = -15.0
-offset_right = 71.0
-offset_bottom = 15.0
-color = Color(0.16, 0.17, 0.27, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformForkHigh"]
-offset_left = -71.0
-offset_top = -20.0
-offset_right = 71.0
-offset_bottom = -14.0
-color = Color(0.7, 0.86, 1, 0.82)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformForkHigh"]
-offset_left = -71.0
-offset_top = 12.0
-offset_right = 71.0
-offset_bottom = 25.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformForkLow" type="StaticBody2D" parent="."]
-position = Vector2(875, 568)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformForkLow"]
-shape = SubResource("RectangleShape2D_platform_small")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformForkLow"]
-offset_left = -95.0
-offset_top = -17.0
-offset_right = 95.0
-offset_bottom = 17.0
-color = Color(0.13, 0.16, 0.24, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformForkLow"]
-offset_left = -95.0
-offset_top = -22.0
-offset_right = 95.0
-offset_bottom = -16.0
-color = Color(0.46, 0.86, 1, 0.82)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformForkLow"]
-offset_left = -95.0
-offset_top = 14.0
-offset_right = 95.0
-offset_bottom = 28.0
-color = Color(0.01, 0.012, 0.035, 0.6)
 
-[node name="PlatformDropRecover" type="StaticBody2D" parent="."]
-position = Vector2(1095, 492)
-collision_layer = 1
-collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformDropRecover"]
-shape = SubResource("RectangleShape2D_platform_narrow")
 
-[node name="FloorVisual" type="ColorRect" parent="PlatformDropRecover"]
-offset_left = -71.0
-offset_top = -15.0
-offset_right = 71.0
-offset_bottom = 15.0
-color = Color(0.13, 0.18, 0.24, 1)
 
-[node name="TopEdge" type="ColorRect" parent="PlatformDropRecover"]
-offset_left = -71.0
-offset_top = -20.0
-offset_right = 71.0
-offset_bottom = -14.0
-color = Color(0.35, 1, 0.72, 0.78)
 
-[node name="UndersideShadow" type="ColorRect" parent="PlatformDropRecover"]
-offset_left = -71.0
-offset_top = 12.0
-offset_right = 71.0
-offset_bottom = 25.0
-color = Color(0.01, 0.012, 0.035, 0.6)
-
-[node name="PlatformAngleRecover" type="StaticBody2D" parent="."]
-position = Vector2(1275, 510)
-collision_layer = 1
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformAngleRecover"]
-shape = SubResource("RectangleShape2D_platform_narrow")
-
-[node name="FloorVisual" type="ColorRect" parent="PlatformAngleRecover"]
-offset_left = -71.0
-offset_top = -15.0
-offset_right = 71.0
-offset_bottom = 15.0
-color = Color(0.18, 0.17, 0.24, 1)
-
-[node name="TopEdge" type="ColorRect" parent="PlatformAngleRecover"]
-offset_left = -71.0
-offset_top = -20.0
-offset_right = 71.0
-offset_bottom = -14.0
-color = Color(1, 0.78, 0.48, 0.8)
-
-[node name="UndersideShadow" type="ColorRect" parent="PlatformAngleRecover"]
-offset_left = -71.0
-offset_top = 12.0
-offset_right = 71.0
-offset_bottom = 25.0
-color = Color(0.01, 0.012, 0.035, 0.6)
-
-[node name="PlatformBreakRecover" type="StaticBody2D" parent="."]
-position = Vector2(1495, 524)
-collision_layer = 1
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformBreakRecover"]
-shape = SubResource("RectangleShape2D_platform_small")
-
-[node name="FloorVisual" type="ColorRect" parent="PlatformBreakRecover"]
-offset_left = -95.0
-offset_top = -17.0
-offset_right = 95.0
-offset_bottom = 17.0
-color = Color(0.2, 0.16, 0.28, 1)
-
-[node name="TopEdge" type="ColorRect" parent="PlatformBreakRecover"]
-offset_left = -95.0
-offset_top = -22.0
-offset_right = 95.0
-offset_bottom = -16.0
-color = Color(1, 0.56, 0.74, 0.82)
-
-[node name="UndersideShadow" type="ColorRect" parent="PlatformBreakRecover"]
-offset_left = -95.0
-offset_top = 14.0
-offset_right = 95.0
-offset_bottom = 28.0
-color = Color(0.01, 0.012, 0.035, 0.6)
-
-[node name="Player" parent="." instance=ExtResource("2_player")]
+[node name="Player" parent="." unique_id=1738933214 instance=ExtResource("2_player")]
 position = Vector2(180, 560)
 
-[node name="EnemyWaves" type="Node2D" parent="."]
+[node name="EnemyWaves" type="Node2D" parent="." unique_id=467189507]
 
-[node name="Wave1" type="Node2D" parent="EnemyWaves"]
+[node name="Wave1" type="Node2D" parent="EnemyWaves" unique_id=632551655]
 
-[node name="Enemy1" parent="EnemyWaves/Wave1" instance=ExtResource("4_enemy")]
+[node name="Enemy1" parent="EnemyWaves/Wave1" unique_id=1346907711 instance=ExtResource("4_enemy")]
 position = Vector2(1210, 414)
 required_attack_kind = "dash"
 min_hit_speed = 780.0
 reward_energy = 22.0
 starts_enabled = false
 
-[node name="Wave2" type="Node2D" parent="EnemyWaves"]
+[node name="Wave2" type="Node2D" parent="EnemyWaves" unique_id=56379717]
 
-[node name="Enemy2" parent="EnemyWaves/Wave2" instance=ExtResource("4_enemy")]
+[node name="Enemy2" parent="EnemyWaves/Wave2" unique_id=1553585557 instance=ExtResource("4_enemy")]
 position = Vector2(1395, 236)
 patrol_range = 75.0
 required_attack_kind = "dash"
@@ -1044,9 +729,9 @@ min_hit_speed = 860.0
 reward_energy = 26.0
 starts_enabled = false
 
-[node name="Wave3" type="Node2D" parent="EnemyWaves"]
+[node name="Wave3" type="Node2D" parent="EnemyWaves" unique_id=1517753480]
 
-[node name="Enemy3" parent="EnemyWaves/Wave3" instance=ExtResource("4_enemy")]
+[node name="Enemy3" parent="EnemyWaves/Wave3" unique_id=275365557 instance=ExtResource("4_enemy")]
 position = Vector2(1645, 428)
 patrol_speed = 80.0
 required_attack_kind = "dash"
@@ -1054,21 +739,21 @@ min_hit_speed = 940.0
 reward_energy = 32.0
 starts_enabled = false
 
-[node name="CloseMomentTrigger" type="Area2D" parent="."]
+[node name="CloseMomentTrigger" type="Area2D" parent="." unique_id=1562830026]
 visible = false
 position = Vector2(1848, 404)
 collision_layer = 0
 collision_mask = 2
 monitoring = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CloseMomentTrigger"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CloseMomentTrigger" unique_id=839064074]
 shape = SubResource("RectangleShape2D_close_trigger")
 
-[node name="CloseRouteGuides" type="Node2D" parent="."]
+[node name="CloseRouteGuides" type="Node2D" parent="." unique_id=499160981]
 visible = false
 z_index = 10
 
-[node name="ExitWake" type="Line2D" parent="CloseRouteGuides"]
+[node name="ExitWake" type="Line2D" parent="CloseRouteGuides" unique_id=1765459103]
 points = PackedVector2Array(1645, 428, 1720, 404, 1848, 404)
 width = 7.0
 default_color = Color(0.76, 0.96, 1, 0.54)
@@ -1076,7 +761,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitBracket" type="Line2D" parent="CloseRouteGuides"]
+[node name="ExitBracket" type="Line2D" parent="CloseRouteGuides" unique_id=456081708]
 points = PackedVector2Array(1808, 324, 1888, 324, 1888, 484, 1808, 484, 1808, 324)
 width = 4.0
 default_color = Color(1, 0.82, 0.42, 0.52)
@@ -1084,7 +769,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PermissionCrack" type="Line2D" parent="CloseRouteGuides"]
+[node name="PermissionCrack" type="Line2D" parent="CloseRouteGuides" unique_id=1587368533]
 points = PackedVector2Array(1796, 372, 1848, 404, 1898, 356, 1868, 448, 1922, 430)
 width = 5.0
 default_color = Color(1, 0.34, 0.56, 0.42)
@@ -1092,10 +777,10 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="EnemyWaveGuides" type="Node2D" parent="."]
+[node name="EnemyWaveGuides" type="Node2D" parent="." unique_id=1386137606]
 z_index = 7
 
-[node name="Wave1ApproachGuide" type="Line2D" parent="EnemyWaveGuides"]
+[node name="Wave1ApproachGuide" type="Line2D" parent="EnemyWaveGuides" unique_id=1958760791]
 visible = false
 points = PackedVector2Array(1110, 468, 1174, 454, 1210, 414)
 width = 5.0
@@ -1103,7 +788,7 @@ default_color = Color(0.72, 0.85, 1, 0.34)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Wave2AngleGuide" type="Line2D" parent="EnemyWaveGuides"]
+[node name="Wave2AngleGuide" type="Line2D" parent="EnemyWaveGuides" unique_id=1778564872]
 visible = false
 points = PackedVector2Array(1275, 486, 1320, 408, 1350, 344, 1395, 236)
 width = 5.0
@@ -1112,7 +797,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Wave3BreakGuide" type="Line2D" parent="EnemyWaveGuides"]
+[node name="Wave3BreakGuide" type="Line2D" parent="EnemyWaveGuides" unique_id=50514849]
 visible = false
 points = PackedVector2Array(1495, 500, 1535, 500, 1585, 462, 1645, 428)
 width = 6.0
@@ -1121,9 +806,9 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PressureReads" type="Node2D" parent="EnemyWaveGuides"]
+[node name="PressureReads" type="Node2D" parent="EnemyWaveGuides" unique_id=618887105]
 
-[node name="LowPressureBand" type="Line2D" parent="EnemyWaveGuides/PressureReads"]
+[node name="LowPressureBand" type="Line2D" parent="EnemyWaveGuides/PressureReads" unique_id=926800408]
 visible = false
 points = PackedVector2Array(1084, 398, 1248, 398, 1248, 492, 1084, 492, 1084, 398)
 width = 2.0
@@ -1132,7 +817,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="AnglePressureBand" type="Line2D" parent="EnemyWaveGuides/PressureReads"]
+[node name="AnglePressureBand" type="Line2D" parent="EnemyWaveGuides/PressureReads" unique_id=1380057262]
 visible = false
 points = PackedVector2Array(1248, 218, 1454, 218, 1454, 512, 1248, 512, 1248, 218)
 width = 2.0
@@ -1141,7 +826,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BreakPressureBand" type="Line2D" parent="EnemyWaveGuides/PressureReads"]
+[node name="BreakPressureBand" type="Line2D" parent="EnemyWaveGuides/PressureReads" unique_id=1763622857]
 visible = false
 points = PackedVector2Array(1472, 402, 1698, 402, 1698, 522, 1472, 522, 1472, 402)
 width = 2.0
@@ -1150,13 +835,13 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="SpeedGateReads" type="Node2D" parent="EnemyWaveGuides"]
+[node name="SpeedGateReads" type="Node2D" parent="EnemyWaveGuides" unique_id=1654431332]
 z_index = 2
 
-[node name="LowSpeedGate" type="Node2D" parent="EnemyWaveGuides/SpeedGateReads"]
+[node name="LowSpeedGate" type="Node2D" parent="EnemyWaveGuides/SpeedGateReads" unique_id=1555855788]
 visible = false
 
-[node name="ApproachRail" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/LowSpeedGate"]
+[node name="ApproachRail" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/LowSpeedGate" unique_id=1078229123]
 points = PackedVector2Array(1088, 468, 1140, 458, 1174, 454)
 width = 5.0
 default_color = Color(0.62, 0.92, 1, 0.48)
@@ -1164,7 +849,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CommitGate" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/LowSpeedGate"]
+[node name="CommitGate" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/LowSpeedGate" unique_id=1292952447]
 points = PackedVector2Array(1156, 432, 1174, 454, 1194, 432)
 width = 6.0
 default_color = Color(1, 0.96, 0.58, 0.78)
@@ -1172,7 +857,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitWake" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/LowSpeedGate"]
+[node name="ExitWake" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/LowSpeedGate" unique_id=1466933030]
 points = PackedVector2Array(1174, 454, 1210, 414, 1260, 408)
 width = 4.0
 default_color = Color(0.62, 0.92, 1, 0.34)
@@ -1180,10 +865,10 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="AngleSpeedGate" type="Node2D" parent="EnemyWaveGuides/SpeedGateReads"]
+[node name="AngleSpeedGate" type="Node2D" parent="EnemyWaveGuides/SpeedGateReads" unique_id=448959996]
 visible = false
 
-[node name="ApproachRail" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/AngleSpeedGate"]
+[node name="ApproachRail" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/AngleSpeedGate" unique_id=1124619744]
 points = PackedVector2Array(1275, 486, 1320, 408, 1350, 344)
 width = 5.0
 default_color = Color(1, 0.78, 0.48, 0.48)
@@ -1191,7 +876,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CommitGate" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/AngleSpeedGate"]
+[node name="CommitGate" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/AngleSpeedGate" unique_id=196034022]
 points = PackedVector2Array(1324, 356, 1350, 320, 1378, 356)
 width = 6.0
 default_color = Color(1, 0.96, 0.58, 0.78)
@@ -1199,7 +884,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitWake" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/AngleSpeedGate"]
+[node name="ExitWake" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/AngleSpeedGate" unique_id=1483968629]
 points = PackedVector2Array(1350, 344, 1395, 236, 1448, 218)
 width = 4.0
 default_color = Color(1, 0.78, 0.48, 0.34)
@@ -1207,10 +892,10 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BreakSpeedGate" type="Node2D" parent="EnemyWaveGuides/SpeedGateReads"]
+[node name="BreakSpeedGate" type="Node2D" parent="EnemyWaveGuides/SpeedGateReads" unique_id=979147734]
 visible = false
 
-[node name="ApproachRail" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate"]
+[node name="ApproachRail" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate" unique_id=897416610]
 points = PackedVector2Array(1495, 500, 1535, 500, 1585, 462)
 width = 6.0
 default_color = Color(1, 0.56, 0.74, 0.5)
@@ -1218,7 +903,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CommitGate" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate"]
+[node name="CommitGate" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate" unique_id=126420740]
 points = PackedVector2Array(1560, 440, 1585, 462, 1610, 438)
 width = 7.0
 default_color = Color(1, 0.96, 0.58, 0.82)
@@ -1226,7 +911,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitWake" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate"]
+[node name="ExitWake" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate" unique_id=463143468]
 points = PackedVector2Array(1585, 462, 1645, 428, 1710, 428)
 width = 5.0
 default_color = Color(1, 0.56, 0.74, 0.38)
@@ -1234,9 +919,9 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="RecoveryReads" type="Node2D" parent="EnemyWaveGuides"]
+[node name="RecoveryReads" type="Node2D" parent="EnemyWaveGuides" unique_id=1850945612]
 
-[node name="LowRecoveryRead" type="Line2D" parent="EnemyWaveGuides/RecoveryReads"]
+[node name="LowRecoveryRead" type="Line2D" parent="EnemyWaveGuides/RecoveryReads" unique_id=793677421]
 visible = false
 points = PackedVector2Array(1210, 414, 1174, 454, 1110, 468)
 width = 5.0
@@ -1245,7 +930,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="AngleRecoveryRead" type="Line2D" parent="EnemyWaveGuides/RecoveryReads"]
+[node name="AngleRecoveryRead" type="Line2D" parent="EnemyWaveGuides/RecoveryReads" unique_id=384262325]
 visible = false
 points = PackedVector2Array(1395, 236, 1350, 344, 1275, 486)
 width = 5.0
@@ -1254,7 +939,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BreakRecoveryRead" type="Line2D" parent="EnemyWaveGuides/RecoveryReads"]
+[node name="BreakRecoveryRead" type="Line2D" parent="EnemyWaveGuides/RecoveryReads" unique_id=1898819650]
 visible = false
 points = PackedVector2Array(1645, 428, 1585, 462, 1495, 500)
 width = 5.0
@@ -1263,21 +948,21 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="SafeRestPoints" type="Node2D" parent="EnemyWaveGuides"]
+[node name="SafeRestPoints" type="Node2D" parent="EnemyWaveGuides" unique_id=1647269073]
 
-[node name="LowRest" type="Marker2D" parent="EnemyWaveGuides/SafeRestPoints"]
+[node name="LowRest" type="Marker2D" parent="EnemyWaveGuides/SafeRestPoints" unique_id=1470610029]
 position = Vector2(1110, 468)
 
-[node name="AngleRest" type="Marker2D" parent="EnemyWaveGuides/SafeRestPoints"]
+[node name="AngleRest" type="Marker2D" parent="EnemyWaveGuides/SafeRestPoints" unique_id=2123434323]
 position = Vector2(1275, 486)
 
-[node name="BreakRest" type="Marker2D" parent="EnemyWaveGuides/SafeRestPoints"]
+[node name="BreakRest" type="Marker2D" parent="EnemyWaveGuides/SafeRestPoints" unique_id=1611666207]
 position = Vector2(1495, 500)
 
-[node name="WaveEnergyPockets" type="Node2D" parent="EnemyWaveGuides"]
+[node name="WaveEnergyPockets" type="Node2D" parent="EnemyWaveGuides" unique_id=898704289]
 visible = false
 
-[node name="LowPocket" parent="EnemyWaveGuides/WaveEnergyPockets" instance=ExtResource("8_pocket")]
+[node name="LowPocket" parent="EnemyWaveGuides/WaveEnergyPockets" unique_id=1224037361 instance=ExtResource("8_pocket")]
 visible = false
 position = Vector2(1110, 468)
 monitoring = false
@@ -1287,7 +972,7 @@ cooldown_seconds = 0.5
 [node name="CollisionShape2D" parent="EnemyWaveGuides/WaveEnergyPockets/LowPocket" index="0"]
 disabled = true
 
-[node name="AnglePocket" parent="EnemyWaveGuides/WaveEnergyPockets" instance=ExtResource("8_pocket")]
+[node name="AnglePocket" parent="EnemyWaveGuides/WaveEnergyPockets" unique_id=971670773 instance=ExtResource("8_pocket")]
 visible = false
 position = Vector2(1275, 486)
 monitoring = false
@@ -1297,7 +982,7 @@ cooldown_seconds = 0.5
 [node name="CollisionShape2D" parent="EnemyWaveGuides/WaveEnergyPockets/AnglePocket" index="0"]
 disabled = true
 
-[node name="BreakPocket" parent="EnemyWaveGuides/WaveEnergyPockets" instance=ExtResource("8_pocket")]
+[node name="BreakPocket" parent="EnemyWaveGuides/WaveEnergyPockets" unique_id=321796081 instance=ExtResource("8_pocket")]
 visible = false
 position = Vector2(1495, 500)
 monitoring = false
@@ -1307,25 +992,25 @@ cooldown_seconds = 0.5
 [node name="CollisionShape2D" parent="EnemyWaveGuides/WaveEnergyPockets/BreakPocket" index="0"]
 disabled = true
 
-[node name="AirCombatRooms" type="Node2D" parent="."]
+[node name="AirCombatRooms" type="Node2D" parent="." unique_id=1243308980]
 z_index = 5
 
-[node name="LowRoom" type="Node2D" parent="AirCombatRooms"]
+[node name="LowRoom" type="Node2D" parent="AirCombatRooms" unique_id=219886535]
 visible = false
 
-[node name="Entry" type="Marker2D" parent="AirCombatRooms/LowRoom"]
+[node name="Entry" type="Marker2D" parent="AirCombatRooms/LowRoom" unique_id=1679642496]
 position = Vector2(1110, 468)
 
-[node name="Apex" type="Marker2D" parent="AirCombatRooms/LowRoom"]
+[node name="Apex" type="Marker2D" parent="AirCombatRooms/LowRoom" unique_id=1525547115]
 position = Vector2(1174, 454)
 
-[node name="Exit" type="Marker2D" parent="AirCombatRooms/LowRoom"]
+[node name="Exit" type="Marker2D" parent="AirCombatRooms/LowRoom" unique_id=1194965175]
 position = Vector2(1210, 414)
 
-[node name="TimingGate" type="Marker2D" parent="AirCombatRooms/LowRoom"]
+[node name="TimingGate" type="Marker2D" parent="AirCombatRooms/LowRoom" unique_id=1933153008]
 position = Vector2(1174, 454)
 
-[node name="RouteRead" type="Line2D" parent="AirCombatRooms/LowRoom"]
+[node name="RouteRead" type="Line2D" parent="AirCombatRooms/LowRoom" unique_id=195788087]
 points = PackedVector2Array(1110, 468, 1174, 454, 1210, 414)
 width = 4.0
 default_color = Color(0.62, 0.92, 1, 0.26)
@@ -1333,31 +1018,31 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FloorRead" type="Line2D" parent="AirCombatRooms/LowRoom"]
+[node name="FloorRead" type="Line2D" parent="AirCombatRooms/LowRoom" unique_id=305137565]
 points = PackedVector2Array(1084, 492, 1248, 492)
 width = 2.0
 default_color = Color(0.55, 0.9, 1, 0.18)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CeilingRead" type="Line2D" parent="AirCombatRooms/LowRoom"]
+[node name="CeilingRead" type="Line2D" parent="AirCombatRooms/LowRoom" unique_id=881993497]
 points = PackedVector2Array(1084, 398, 1248, 398)
 width = 2.0
 default_color = Color(0.55, 0.9, 1, 0.12)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="TimingRead" type="Node2D" parent="AirCombatRooms/LowRoom"]
+[node name="TimingRead" type="Node2D" parent="AirCombatRooms/LowRoom" unique_id=40904492]
 visible = false
 
-[node name="ApproachTick" type="Line2D" parent="AirCombatRooms/LowRoom/TimingRead"]
+[node name="ApproachTick" type="Line2D" parent="AirCombatRooms/LowRoom/TimingRead" unique_id=674138623]
 points = PackedVector2Array(1100, 450, 1128, 478)
 width = 4.0
 default_color = Color(0.72, 0.95, 1, 0.62)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CommitWindow" type="Line2D" parent="AirCombatRooms/LowRoom/TimingRead"]
+[node name="CommitWindow" type="Line2D" parent="AirCombatRooms/LowRoom/TimingRead" unique_id=1858392521]
 points = PackedVector2Array(1148, 438, 1174, 454, 1198, 432)
 width = 5.0
 default_color = Color(1, 0.96, 0.58, 0.72)
@@ -1365,29 +1050,29 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitTick" type="Line2D" parent="AirCombatRooms/LowRoom/TimingRead"]
+[node name="ExitTick" type="Line2D" parent="AirCombatRooms/LowRoom/TimingRead" unique_id=1777004020]
 points = PackedVector2Array(1210, 386, 1210, 440)
 width = 4.0
 default_color = Color(0.72, 0.95, 1, 0.5)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="AngleRoom" type="Node2D" parent="AirCombatRooms"]
+[node name="AngleRoom" type="Node2D" parent="AirCombatRooms" unique_id=1271422985]
 visible = false
 
-[node name="Entry" type="Marker2D" parent="AirCombatRooms/AngleRoom"]
+[node name="Entry" type="Marker2D" parent="AirCombatRooms/AngleRoom" unique_id=275561932]
 position = Vector2(1275, 486)
 
-[node name="Apex" type="Marker2D" parent="AirCombatRooms/AngleRoom"]
+[node name="Apex" type="Marker2D" parent="AirCombatRooms/AngleRoom" unique_id=317655055]
 position = Vector2(1350, 344)
 
-[node name="Exit" type="Marker2D" parent="AirCombatRooms/AngleRoom"]
+[node name="Exit" type="Marker2D" parent="AirCombatRooms/AngleRoom" unique_id=2142484806]
 position = Vector2(1395, 236)
 
-[node name="TimingGate" type="Marker2D" parent="AirCombatRooms/AngleRoom"]
+[node name="TimingGate" type="Marker2D" parent="AirCombatRooms/AngleRoom" unique_id=1470989310]
 position = Vector2(1350, 344)
 
-[node name="RouteRead" type="Line2D" parent="AirCombatRooms/AngleRoom"]
+[node name="RouteRead" type="Line2D" parent="AirCombatRooms/AngleRoom" unique_id=2014160456]
 points = PackedVector2Array(1275, 486, 1320, 408, 1350, 344, 1395, 236)
 width = 4.0
 default_color = Color(1, 0.78, 0.48, 0.28)
@@ -1395,31 +1080,31 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FloorRead" type="Line2D" parent="AirCombatRooms/AngleRoom"]
+[node name="FloorRead" type="Line2D" parent="AirCombatRooms/AngleRoom" unique_id=618465832]
 points = PackedVector2Array(1248, 512, 1454, 512)
 width = 2.0
 default_color = Color(1, 0.78, 0.48, 0.18)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CeilingRead" type="Line2D" parent="AirCombatRooms/AngleRoom"]
+[node name="CeilingRead" type="Line2D" parent="AirCombatRooms/AngleRoom" unique_id=1359891637]
 points = PackedVector2Array(1248, 218, 1454, 218)
 width = 2.0
 default_color = Color(1, 0.78, 0.48, 0.13)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="TimingRead" type="Node2D" parent="AirCombatRooms/AngleRoom"]
+[node name="TimingRead" type="Node2D" parent="AirCombatRooms/AngleRoom" unique_id=465078627]
 visible = false
 
-[node name="ApproachTick" type="Line2D" parent="AirCombatRooms/AngleRoom/TimingRead"]
+[node name="ApproachTick" type="Line2D" parent="AirCombatRooms/AngleRoom/TimingRead" unique_id=1196941522]
 points = PackedVector2Array(1268, 500, 1298, 450)
 width = 4.0
 default_color = Color(1, 0.78, 0.48, 0.58)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CommitWindow" type="Line2D" parent="AirCombatRooms/AngleRoom/TimingRead"]
+[node name="CommitWindow" type="Line2D" parent="AirCombatRooms/AngleRoom/TimingRead" unique_id=1108403400]
 points = PackedVector2Array(1328, 366, 1350, 344, 1374, 366)
 width = 5.0
 default_color = Color(1, 0.96, 0.58, 0.72)
@@ -1427,29 +1112,29 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitTick" type="Line2D" parent="AirCombatRooms/AngleRoom/TimingRead"]
+[node name="ExitTick" type="Line2D" parent="AirCombatRooms/AngleRoom/TimingRead" unique_id=810383550]
 points = PackedVector2Array(1376, 262, 1412, 214)
 width = 4.0
 default_color = Color(1, 0.78, 0.48, 0.5)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BreakRoom" type="Node2D" parent="AirCombatRooms"]
+[node name="BreakRoom" type="Node2D" parent="AirCombatRooms" unique_id=143206569]
 visible = false
 
-[node name="Entry" type="Marker2D" parent="AirCombatRooms/BreakRoom"]
+[node name="Entry" type="Marker2D" parent="AirCombatRooms/BreakRoom" unique_id=1084580304]
 position = Vector2(1495, 500)
 
-[node name="Apex" type="Marker2D" parent="AirCombatRooms/BreakRoom"]
+[node name="Apex" type="Marker2D" parent="AirCombatRooms/BreakRoom" unique_id=1413925274]
 position = Vector2(1585, 462)
 
-[node name="Exit" type="Marker2D" parent="AirCombatRooms/BreakRoom"]
+[node name="Exit" type="Marker2D" parent="AirCombatRooms/BreakRoom" unique_id=1462574899]
 position = Vector2(1645, 428)
 
-[node name="TimingGate" type="Marker2D" parent="AirCombatRooms/BreakRoom"]
+[node name="TimingGate" type="Marker2D" parent="AirCombatRooms/BreakRoom" unique_id=1679080030]
 position = Vector2(1585, 462)
 
-[node name="RouteRead" type="Line2D" parent="AirCombatRooms/BreakRoom"]
+[node name="RouteRead" type="Line2D" parent="AirCombatRooms/BreakRoom" unique_id=2095177838]
 points = PackedVector2Array(1495, 500, 1535, 500, 1585, 462, 1645, 428)
 width = 5.0
 default_color = Color(1, 0.56, 0.74, 0.3)
@@ -1457,31 +1142,31 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FloorRead" type="Line2D" parent="AirCombatRooms/BreakRoom"]
+[node name="FloorRead" type="Line2D" parent="AirCombatRooms/BreakRoom" unique_id=1530395554]
 points = PackedVector2Array(1472, 522, 1698, 522)
 width = 2.0
 default_color = Color(1, 0.56, 0.74, 0.18)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CeilingRead" type="Line2D" parent="AirCombatRooms/BreakRoom"]
+[node name="CeilingRead" type="Line2D" parent="AirCombatRooms/BreakRoom" unique_id=1861167160]
 points = PackedVector2Array(1472, 402, 1698, 402)
 width = 2.0
 default_color = Color(1, 0.56, 0.74, 0.13)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="TimingRead" type="Node2D" parent="AirCombatRooms/BreakRoom"]
+[node name="TimingRead" type="Node2D" parent="AirCombatRooms/BreakRoom" unique_id=324775547]
 visible = false
 
-[node name="ApproachTick" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead"]
+[node name="ApproachTick" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead" unique_id=1175748902]
 points = PackedVector2Array(1490, 486, 1532, 514)
 width = 4.0
 default_color = Color(1, 0.56, 0.74, 0.58)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CommitWindow" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead"]
+[node name="CommitWindow" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead" unique_id=1354788823]
 points = PackedVector2Array(1560, 440, 1585, 462, 1610, 438)
 width = 5.0
 default_color = Color(1, 0.96, 0.58, 0.72)
@@ -1489,29 +1174,28 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitTick" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead"]
+[node name="ExitTick" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead" unique_id=863818468]
 points = PackedVector2Array(1634, 396, 1656, 456)
 width = 4.0
 default_color = Color(1, 0.56, 0.74, 0.5)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="EnergyHud" parent="." instance=ExtResource("6_energy_hud")]
+[node name="EnergyHud" parent="." unique_id=874036862 instance=ExtResource("6_energy_hud")]
 
-[node name="PauseLayer" type="CanvasLayer" parent="."]
+[node name="PauseLayer" type="CanvasLayer" parent="." unique_id=1562226791]
 process_mode = 3
 layer = 20
 
-[node name="PauseScreen" parent="PauseLayer" instance=ExtResource("3_pause")]
+[node name="PauseScreen" parent="PauseLayer" unique_id=880881448 instance=ExtResource("3_pause")]
 
-[node name="CloseMomentLayer" type="CanvasLayer" parent="."]
-visible = false
+[node name="CloseMomentLayer" type="CanvasLayer" parent="." unique_id=367554886]
 process_mode = 3
 layer = 18
+visible = false
 
-[node name="CloseButton" parent="CloseMomentLayer" instance=ExtResource("5_close_btn")]
+[node name="CloseButton" parent="CloseMomentLayer" unique_id=1386214100 instance=ExtResource("5_close_btn")]
 process_mode = 3
-layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -1523,6 +1207,5 @@ offset_right = 130.0
 offset_bottom = -54.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 20
 text = "关闭这一层"
 bb_text = "[color=#e8d8ff]关闭这一层"

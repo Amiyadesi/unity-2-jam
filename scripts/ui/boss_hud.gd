@@ -2,7 +2,7 @@ extends CanvasLayer
 class_name BossHud
 ## boss_hud.gd — 终战 Boss 血条 HUD。
 ##
-## authored UI 模板，外部只推送血量与阶段名。
+## authored UI 模板，外部只推送血量与状态；阶段名不直接展示。
 
 @onready var _boss_fill: ColorRect = $Root/BossFrame/FillClip/Fill
 @onready var _phase_two_tick: ColorRect = $Root/BossFrame/FillClip/PhaseTwoTick
@@ -31,6 +31,8 @@ func _ready() -> void:
 	_shield_badge.hide()
 	_pierce_read.hide()
 	_hit_flash.hide()
+	_phase_label.text = ""
+	_phase_label.hide()
 
 
 ## 更新 Boss 血量和名字。
@@ -46,9 +48,10 @@ func set_thresholds(max_value: int, phase_two: int, phase_three: int) -> void:
 	_position_threshold_tick(_phase_three_tick, max_value, phase_three)
 
 
-## 更新 Boss 阶段文案。
+## 保留阶段接口给 Stage3 使用，但不把“一/二/三阶段”明示到 HUD。
 func set_phase(label: String) -> void:
-	_phase_label.text = label
+	_phase_label.text = ""
+	_phase_label.hide()
 
 
 ## 显示 Boss 护盾/弱点状态。

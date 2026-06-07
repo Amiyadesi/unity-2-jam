@@ -40,6 +40,8 @@ enum PressureState { REST, TELEGRAPH, ACTIVE }
 @export var request_interval: float = 0.9
 @export var request_telegraph_seconds: float = 0.22
 @export var request_good_pattern: PackedByteArray = PackedByteArray([0, 1, 1])
+@export var request_good_energy_reward: float = 18.0
+@export var request_bad_energy_damage: float = 16.0
 @export var soft_reset_energy: float = 35.0
 @export var phase_three_dash_bonus: int = 1
 @export var phase_three_open_seconds: float = 0.86
@@ -127,6 +129,9 @@ func _ready() -> void:
 	_collect_phase_three_pressure_sweeps()
 	_hide_combat_vfx()
 	body_entered.connect(_on_body_entered)
+	if _predecessor == null:
+		push_error("FinalBoss: $PredecessorAI missing")
+		return
 	if _predecessor.has_signal("defeated"):
 		_predecessor.connect("defeated", Callable(self, "_on_predecessor_defeated"))
 	if _predecessor.has_signal("health_changed"):
@@ -191,7 +196,7 @@ func activate(player: Node) -> void:
 	thresholds_changed.emit(max_hp, phase_two_threshold, phase_three_threshold)
 	health_changed.emit(_hp, max_hp)
 	shield_changed.emit(false, "核心暴露")
-	_set_phase(1, "一阶段：切开边界")
+	_set_phase(1, "边界正在裂开")
 
 
 ## 停用 Boss，用于初始场景或胜利后收束。
@@ -619,7 +624,7 @@ func _update_phase_from_health() -> void:
 
 ## 进入信息流阶段并激活前辈 AI。
 func _enter_phase_two() -> void:
-	_set_phase(2, "二阶段：分辨请求")
+	_set_phase(2, "请求开始漂入")
 	_request_timer = 0.2
 	_predecessor_blocking = true
 	shield_changed.emit(true, "先击败前辈 AI")
@@ -633,7 +638,7 @@ func _enter_phase_two() -> void:
 
 ## 进入超载终局，隐藏前辈血条并强化核心。
 func _enter_phase_three() -> void:
-	_set_phase(3, "三阶段：超载穿透")
+	_set_phase(3, "核心只会短暂张开")
 	_predecessor_blocking = false
 	request_interval = maxf(request_interval * 0.72, 0.42)
 	request_speed *= 1.18
@@ -1064,8 +1069,10 @@ func _kill_request_telegraph_tween() -> void:
 	_request_telegraph_tween = null
 
 
-## 善意请求在一/二阶段削弱 Boss；三阶段只补能，击穿必须靠冲刺窗口。
-func _on_request_resolved(was_good: bool) -> void:
+## 善意请求补能；一/二阶段还削弱 Boss，三阶段击穿必须靠冲刺窗口。
+func _on_request_resolved(was_good: bool, body: Node = null) -> void:
+	if was_good:
+		_ensure_request_energy_delta(body, request_good_energy_reward, true)
 	if was_good and _active and not _defeated and not _predecessor_blocking and _phase < 3:
 		_hp = maxi(_hp - 1, 0)
 		health_changed.emit(_hp, max_hp)
@@ -1075,10 +1082,26 @@ func _on_request_resolved(was_good: bool) -> void:
 
 
 ## 恶意请求命中累计三次，触发阶段软重置。
-func _on_request_hurt_player() -> void:
+func _on_request_hurt_player(body: Node = null) -> void:
+	_ensure_request_energy_delta(body, request_bad_energy_damage, false)
 	_bad_hits += 1
 	if _bad_hits >= 3:
 		_soft_reset()
+
+
+## 兜底同步请求卡的能量反馈，避免信号接线或物理回调漏掉资源变化。
+func _ensure_request_energy_delta(body: Node, amount: float, restore: bool) -> void:
+	if body != null:
+		return
+	var target := body
+	if target == null:
+		target = _player
+	if target == null:
+		return
+	if restore and target.has_method("restore_energy"):
+		target.restore_energy(amount)
+	elif not restore and target.has_method("drain_energy"):
+		target.drain_energy(amount)
 
 
 ## 前辈 AI 倒下时给玩家超载，并允许继续打 Boss。
