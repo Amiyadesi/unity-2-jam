@@ -55,10 +55,13 @@ func _run() -> void:
 	_check("energy starts within max", script_property_names.has("energy") and script_property_names.has("max_energy") and p.energy >= 0.0 and p.energy <= p.max_energy)
 	_check("dash speed tuned fast", p.dash_speed >= 1100.0)
 	_check("awaken action exists", InputMap.has_action("awaken"))
+	_check("dash action exists", InputMap.has_action("dash"))
+	_check("dash action includes left mouse", _input_action_has_mouse_button("dash", MOUSE_BUTTON_LEFT))
 	_check("dash_started signal exists", p.has_signal("dash_started"))
 	_check("dash_hit_confirmed signal exists", p.has_signal("dash_hit_confirmed"))
 	_check("dash_whiffed signal exists", p.has_signal("dash_whiffed"))
 	await _check_training_target_hit(p)
+	_check_ability_gates(p)
 	await _check_cast_release_frame(p)
 	await _check_dash_vfx_and_camera(p)
 	await _check_dash_hit_confirm(p)
@@ -168,9 +171,32 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 		player.dash_whiffed.disconnect(whiff_handler)
 	player._camera_dash_timer = 0.0
 	player.morphed = true
+	player._action_playing = false
+	player.frozen = false
 	player.velocity = Vector2(player.FLY_SPEED, 0.0)
 	player._update_camera_lookahead(0.12)
 	_check("flight camera opens view lightly", camera.zoom.x < player.camera_zoom_ground.x and camera.zoom.x > player.camera_zoom_dash.x)
+	body.rotation = 0.0
+	player._fly_angle = PI
+	player._last_fly_input = Vector2.LEFT
+	player.velocity = Vector2(-player.FLY_SPEED, 0.0)
+	player._update_facing_fly(0.2)
+	_check("active left flight may rotate sideways", absf(absf(body.rotation) - PI) < 0.02)
+	body.rotation = 0.0
+	player._fly_angle = 0.0
+	player._last_fly_input = Vector2.ZERO
+	player.velocity = Vector2.UP * player.FLY_SPEED
+	player._update_facing_fly(0.2)
+	_check("released high-speed flight follows velocity", absf(wrapf(body.rotation - Vector2.UP.angle(), -PI, PI)) < 0.02)
+	body.rotation = PI * 0.75
+	player._fly_angle = PI * 0.75
+	player._last_fly_input = Vector2.ZERO
+	player.velocity = Vector2.ZERO
+	player._update_facing_fly(0.2)
+	_check("idle flight returns upright", absf(body.rotation) < 0.02)
+	body.rotation = -PI * 0.5
+	player.correct_flight_pose()
+	_check("pause correction forces upright hover", is_equal_approx(body.rotation, 0.0) and body.scale.x > 0.0)
 	player.morphed = false
 	player.velocity = Vector2.ZERO
 	for _i in range(12):
@@ -232,8 +258,8 @@ func _check_dash_hit_confirm(player: Node) -> void:
 
 ## 验证觉醒/超载释放会触发 authored 粒子和冲击圈。
 func _check_ability_release_vfx(player: Node) -> void:
-	var particles := player.get_node_or_null("Body/CombatVFX/CastEnergyParticles") as GPUParticles2D
-	var ring := player.get_node_or_null("Body/CombatVFX/CastImpactRing") as CanvasItem
+	var particles := player.get_node_or_null("AwakenCenterVFX/AwakenCenterParticles") as GPUParticles2D
+	var ring := player.get_node_or_null("AwakenCenterVFX/AwakenCenterRing") as CanvasItem
 	_check("ability-release prerequisites available", particles != null and ring != null)
 	if particles == null or ring == null:
 		return
@@ -245,6 +271,26 @@ func _check_ability_release_vfx(player: Node) -> void:
 	_check("overload enters morph state", player.morphed)
 	_check("overload release particles emit", particles.emitting)
 	_check("overload release ring shows", ring.visible and ring.scale.x < 1.0)
+	player.morphed = false
+
+
+## 验证 authored/export 能力门控能阻止第 1 关提前觉醒或冲撞。
+func _check_ability_gates(player: Node) -> void:
+	player.allow_awaken = false
+	player.morphed = false
+	player._awaken_pressed_buffered = true
+	player._handle_awaken()
+	_check("allow_awaken=false blocks transform", not player.morphed)
+	player.allow_awaken = true
+	player.allow_dash = false
+	player.morphed = true
+	player.energy = player.max_energy
+	player._disable_all_hitboxes()
+	var before_energy: float = player.energy
+	player._start_dash_attack()
+	_check("allow_dash=false blocks dash window", not player.is_dashing())
+	_check("allow_dash=false preserves energy", is_equal_approx(player.energy, before_energy))
+	player.allow_dash = true
 	player.morphed = false
 
 ## 验证普通释放不会在按下瞬间命中，而是在动画释放帧打开 hitbox。
@@ -315,6 +361,16 @@ func _animation_has_method_key(anim_player: AnimationPlayer, animation_name: Str
 			var value = animation.track_get_key_value(track_index, key_index)
 			if value is Dictionary and value.get("method", &"") == method_name and animation.track_get_key_time(track_index, key_index) >= 0.25:
 				return true
+	return false
+
+
+## 检查某个动作是否包含指定鼠标按钮绑定。
+func _input_action_has_mouse_button(action_name: String, button_index: int) -> bool:
+	if not InputMap.has_action(action_name):
+		return false
+	for event in InputMap.action_get_events(action_name):
+		if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == button_index:
+			return true
 	return false
 
 ## 输出测试汇总并设置退出码。

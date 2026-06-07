@@ -1,8 +1,8 @@
 extends Area2D
 class_name InteractNode
-## interact_node.gd — 可交互连接节点（第 1 关教学用「互动」动词）
+## interact_node.gd — 可交互训练端口（第 1 关教学用「互动」动词）
 ##
-## 玩家进入范围 → 显示 "E" 提示；按 interact(E) → 激活一次，发出 activated。
+## 玩家进入范围 → 显示 "E" 提示；按 interact(E) → 校准一次，发出 activated。
 ## 与第 1 关的「走进即亮」开关不同：这个必须按键，用来教 E 这个动词。
 ##
 ## 放置：collision_mask=2 检测 player；子节点含 "Lit"(初始透明) 与可选 "Prompt"(初始隐藏)。

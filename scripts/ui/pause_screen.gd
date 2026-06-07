@@ -35,6 +35,7 @@ func _toggle() -> void:
 
 
 func _pause() -> void:
+	_correct_player_flight_pose()
 	get_tree().paused = true
 	open_modal()
 
@@ -49,3 +50,10 @@ func _open_settings() -> void:
 	if _settings_screen.has_method("set_show_thanks"):
 		_settings_screen.set_show_thanks(false)
 	_settings_screen.open_modal()
+
+
+## 暂停前让飞行中的玩家回到直立悬浮，避免停在横飞或倒飞读图。
+func _correct_player_flight_pose() -> void:
+	var player := get_tree().get_first_node_in_group("player")
+	if player != null and player.has_method("correct_flight_pose"):
+		player.correct_flight_pose()

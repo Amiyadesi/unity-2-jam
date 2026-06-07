@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://closeaistage1scn"]
+[gd_scene load_steps=13 format=3 uid="uid://closeaistage1scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_1.gd" id="1_stage1"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/interact_node.tscn" id="4_interact"]
 [ext_resource type="PackedScene" path="res://ui_kit/components/shader_button.tscn" id="5_close_btn"]
 [ext_resource type="PackedScene" path="res://scenes/training_target.tscn" id="6_target"]
+[ext_resource type="Texture2D" path="res://assets/generated/backgrounds/stage1_training_room.png" id="7_bg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor_left"]
 size = Vector2(440, 48)
@@ -37,6 +38,18 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.05, 0.06, 0.09, 1)
+
+[node name="TrainingRoomPlate" type="TextureRect" parent="Background"]
+modulate = Color(1, 1, 1, 0.5)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_bg")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="HorizonBand" type="ColorRect" parent="Background"]
 anchors_preset = 15
@@ -568,14 +581,16 @@ end_cap_mode = 2
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector2(220, 560)
+allow_awaken = false
+allow_dash = false
 
-[node name="InteractNode1" parent="." instance=ExtResource("4_interact")]
+[node name="CalibrationPortA" parent="." instance=ExtResource("4_interact")]
 position = Vector2(890, 509)
 
-[node name="InteractNode2" parent="." instance=ExtResource("4_interact")]
+[node name="LogicRelayB" parent="." instance=ExtResource("4_interact")]
 position = Vector2(1115, 496)
 
-[node name="InteractNode3" parent="." instance=ExtResource("4_interact")]
+[node name="ExitProbeC" parent="." instance=ExtResource("4_interact")]
 position = Vector2(1325, 438)
 
 [node name="TrainingTargets" type="Node2D" parent="."]

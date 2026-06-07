@@ -54,7 +54,7 @@ func _run() -> void:
 			_check_authored_stage_ui(inst, scene_path)
 			_check_authored_energy_hud(inst, scene_path)
 		if scene_path == "res://scenes/stage_1.tscn":
-			_check_stage_1_interact_nodes(inst)
+			_check_stage_1_training_ports(inst)
 			_check_stage_1_tutorial_nodes(inst)
 			_check_stage_1_platform_rhythm(inst)
 			_check_stage_1_visual_readability(inst)
@@ -97,15 +97,20 @@ func _check_authored_energy_hud(inst: Node, scene_path: String) -> void:
 	_check("EnergyHud has player_path: " + scene_path, energy_hud != null and "player_path" in energy_hud and str(energy_hud.player_path) != "")
 
 
-## 确认第 1 关教学脚本使用的互动节点已 authored 到场景里。
-func _check_stage_1_interact_nodes(inst: Node) -> void:
-	var expected := ["InteractNode1", "InteractNode2", "InteractNode3"]
+## 确认第 1 关 AI 训练室端口已 authored 到场景里，不再使用旧连接节点命名。
+func _check_stage_1_training_ports(inst: Node) -> void:
+	var player := inst.get_node_or_null("Player")
+	_check("stage_1 disables awaken", player != null and "allow_awaken" in player and player.allow_awaken == false)
+	_check("stage_1 disables dash", player != null and "allow_dash" in player and player.allow_dash == false)
+	var expected := ["CalibrationPortA", "LogicRelayB", "ExitProbeC"]
 	for node_name in expected:
-		var interact_node := inst.get_node_or_null(node_name)
-		_check("stage_1 authored " + node_name, interact_node != null)
-		_check("stage_1 " + node_name + " supports set_enabled", interact_node != null and interact_node.has_method("set_enabled"))
-		_check("stage_1 " + node_name + " authored Lit", interact_node != null and interact_node.get_node_or_null("Lit") is CanvasItem)
-		_check("stage_1 " + node_name + " authored Prompt", interact_node != null and interact_node.get_node_or_null("Prompt") is CanvasItem)
+		var training_port := inst.get_node_or_null(node_name)
+		_check("stage_1 authored " + node_name, training_port != null)
+		_check("stage_1 " + node_name + " supports set_enabled", training_port != null and training_port.has_method("set_enabled"))
+		_check("stage_1 " + node_name + " authored Lit", training_port != null and training_port.get_node_or_null("Lit") is CanvasItem)
+		_check("stage_1 " + node_name + " authored Prompt", training_port != null and training_port.get_node_or_null("Prompt") is CanvasItem)
+		_check("stage_1 " + node_name + " authored PortLabel", training_port != null and training_port.get_node_or_null("PortLabel") is Label)
+	_check("stage_1 removed old InteractNode1", inst.get_node_or_null("InteractNode1") == null)
 	_check("stage_1 removed old Switch1", inst.get_node_or_null("Switch1") == null)
 
 
@@ -254,6 +259,9 @@ func _stage_1_layered_background_authored(inst: Node) -> bool:
 	if background == null or world_backdrop == null:
 		return false
 	if background.layer >= 0 or world_backdrop.z_index >= 0:
+		return false
+	var plate := background.get_node_or_null("TrainingRoomPlate") as TextureRect
+	if plate == null or plate.texture == null or plate.mouse_filter != Control.MOUSE_FILTER_IGNORE:
 		return false
 	for node_name in ["HorizonBand", "MemoryPulseA", "MemoryPulseB", "FarScanA", "FarScanB"]:
 		if not background.get_node_or_null(node_name) is CanvasItem:
@@ -490,6 +498,9 @@ func _stage_2_layered_background_authored(inst: Node) -> bool:
 	if background == null or world_backdrop == null:
 		return false
 	if background.layer >= 0 or world_backdrop.z_index >= 0:
+		return false
+	var plate := background.get_node_or_null("NetworkCorridorPlate") as TextureRect
+	if plate == null or plate.texture == null or plate.mouse_filter != Control.MOUSE_FILTER_IGNORE:
 		return false
 	for node_name in ["HorizonBand", "LiftGlow", "DashGlow", "WakeScanA", "WakeScanB"]:
 		if not background.get_node_or_null(node_name) is CanvasItem:

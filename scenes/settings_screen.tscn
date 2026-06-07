@@ -299,18 +299,18 @@ horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="KeybindPanel" type="PanelContainer" parent="Panel/Margin/VBox" unique_id=463423573]
-custom_minimum_size = Vector2(0, 224)
+custom_minimum_size = Vector2(0, 340)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("SB_frame")
 
 [node name="KeybindingUI" parent="Panel/Margin/VBox/KeybindPanel" unique_id=463423574 instance=ExtResource("7_keybind")]
-custom_minimum_size = Vector2(0, 224)
+custom_minimum_size = Vector2(0, 340)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-action_allowlist = ["move_left", "move_right", "move_up", "move_down", "jump", "attack", "awaken", "interact", "pause", "dialogue_advance"]
+action_allowlist = ["move_left", "move_right", "move_up", "move_down", "jump", "attack", "dash", "awaken", "interact", "pause", "dialogue_advance"]
 
 [node name="Spacer" type="Control" parent="Panel/Margin/VBox" unique_id=1050915002]
 layout_mode = 2

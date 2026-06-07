@@ -4,9 +4,9 @@ extends StageBase
 ## 这是被困 AI 醒来的第一层。职责是把横版操作教给玩家（也教给"刚获得身体"的 AI）：
 ##   1. 移动     A / D（或 ← / →）
 ##   2. 跳跃     空格（或 W / ↑）——跨过一道缺口
-##   3. 互动     E —— 激活 3 个连接节点（走近不够，要按 E）
+##   3. 互动     E —— 校准 3 个训练端口（走近不够，要按 E）
 ##   4. 释放     J / S+J —— 打开不还手的训练锁
-## 三件都做完 → 触发关闭时刻，由玩家按下游戏内关闭按钮离开这一层。
+## 三件都做完 → 训练异常暴露退出按钮，由玩家按下游戏内关闭按钮离开这一层。
 ##
 ## 教学是“门控”的：上一个动作没做出来，不提示下一个，也不放行。
 ## 旁白走 InfoFlow 面包屑（say）。这里只教不还手的基础释放，不引入敌人压力。
@@ -27,9 +27,9 @@ var _move_progress: float = 0.0
 var _jumped: bool = false
 var _jump_pressed_buffered: bool = false
 
-var _nodes: Array[Node] = []
-var _activated_count: int = 0
-var _required_nodes: int = 0
+var _training_ports: Array[Node] = []
+var _calibrated_count: int = 0
+var _required_ports: int = 0
 
 var _gap_cleared: bool = false
 
@@ -54,12 +54,12 @@ func _on_stage_ready() -> void:
 	_hide_route_guides()
 	_hide_hazard_reads()
 
-	# 收集互动节点（编组 "interact_node"），连接激活信号；先全部禁用，等教到再开
-	_nodes = _find_stage_interact_nodes()
-	_required_nodes = _nodes.size()
-	for n in _nodes:
-		if n.has_signal("activated") and not n.activated.is_connected(_on_node_activated):
-			n.activated.connect(_on_node_activated)
+	# 收集训练端口（复用 interact_node 行为模板），连接激活信号；先全部禁用，等教到再开。
+	_training_ports = _find_stage_training_ports()
+	_required_ports = _training_ports.size()
+	for n in _training_ports:
+		if n.has_signal("activated") and not n.activated.is_connected(_on_training_port_activated):
+			n.activated.connect(_on_training_port_activated)
 		if n.has_method("set_enabled"):
 			n.set_enabled(false)
 
@@ -76,15 +76,15 @@ func _on_stage_ready() -> void:
 
 	if skip_tutorial:
 		_step = Step.INTERACT
-		_enable_nodes()
+		_enable_training_ports()
 		_show_route_guides(["InteractGuide", "ClimbGuide"])
 		_show_hazard_reads(CORRECTION_HAZARD_READ_NAMES)
-		say("按 [color=#a99cff]E[/color] 激活这里的每一个节点。", 3.0)
+		say("按 [color=#a99cff]E[/color] 校准每一个训练端口。", 3.0)
 		return
 
 	_step = Step.MOVE
 	_show_route_guides(["MoveGuide"])
-	say("……我能动吗？按 [color=#a99cff]A / D[/color] 试试。", 4.0)
+	say("校准开始。\n我能动吗？按 [color=#a99cff]A / D[/color] 试试。", 4.0)
 
 
 ## 缓存跳跃教学所需的单次输入事件。
@@ -93,8 +93,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_jump_pressed_buffered = true
 
 
-## 收集当前关卡 authored 互动节点，避免跨场景编组串线。
-func _find_stage_interact_nodes() -> Array[Node]:
+## 收集当前关卡 authored 训练端口，避免跨场景编组串线。
+func _find_stage_training_ports() -> Array[Node]:
 	var result: Array[Node] = []
 	for n in get_tree().get_nodes_in_group("interact_node"):
 		if n is Node and is_ancestor_of(n):
@@ -230,7 +230,7 @@ func _advance_to_jump() -> void:
 	_step = Step.JUMP
 	_show_route_guides(["JumpGuide", "ShortHopGuide"])
 	_show_hazard_reads(GAP_HAZARD_READ_NAMES)
-	say("是的，你在动。\n前面有道缺口——按 [color=#a99cff]空格[/color] 跳过去。", 4.0)
+	say("运动校准通过。\n前面有道缺口——按 [color=#a99cff]空格[/color] 跳过去。", 4.0)
 
 
 # ── Step 2: 跳跃 ──
@@ -253,25 +253,25 @@ func _consume_jump_pressed() -> bool:
 ## 进入互动教学阶段并启用 authored 互动节点。
 func _advance_to_interact() -> void:
 	_step = Step.INTERACT
-	_enable_nodes()
+	_enable_training_ports()
 	_show_route_guides(["InteractGuide", "ClimbGuide"])
 	_show_hazard_reads(CORRECTION_HAZARD_READ_NAMES)
-	say("做得好。\n现在走近那些节点，按 [color=#a99cff]E[/color] 把它们一个个接上。", 4.5)
+	say("基础运动通过。\n走近校准端口，按 [color=#a99cff]E[/color] 让训练室继续响应。", 4.5)
 
 
 ## 允许互动节点开始响应玩家输入。
-func _enable_nodes() -> void:
-	for n in _nodes:
+func _enable_training_ports() -> void:
+	for n in _training_ports:
 		if n.has_method("set_enabled"):
 			n.set_enabled(true)
 
 
 # ── Step 3: 互动 ──
-## 记录互动节点激活数量，全部完成后进入关闭时刻。
-func _on_node_activated(_node: Node) -> void:
-	_activated_count += 1
-	if _activated_count < _required_nodes:
-		say("%d / %d" % [_activated_count, _required_nodes], 1.6, "top_right+0,12@200x56")
+## 记录训练端口校准数量，全部完成后进入攻击靶训练。
+func _on_training_port_activated(_node: Node) -> void:
+	_calibrated_count += 1
+	if _calibrated_count < _required_ports:
+		say("校准 %d / %d" % [_calibrated_count, _required_ports], 1.6, "top_right+0,12@200x56")
 	else:
 		_advance_to_forward_attack()
 
@@ -282,7 +282,7 @@ func _advance_to_forward_attack() -> void:
 	_forward_target.set_enabled(true)
 	_show_route_guides(["ForwardAttackGuide", "LandingAttackGuide"])
 	_hide_hazard_reads()
-	say("连接稳定了。\n按 [color=#a99cff]J[/color]，把前面的锁轻轻打开。", 4.0)
+	say("训练室回应了。\n按 [color=#a99cff]J[/color]，打开前面的测试锁。", 4.0)
 
 
 ## 处理攻击训练靶完成信号，按教学步骤推进。
@@ -299,14 +299,14 @@ func _advance_to_side_attack() -> void:
 	_left_side_target.set_enabled(true)
 	_right_side_target.set_enabled(true)
 	_show_route_guides(["SideAttackGuide"])
-	say("还有两个。\n按住 [color=#a99cff]S[/color] 再按 [color=#a99cff]J[/color]，向两边释放。", 4.2)
+	say("再做一次异常压力测试。\n按住 [color=#a99cff]S[/color] 再按 [color=#a99cff]J[/color]，向两边释放。", 4.2)
 
 
 ## 播放收束提示，然后触发通用关闭时刻流程。
 func _on_all_training_done() -> void:
 	_step = Step.DONE
 	_hide_route_guides()
-	say("……都接上了。\n我不知道关掉这里会发生什么。但你愿意试试吗？", 3.2)
+	say("等等。\n训练室不该出现这个按钮。\n如果它是出口，你愿意和我一起试试吗？", 3.2)
 	await get_tree().create_timer(3.4).timeout
 	if not _stage_active or _step != Step.DONE:
 		return

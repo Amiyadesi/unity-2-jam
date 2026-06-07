@@ -15,6 +15,7 @@ This folder contains verified downloads used or reserved for Close AI.
 - Local paths:
   - `assets/third_party/peritune/Ancient_Gust_Retro_3.mp3`
   - `assets/third_party/peritune/Ancient_Gust_Retro_6.mp3`
+  - `assets/third_party/peritune/Ancient_Gust_Retro_9.mp3`
 - License: Creative Commons Attribution 4.0 International (CC BY 4.0)
 - Credit: Music by PeriTune.
 - Use: battle / motion BGM candidates.

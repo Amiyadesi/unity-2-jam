@@ -3,8 +3,8 @@ class_name CloseAIPlayer
 ## player.gd — CloseAI 玩家角色（普通横版 + 觉醒飞行双形态）
 ##
 ## 普通形态：横版平台跳跃。无跳跃精灵图 → 滞空显示 air_frame（可在检查器指定）。
-## 觉醒形态（morphed）：八向自由飞行，无重力；精灵朝移动方向 360° 旋转，
-##   默认朝右；静止时保持上次朝向。移动用 morph_move（中间循环），静止用 morph_idle。
+## 觉醒形态（morphed）：八向自由飞行，无重力；有明确飞行输入时身体朝速度方向旋转，
+##   停下或冻结时回到直立悬浮。移动用 morph_move（中间循环），静止用 morph_idle。
 ##
 ## 变身切换：play_action("transform") 觉醒，play_action("untransform") 解除。
 ## 这两个动作播放期间锁定移动动画与输入朝向。
@@ -31,11 +31,16 @@ const FLY_ACCEL := 3900.0
 const FLY_FRICTION := 2500.0
 ## 精灵旋转跟随速度（弧度/秒插值因子）
 const ROT_LERP := 12.0
+const FLY_UPRIGHT_SPEED_THRESHOLD := 42.0
+const FLY_UPRIGHT_INPUT_THRESHOLD := 0.08
 
 @export var gravity: float = 1200.0
 @export var max_fall_speed: float = 700.0
 ## 普通形态滞空（跳跃/下落）时显示的帧（素材无专门跳跃图，此处指定一帧）
 @export var air_frame: int = 52
+@export_group("Ability Gates")
+@export var allow_awaken: bool = true
+@export var allow_dash: bool = true
 @export_group("Energy")
 @export_range(0.0, 100.0, 1.0) var max_energy: float = 100.0
 @export_range(0.0, 100.0, 1.0) var energy: float = 100.0
@@ -90,6 +95,7 @@ var _jump_released_buffered: bool = false
 var _attack_pressed_buffered: bool = false
 var _awaken_pressed_buffered: bool = false
 var _dash_pressed_buffered: bool = false
+var _last_fly_input: Vector2 = Vector2.ZERO
 
 @onready var _body: Node2D = $Body
 @onready var _sprite: Sprite2D = $Body/Sprite2D
@@ -109,6 +115,8 @@ var _dash_pressed_buffered: bool = false
 @onready var _dash_whiff_read: Node2D = $Body/CombatVFX/DashWhiffRead
 @onready var _cast_energy_particles: GPUParticles2D = $Body/CombatVFX/CastEnergyParticles
 @onready var _cast_impact_ring: Node2D = $Body/CombatVFX/CastImpactRing
+@onready var _awaken_center_particles: GPUParticles2D = $AwakenCenterVFX/AwakenCenterParticles
+@onready var _awaken_center_ring: Node2D = $AwakenCenterVFX/AwakenCenterRing
 
 
 ## 初始化玩家组、能量与 authored hitbox 状态。
@@ -132,6 +140,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_attack_pressed_buffered = true
 	if InputMap.has_action("awaken") and event.is_action_pressed("awaken", false):
 		_awaken_pressed_buffered = true
+	if InputMap.has_action("dash") and event.is_action_pressed("dash", false):
+		_dash_pressed_buffered = true
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
@@ -233,6 +243,7 @@ func _physics_fly(delta: float) -> void:
 	var input := Vector2.ZERO
 	if not frozen and not _action_playing:
 		input = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	_last_fly_input = input
 	if input.length() > 0.01:
 		velocity = velocity.move_toward(input.normalized() * FLY_SPEED * _current_speed_multiplier(), FLY_ACCEL * _current_speed_multiplier() * delta)
 		_fly_angle = input.angle()
@@ -247,14 +258,26 @@ func _physics_fly(delta: float) -> void:
 			_play_anim("morph_idle")
 
 
-## 精灵朝飞行方向旋转（默认右=0），飞行态不左右翻图。
+## 有明确飞行意图或高速惯性时朝运动方向旋转；停下、冻结或暂停恢复后回正悬浮。
 func _update_facing_fly(delta: float) -> void:
 	if not is_instance_valid(_body):
 		return
 	# 飞行态固定正 scale，避免左右切换图片导致的读图问题。
-	var target := _fly_angle
+	var has_input := _last_fly_input.length() > FLY_UPRIGHT_INPUT_THRESHOLD
+	var has_motion := velocity.length() > FLY_UPRIGHT_SPEED_THRESHOLD
+	var should_follow_motion := not frozen and not _action_playing and (has_input or has_motion)
+	var target := 0.0
+	if has_input:
+		target = _last_fly_input.angle()
+	elif has_motion:
+		target = velocity.angle()
 	_body.scale.x = absf(_body.scale.x)
-	_body.rotation = lerp_angle(_body.rotation, target, clampf(ROT_LERP * delta, 0.0, 1.0))
+	var turn_weight := clampf(ROT_LERP * delta, 0.0, 1.0)
+	var turn_delta := wrapf(target - _body.rotation, -PI, PI)
+	if should_follow_motion and absf(absf(turn_delta) - PI) < 0.001:
+		_body.rotation = target
+	else:
+		_body.rotation = lerp_angle(_body.rotation, target, turn_weight)
 
 
 # ──────────────────────────────────────────────
@@ -263,7 +286,7 @@ func _update_facing_fly(delta: float) -> void:
 
 ## 按 awaken 在普通/觉醒形态间切换。
 func _handle_awaken() -> void:
-	if frozen or _action_playing:
+	if frozen or _action_playing or not allow_awaken:
 		_awaken_pressed_buffered = false
 		return
 	if not InputMap.has_action("awaken"):
@@ -331,6 +354,8 @@ func _release_cast_hitboxes(hitboxes: Array[Area2D]) -> void:
 
 ## 启动觉醒形态鼠标方向冲刺攻击。
 func _start_dash_attack() -> void:
+	if not allow_dash:
+		return
 	if not _try_spend_energy(dash_energy_cost):
 		return
 	var dash_dir := get_global_mouse_position() - global_position
@@ -475,12 +500,12 @@ func _disable_all_hitboxes() -> void:
 ## 隐藏所有 authored 战斗 VFX，确保初始场景干净。
 func _hide_combat_vfx() -> void:
 	_kill_all_vfx_tweens()
-	for node in [_forward_shockwave, _left_shockwave, _right_shockwave, _dash_speed_lines, _dash_wind_ring, _dash_afterimage_trail, _dash_hit_confirm, _dash_whiff_read, _cast_impact_ring]:
+	for node in [_forward_shockwave, _left_shockwave, _right_shockwave, _dash_speed_lines, _dash_wind_ring, _dash_afterimage_trail, _dash_hit_confirm, _dash_whiff_read, _cast_impact_ring, _awaken_center_ring]:
 		if node is CanvasItem:
 			(node as CanvasItem).hide()
 			(node as CanvasItem).modulate.a = 1.0
 			(node as CanvasItem).scale = Vector2.ONE
-	for particles in [_dash_speed_particles, _cast_energy_particles]:
+	for particles in [_dash_speed_particles, _cast_energy_particles, _awaken_center_particles]:
 		if particles != null:
 			particles.emitting = false
 
@@ -820,6 +845,18 @@ func _do_untransform() -> void:
 ## 切换外部剧情/对话冻结状态。
 func set_frozen(value: bool) -> void:
 	frozen = value
+	if frozen:
+		correct_flight_pose()
+
+
+## 外部暂停或剧情冻结时，把飞行姿态收回直立悬浮。
+func correct_flight_pose() -> void:
+	_last_fly_input = Vector2.ZERO
+	_fly_angle = 0.0
+	if not is_instance_valid(_body):
+		return
+	_body.scale.x = absf(_body.scale.x)
+	_body.rotation = 0.0
 
 
 ## 外部奖励能量，供善意信息流和终战超载调用。
@@ -858,6 +895,8 @@ func is_dashing() -> bool:
 
 ## 播放觉醒/超载释放反馈，复用 authored 粒子和冲击圈。
 func _trigger_ability_release_vfx() -> void:
-	_trigger_release_particles()
-	_play_one_shot_vfx(_cast_impact_ring, 0.22, Vector2(0.42, 0.42), Vector2(1.42, 1.42))
+	if is_instance_valid(_awaken_center_particles):
+		_awaken_center_particles.restart()
+		_awaken_center_particles.emitting = true
+	_play_one_shot_vfx(_awaken_center_ring, 0.22, Vector2(0.42, 0.42), Vector2(1.42, 1.42))
 	_kick_camera(0.14, 6.5)

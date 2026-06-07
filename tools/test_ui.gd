@@ -42,6 +42,8 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check("menu instantiates", is_instance_valid(menu))
+	var start_line := menu.get_node_or_null("StartLine") as Label
+	_check("menu start line updated", start_line != null and start_line.text == "我期待与你的再会")
 	var primary = menu.get_node_or_null("ButtonColumn/PrimaryButton")
 	_check("PrimaryButton is ShaderButton", primary != null and primary.has_method("set_bbtext"))
 	var settings = menu.get_node_or_null("SettingsScreen")
@@ -51,7 +53,15 @@ func _run() -> void:
 	_check("settings removed fullscreen button", settings != null and settings.get_node_or_null("Panel/Margin/VBox/DisplayRow/FullscreenCheck") == null)
 	_check("settings has UI volume slider", settings != null and settings.get_node_or_null("Panel/Margin/VBox/UiRow/UiSlider") is HSlider)
 	_check("settings has Ambient volume slider", settings != null and settings.get_node_or_null("Panel/Margin/VBox/AmbientRow/AmbientSlider") is HSlider)
-	_check("settings has keybinding UI", settings != null and settings.get_node_or_null("Panel/Margin/VBox/KeybindPanel/KeybindingUI") != null)
+	var keybind_panel: Control = null
+	var keybinding_ui = null
+	if settings != null:
+		keybind_panel = settings.get_node_or_null("Panel/Margin/VBox/KeybindPanel") as Control
+		keybinding_ui = settings.get_node_or_null("Panel/Margin/VBox/KeybindPanel/KeybindingUI")
+	_check("settings has keybinding UI", keybinding_ui != null)
+	_check("settings keybind panel has room", keybind_panel != null and keybind_panel.custom_minimum_size.y >= 320.0)
+	_check("settings keybinding UI has room", keybinding_ui != null and keybinding_ui.custom_minimum_size.y >= 320.0)
+	_check("settings keybinding allowlist includes dash", keybinding_ui != null and "action_allowlist" in keybinding_ui and keybinding_ui.action_allowlist.has("dash"))
 
 	# 回归守护："overlay 挡住菜单按钮"——close_mock 等常驻 overlay 的所有
 	# 可见控件都必须 mouse_filter=IGNORE(2)，否则会挡住其覆盖范围内的按钮点击。

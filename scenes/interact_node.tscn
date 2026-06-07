@@ -18,7 +18,7 @@ offset_left = -22.0
 offset_top = -36.0
 offset_right = 22.0
 offset_bottom = 36.0
-color = Color(0.14, 0.15, 0.2, 1)
+color = Color(0.12, 0.17, 0.18, 1)
 
 [node name="Lit" type="ColorRect" parent="."]
 modulate = Color(1, 1, 1, 0)
@@ -26,7 +26,32 @@ offset_left = -15.0
 offset_top = -29.0
 offset_right = 15.0
 offset_bottom = 29.0
-color = Color(0.486, 0.361, 1, 0.9)
+color = Color(0.42, 0.92, 0.76, 0.86)
+
+[node name="TerminalLineA" type="Line2D" parent="."]
+points = PackedVector2Array(-18, -18, 18, -18)
+width = 2.0
+default_color = Color(0.82, 1, 0.92, 0.46)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="TerminalLineB" type="Line2D" parent="."]
+points = PackedVector2Array(-10, 0, 10, 0)
+width = 2.0
+default_color = Color(1, 0.86, 0.52, 0.42)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="PortLabel" type="Label" parent="."]
+offset_left = -30.0
+offset_top = 42.0
+offset_right = 30.0
+offset_bottom = 62.0
+theme_override_colors/font_color = Color(0.78, 0.95, 0.86, 0.72)
+theme_override_font_sizes/font_size = 12
+text = "CAL"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Prompt" type="Label" parent="."]
 visible = false

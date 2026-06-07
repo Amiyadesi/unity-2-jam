@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://closeaistage2scn"]
+[gd_scene load_steps=14 format=3 uid="uid://closeaistage2scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_2.gd" id="1_stage2"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://closeaienergyhud" path="res://scenes/ui/energy_hud.tscn" id="6_energy_hud"]
 [ext_resource type="PackedScene" path="res://scenes/training_target.tscn" id="7_target"]
 [ext_resource type="PackedScene" path="res://scenes/energy_pocket.tscn" id="8_pocket"]
+[ext_resource type="Texture2D" path="res://assets/generated/backgrounds/stage2_network_corridor.png" id="9_bg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(2100, 48)
@@ -33,6 +34,18 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.06, 0.06, 0.1, 1)
+
+[node name="NetworkCorridorPlate" type="TextureRect" parent="Background"]
+modulate = Color(1, 1, 1, 0.52)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("9_bg")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="HorizonBand" type="ColorRect" parent="Background"]
 anchors_preset = 15

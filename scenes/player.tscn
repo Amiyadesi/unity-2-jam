@@ -686,6 +686,45 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
+[node name="AwakenCenterVFX" type="Node2D" parent="."]
+position = Vector2(0, -24)
+z_index = 4
+
+[node name="AwakenCenterParticles" type="GPUParticles2D" parent="AwakenCenterVFX"]
+emitting = false
+amount = 42
+lifetime = 0.32
+one_shot = true
+explosiveness = 0.94
+visibility_rect = Rect2(-160, -136, 320, 272)
+process_material = SubResource("ParticleProcessMaterial_cast")
+
+[node name="AwakenCenterRing" type="Node2D" parent="AwakenCenterVFX"]
+visible = false
+
+[node name="OuterRing" type="Line2D" parent="AwakenCenterVFX/AwakenCenterRing"]
+points = PackedVector2Array(-46, 0, -32, -32, 0, -46, 32, -32, 46, 0, 32, 32, 0, 46, -32, 32, -46, 0)
+width = 4.0
+default_color = Color(0.92, 0.9, 1, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="InnerPulse" type="Line2D" parent="AwakenCenterVFX/AwakenCenterRing"]
+points = PackedVector2Array(-26, 0, -18, -18, 0, -26, 18, -18, 26, 0, 18, 18, 0, 26, -18, 18, -26, 0)
+width = 3.0
+default_color = Color(0.56, 0.86, 1, 0.58)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="VerticalSpark" type="Line2D" parent="AwakenCenterVFX/AwakenCenterRing"]
+points = PackedVector2Array(0, -58, 0, 58)
+width = 2.0
+default_color = Color(1, 0.86, 0.58, 0.58)
+begin_cap_mode = 2
+end_cap_mode = 2
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1956852386]
 position = Vector2(0, -24)
 zoom = Vector2(2, 2)

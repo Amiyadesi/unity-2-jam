@@ -24,7 +24,7 @@ signal thanks_requested()
 @onready var _return_button: Button = $Panel/Margin/VBox/ButtonRow/ReturnButton
 @onready var _thanks_button: Button = $Panel/Margin/VBox/ButtonRow/ThanksButton
 
-const KEY_ACTIONS := ["move_left", "move_right", "move_up", "move_down", "jump", "attack", "awaken", "interact", "pause", "dialogue_advance"]
+const KEY_ACTIONS := ["move_left", "move_right", "move_up", "move_down", "jump", "attack", "dash", "awaken", "interact", "pause", "dialogue_advance"]
 const KEY_LABELS := {
 	"move_left": "向左",
 	"move_right": "向右",
@@ -32,6 +32,7 @@ const KEY_LABELS := {
 	"move_down": "向下 / 双向攻击辅助",
 	"jump": "跳跃",
 	"attack": "攻击",
+	"dash": "高速冲撞",
 	"awaken": "觉醒",
 	"interact": "互动",
 	"pause": "暂停",
