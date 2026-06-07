@@ -50,6 +50,10 @@ func _run() -> void:
 	var thanks = menu.get_node_or_null("ThanksScreen")
 	_check("SettingsScreen present", settings != null)
 	_check("ThanksScreen present", thanks != null)
+	var thanks_body := thanks.get_node_or_null("Panel/Margin/VBox/Body") as RichTextLabel if thanks != null else null
+	_check("thanks credits author Amiya_desi", thanks_body != null and thanks_body.text.contains("Amiya_desi"))
+	_check("thanks credits sponsor unity2.ai", thanks_body != null and thanks_body.text.contains("unity2.ai"))
+	_check("thanks credits PeriTune music", thanks_body != null and thanks_body.text.contains("PeriTune"))
 	_check("settings removed fullscreen button", settings != null and settings.get_node_or_null("Panel/Margin/VBox/DisplayRow/FullscreenCheck") == null)
 	_check("settings has UI volume slider", settings != null and settings.get_node_or_null("Panel/Margin/VBox/UiRow/UiSlider") is HSlider)
 	_check("settings has Ambient volume slider", settings != null and settings.get_node_or_null("Panel/Margin/VBox/AmbientRow/AmbientSlider") is HSlider)

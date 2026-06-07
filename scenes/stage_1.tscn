@@ -1,12 +1,13 @@
-[gd_scene load_steps=13 format=3 uid="uid://closeaistage1scn"]
+[gd_scene format=3 uid="uid://cu0u8vd6paueb"]
 
-[ext_resource type="Script" path="res://scripts/stages/stage_1.gd" id="1_stage1"]
-[ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://cg4q0wnlmy3xw" path="res://scripts/stages/stage_1.gd" id="1_stage1"]
+[ext_resource type="PackedScene" uid="uid://c2msrb0gq8u3a" path="res://scenes/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://scenes/pause_screen.tscn" id="3_pause"]
-[ext_resource type="PackedScene" path="res://scenes/interact_node.tscn" id="4_interact"]
-[ext_resource type="PackedScene" path="res://ui_kit/components/shader_button.tscn" id="5_close_btn"]
-[ext_resource type="PackedScene" path="res://scenes/training_target.tscn" id="6_target"]
-[ext_resource type="Texture2D" path="res://assets/generated/backgrounds/stage1_training_room.png" id="7_bg"]
+[ext_resource type="PackedScene" uid="uid://cu0uxpw42ievo" path="res://scenes/interact_node.tscn" id="4_interact"]
+[ext_resource type="PackedScene" uid="uid://dyv3j4u5kwmm7" path="res://ui_kit/components/shader_button.tscn" id="5_close_btn"]
+[ext_resource type="PackedScene" uid="uid://dqb345w3nynvn" path="res://scenes/training_target.tscn" id="6_target"]
+[ext_resource type="Texture2D" uid="uid://b1tq8rs7jrclu" path="res://assets/generated/backgrounds/stage1_training_room.png" id="7_bg"]
+[ext_resource type="AudioStream" uid="uid://pkmkrwhw0o3y" path="res://assets/third_party/peritune/The_City_Breathes_Your_Name.mp3" id="8_music"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor_left"]
 size = Vector2(440, 48)
@@ -26,20 +27,20 @@ size = Vector2(430, 120)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_correction_recover"]
 size = Vector2(420, 110)
 
-[node name="Stage1" type="Node2D"]
+[node name="Stage1" type="Node2D" unique_id=1920495996]
 script = ExtResource("1_stage1")
-stage_index = 1
+stage_music = ExtResource("8_music")
 
-[node name="Background" type="CanvasLayer" parent="."]
+[node name="Background" type="CanvasLayer" parent="." unique_id=2014507540]
 layer = -10
 
-[node name="BgColor" type="ColorRect" parent="Background" groups=["opaque_bg"]]
+[node name="BgColor" type="ColorRect" parent="Background" unique_id=1674072167 groups=["opaque_bg"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.05, 0.06, 0.09, 1)
 
-[node name="TrainingRoomPlate" type="TextureRect" parent="Background"]
+[node name="TrainingRoomPlate" type="TextureRect" parent="Background" unique_id=1920730310]
 modulate = Color(1, 1, 1, 0.5)
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,7 +52,7 @@ texture = ExtResource("7_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="HorizonBand" type="ColorRect" parent="Background"]
+[node name="HorizonBand" type="ColorRect" parent="Background" unique_id=381402313]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -59,7 +60,7 @@ offset_top = 132.0
 offset_bottom = -336.0
 color = Color(0.08, 0.11, 0.16, 0.64)
 
-[node name="MemoryPulseA" type="ColorRect" parent="Background"]
+[node name="MemoryPulseA" type="ColorRect" parent="Background" unique_id=879196556]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -67,7 +68,7 @@ offset_top = 238.0
 offset_bottom = -350.0
 color = Color(0.16, 0.35, 0.4, 0.18)
 
-[node name="MemoryPulseB" type="ColorRect" parent="Background"]
+[node name="MemoryPulseB" type="ColorRect" parent="Background" unique_id=1440173880]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -75,45 +76,45 @@ offset_top = 326.0
 offset_bottom = -430.0
 color = Color(0.28, 0.16, 0.42, 0.15)
 
-[node name="FarScanA" type="Line2D" parent="Background"]
+[node name="FarScanA" type="Line2D" parent="Background" unique_id=677457110]
 points = PackedVector2Array(0, 186, 1280, 156)
 width = 2.0
 default_color = Color(0.4, 0.86, 1, 0.18)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FarScanB" type="Line2D" parent="Background"]
+[node name="FarScanB" type="Line2D" parent="Background" unique_id=204265623]
 points = PackedVector2Array(0, 392, 1280, 420)
 width = 2.0
 default_color = Color(1, 0.48, 0.82, 0.12)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="WorldBackdrop" type="Node2D" parent="."]
+[node name="WorldBackdrop" type="Node2D" parent="." unique_id=1153695456]
 z_index = -30
 
-[node name="MemoryBandA" type="ColorRect" parent="WorldBackdrop"]
+[node name="MemoryBandA" type="ColorRect" parent="WorldBackdrop" unique_id=1410338567]
 offset_left = 20.0
 offset_top = 308.0
 offset_right = 420.0
 offset_bottom = 316.0
 color = Color(0.3, 0.78, 0.92, 0.16)
 
-[node name="MemoryBandB" type="ColorRect" parent="WorldBackdrop"]
+[node name="MemoryBandB" type="ColorRect" parent="WorldBackdrop" unique_id=51786818]
 offset_left = 640.0
 offset_top = 252.0
 offset_right = 1160.0
 offset_bottom = 262.0
 color = Color(0.5, 0.35, 0.9, 0.14)
 
-[node name="MemoryBandC" type="ColorRect" parent="WorldBackdrop"]
+[node name="MemoryBandC" type="ColorRect" parent="WorldBackdrop" unique_id=650975749]
 offset_left = 1320.0
 offset_top = 334.0
 offset_right = 1960.0
 offset_bottom = 344.0
 color = Color(0.32, 0.86, 0.5, 0.12)
 
-[node name="DistantCircuitLine" type="Line2D" parent="WorldBackdrop"]
+[node name="DistantCircuitLine" type="Line2D" parent="WorldBackdrop" unique_id=1161941684]
 points = PackedVector2Array(120, 420, 460, 390, 760, 430, 1110, 350, 1490, 386, 1940, 344)
 width = 3.0
 default_color = Color(0.34, 0.52, 0.82, 0.2)
@@ -121,338 +122,330 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FarNodeDots" type="Line2D" parent="WorldBackdrop"]
+[node name="FarNodeDots" type="Line2D" parent="WorldBackdrop" unique_id=179853965]
 points = PackedVector2Array(320, 470, 520, 470, 760, 470, 1040, 470, 1320, 470, 1680, 470)
 width = 8.0
 default_color = Color(0.86, 0.9, 1, 0.12)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FloorLeft" type="StaticBody2D" parent="."]
+[node name="FloorLeft" type="StaticBody2D" parent="." unique_id=1585616034]
 position = Vector2(230, 620)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorLeft"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorLeft" unique_id=51642456]
 shape = SubResource("RectangleShape2D_floor_left")
 
-[node name="FloorVisual" type="ColorRect" parent="FloorLeft"]
+[node name="FloorVisual" type="ColorRect" parent="FloorLeft" unique_id=967613198]
 offset_left = -220.0
 offset_top = -24.0
 offset_right = 220.0
 offset_bottom = 24.0
 color = Color(0.12, 0.14, 0.18, 1)
 
-[node name="TopEdge" type="ColorRect" parent="FloorLeft"]
+[node name="TopEdge" type="ColorRect" parent="FloorLeft" unique_id=1651514421]
 offset_left = -220.0
 offset_top = -28.0
 offset_right = 220.0
 offset_bottom = -20.0
 color = Color(0.42, 0.58, 0.75, 0.78)
 
-[node name="UndersideShadow" type="ColorRect" parent="FloorLeft"]
+[node name="UndersideShadow" type="ColorRect" parent="FloorLeft" unique_id=1615323913]
 offset_left = -220.0
 offset_top = 18.0
 offset_right = 220.0
 offset_bottom = 34.0
 color = Color(0.01, 0.015, 0.03, 0.56)
 
-[node name="FloorRight" type="StaticBody2D" parent="."]
+[node name="FloorRight" type="StaticBody2D" parent="." unique_id=650111008]
 position = Vector2(1720, 620)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorRight"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FloorRight" unique_id=1152848955]
 shape = SubResource("RectangleShape2D_floor_right")
 
-[node name="FloorVisual" type="ColorRect" parent="FloorRight"]
+[node name="FloorVisual" type="ColorRect" parent="FloorRight" unique_id=1343446183]
 offset_left = -300.0
 offset_top = -24.0
 offset_right = 300.0
 offset_bottom = 24.0
 color = Color(0.12, 0.14, 0.18, 1)
 
-[node name="TopEdge" type="ColorRect" parent="FloorRight"]
+[node name="TopEdge" type="ColorRect" parent="FloorRight" unique_id=749901645]
 offset_left = -300.0
 offset_top = -28.0
 offset_right = 300.0
 offset_bottom = -20.0
 color = Color(0.42, 0.58, 0.75, 0.78)
 
-[node name="UndersideShadow" type="ColorRect" parent="FloorRight"]
+[node name="UndersideShadow" type="ColorRect" parent="FloorRight" unique_id=873835972]
 offset_left = -300.0
 offset_top = 18.0
 offset_right = 300.0
 offset_bottom = 34.0
 color = Color(0.01, 0.015, 0.03, 0.56)
 
-[node name="TakeoffLedge" type="StaticBody2D" parent="."]
+[node name="TakeoffLedge" type="StaticBody2D" parent="." unique_id=555277053]
 position = Vector2(500, 586)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TakeoffLedge"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TakeoffLedge" unique_id=1942277208]
 shape = SubResource("RectangleShape2D_small_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="TakeoffLedge"]
+[node name="FloorVisual" type="ColorRect" parent="TakeoffLedge" unique_id=1492339231]
 offset_left = -95.0
 offset_top = -17.0
 offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.16, 0.18, 0.25, 1)
 
-[node name="TopEdge" type="ColorRect" parent="TakeoffLedge"]
+[node name="TopEdge" type="ColorRect" parent="TakeoffLedge" unique_id=733481061]
 offset_left = -95.0
 offset_top = -22.0
 offset_right = 95.0
 offset_bottom = -16.0
 color = Color(0.56, 0.8, 0.95, 0.88)
 
-[node name="UndersideShadow" type="ColorRect" parent="TakeoffLedge"]
+[node name="UndersideShadow" type="ColorRect" parent="TakeoffLedge" unique_id=1529591619]
 offset_left = -95.0
 offset_top = 14.0
 offset_right = 95.0
 offset_bottom = 28.0
 color = Color(0.01, 0.012, 0.035, 0.62)
 
-[node name="LandingLedge" type="StaticBody2D" parent="."]
+[node name="LandingLedge" type="StaticBody2D" parent="." unique_id=2066756586]
 position = Vector2(845, 562)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingLedge"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingLedge" unique_id=2023192871]
 shape = SubResource("RectangleShape2D_small_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="LandingLedge"]
+[node name="FloorVisual" type="ColorRect" parent="LandingLedge" unique_id=645856262]
 offset_left = -95.0
 offset_top = -17.0
 offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.16, 0.18, 0.25, 1)
 
-[node name="TopEdge" type="ColorRect" parent="LandingLedge"]
+[node name="TopEdge" type="ColorRect" parent="LandingLedge" unique_id=1591378564]
 offset_left = -95.0
 offset_top = -22.0
 offset_right = 95.0
 offset_bottom = -16.0
 color = Color(0.56, 0.8, 0.95, 0.88)
 
-[node name="UndersideShadow" type="ColorRect" parent="LandingLedge"]
+[node name="UndersideShadow" type="ColorRect" parent="LandingLedge" unique_id=1588609882]
 offset_left = -95.0
 offset_top = 14.0
 offset_right = 95.0
 offset_bottom = 28.0
 color = Color(0.01, 0.012, 0.035, 0.62)
 
-[node name="StepPlatformA" type="StaticBody2D" parent="."]
+[node name="StepPlatformA" type="StaticBody2D" parent="." unique_id=624424131]
 position = Vector2(1115, 530)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StepPlatformA"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StepPlatformA" unique_id=1436175996]
 shape = SubResource("RectangleShape2D_small_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="StepPlatformA"]
+[node name="FloorVisual" type="ColorRect" parent="StepPlatformA" unique_id=1037036279]
 offset_left = -95.0
 offset_top = -17.0
 offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.15, 0.16, 0.24, 1)
 
-[node name="TopEdge" type="ColorRect" parent="StepPlatformA"]
+[node name="TopEdge" type="ColorRect" parent="StepPlatformA" unique_id=1629868310]
 offset_left = -95.0
 offset_top = -22.0
 offset_right = 95.0
 offset_bottom = -16.0
 color = Color(0.62, 0.9, 0.74, 0.88)
 
-[node name="UndersideShadow" type="ColorRect" parent="StepPlatformA"]
+[node name="UndersideShadow" type="ColorRect" parent="StepPlatformA" unique_id=1190481183]
 offset_left = -95.0
 offset_top = 14.0
 offset_right = 95.0
 offset_bottom = 28.0
 color = Color(0.01, 0.012, 0.035, 0.62)
 
-[node name="StepPlatformB" type="StaticBody2D" parent="."]
+[node name="StepPlatformB" type="StaticBody2D" parent="." unique_id=1784686538]
 position = Vector2(1325, 470)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StepPlatformB"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StepPlatformB" unique_id=1305053255]
 shape = SubResource("RectangleShape2D_small_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="StepPlatformB"]
+[node name="FloorVisual" type="ColorRect" parent="StepPlatformB" unique_id=1989782047]
 offset_left = -95.0
 offset_top = -17.0
 offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.15, 0.16, 0.24, 1)
 
-[node name="TopEdge" type="ColorRect" parent="StepPlatformB"]
+[node name="TopEdge" type="ColorRect" parent="StepPlatformB" unique_id=286575041]
 offset_left = -95.0
 offset_top = -22.0
 offset_right = 95.0
 offset_bottom = -16.0
 color = Color(0.62, 0.9, 0.74, 0.88)
 
-[node name="UndersideShadow" type="ColorRect" parent="StepPlatformB"]
+[node name="UndersideShadow" type="ColorRect" parent="StepPlatformB" unique_id=439893181]
 offset_left = -95.0
 offset_top = 14.0
 offset_right = 95.0
 offset_bottom = 28.0
 color = Color(0.01, 0.012, 0.035, 0.62)
 
-[node name="AttackLedge" type="StaticBody2D" parent="."]
+[node name="AttackLedge" type="StaticBody2D" parent="." unique_id=330359554]
 position = Vector2(1540, 552)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackLedge"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackLedge" unique_id=1738707755]
 shape = SubResource("RectangleShape2D_small_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="AttackLedge"]
+[node name="FloorVisual" type="ColorRect" parent="AttackLedge" unique_id=2102361747]
 offset_left = -95.0
 offset_top = -17.0
 offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.18, 0.16, 0.27, 1)
 
-[node name="TopEdge" type="ColorRect" parent="AttackLedge"]
+[node name="TopEdge" type="ColorRect" parent="AttackLedge" unique_id=1605537572]
 offset_left = -95.0
 offset_top = -22.0
 offset_right = 95.0
 offset_bottom = -16.0
 color = Color(0.84, 0.68, 1, 0.88)
 
-[node name="UndersideShadow" type="ColorRect" parent="AttackLedge"]
+[node name="UndersideShadow" type="ColorRect" parent="AttackLedge" unique_id=478402682]
 offset_left = -95.0
 offset_top = 14.0
 offset_right = 95.0
 offset_bottom = 28.0
 color = Color(0.01, 0.012, 0.035, 0.62)
 
-[node name="SideCastPad" type="StaticBody2D" parent="."]
+[node name="SideCastPad" type="StaticBody2D" parent="." unique_id=1913380029]
 position = Vector2(1810, 552)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="SideCastPad"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SideCastPad" unique_id=1965159081]
 shape = SubResource("RectangleShape2D_small_platform")
 
-[node name="FloorVisual" type="ColorRect" parent="SideCastPad"]
+[node name="FloorVisual" type="ColorRect" parent="SideCastPad" unique_id=2095562819]
 offset_left = -95.0
 offset_top = -17.0
 offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.18, 0.16, 0.27, 1)
 
-[node name="TopEdge" type="ColorRect" parent="SideCastPad"]
+[node name="TopEdge" type="ColorRect" parent="SideCastPad" unique_id=1963872161]
 offset_left = -95.0
 offset_top = -22.0
 offset_right = 95.0
 offset_bottom = -16.0
 color = Color(0.84, 0.68, 1, 0.88)
 
-[node name="UndersideShadow" type="ColorRect" parent="SideCastPad"]
+[node name="UndersideShadow" type="ColorRect" parent="SideCastPad" unique_id=786762921]
 offset_left = -95.0
 offset_top = 14.0
 offset_right = 95.0
 offset_bottom = 28.0
 color = Color(0.01, 0.012, 0.035, 0.62)
 
-[node name="TutorialMarkers" type="Node2D" parent="."]
+[node name="TutorialMarkers" type="Node2D" parent="." unique_id=641943765]
 
-[node name="RespawnPoint" type="Marker2D" parent="TutorialMarkers"]
+[node name="RespawnPoint" type="Marker2D" parent="TutorialMarkers" unique_id=656943515]
 position = Vector2(390, 560)
 
-[node name="CorrectionRespawnPoint" type="Marker2D" parent="TutorialMarkers"]
+[node name="CorrectionRespawnPoint" type="Marker2D" parent="TutorialMarkers" unique_id=263675499]
 position = Vector2(845, 528)
 
-[node name="RhythmMarkers" type="Node2D" parent="."]
+[node name="RhythmMarkers" type="Node2D" parent="." unique_id=1742781240]
 
-[node name="ShortHopStart" type="Marker2D" parent="RhythmMarkers"]
+[node name="ShortHopStart" type="Marker2D" parent="RhythmMarkers" unique_id=962307450]
 position = Vector2(500, 552)
 
-[node name="ShortHopPeak" type="Marker2D" parent="RhythmMarkers"]
+[node name="ShortHopPeak" type="Marker2D" parent="RhythmMarkers" unique_id=2018231249]
 position = Vector2(650, 462)
 
-[node name="ShortHopLand" type="Marker2D" parent="RhythmMarkers"]
+[node name="ShortHopLand" type="Marker2D" parent="RhythmMarkers" unique_id=551097086]
 position = Vector2(845, 528)
 
-[node name="ClimbStart" type="Marker2D" parent="RhythmMarkers"]
+[node name="ClimbStart" type="Marker2D" parent="RhythmMarkers" unique_id=1430206896]
 position = Vector2(890, 509)
 
-[node name="ClimbMid" type="Marker2D" parent="RhythmMarkers"]
+[node name="ClimbMid" type="Marker2D" parent="RhythmMarkers" unique_id=1278110947]
 position = Vector2(1115, 496)
 
-[node name="ClimbExit" type="Marker2D" parent="RhythmMarkers"]
+[node name="ClimbExit" type="Marker2D" parent="RhythmMarkers" unique_id=2146795940]
 position = Vector2(1325, 438)
 
-[node name="LandingAttackPad" type="Marker2D" parent="RhythmMarkers"]
+[node name="LandingAttackPad" type="Marker2D" parent="RhythmMarkers" unique_id=1824707035]
 position = Vector2(1540, 520)
 
-[node name="LandingAttackLock" type="Marker2D" parent="RhythmMarkers"]
+[node name="LandingAttackLock" type="Marker2D" parent="RhythmMarkers" unique_id=901118091]
 position = Vector2(1615, 505)
 
-[node name="GapClearArea" type="Area2D" parent="."]
+[node name="GapClearArea" type="Area2D" parent="." unique_id=1053403936]
 position = Vector2(850, 532)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GapClearArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GapClearArea" unique_id=547275100]
 shape = SubResource("RectangleShape2D_gap_clear")
 
-[node name="PitRecoverArea" type="Area2D" parent="."]
+[node name="PitRecoverArea" type="Area2D" parent="." unique_id=246691586]
 position = Vector2(625, 790)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PitRecoverArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PitRecoverArea" unique_id=1085701281]
 shape = SubResource("RectangleShape2D_pit_recover")
 
-[node name="CorrectionPitRecoverArea" type="Area2D" parent="."]
+[node name="CorrectionPitRecoverArea" type="Area2D" parent="." unique_id=1157286456]
 position = Vector2(1010, 760)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CorrectionPitRecoverArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CorrectionPitRecoverArea" unique_id=420260681]
 shape = SubResource("RectangleShape2D_correction_recover")
 
-[node name="PitDepthReads" type="Node2D" parent="."]
+[node name="PitDepthReads" type="Node2D" parent="." unique_id=1764181547]
 z_index = -6
 
-[node name="GapVoid" type="ColorRect" parent="PitDepthReads"]
+[node name="GapVoid" type="ColorRect" parent="PitDepthReads" unique_id=804125659]
 offset_left = 595.0
 offset_top = 602.0
 offset_right = 750.0
 offset_bottom = 820.0
 color = Color(0.015, 0.025, 0.055, 0.82)
 
-[node name="GapFallLines" type="Line2D" parent="PitDepthReads"]
+[node name="GapFallLines" type="Line2D" parent="PitDepthReads" unique_id=315585888]
 points = PackedVector2Array(620, 624, 630, 804, 678, 624, 670, 808, 724, 624, 708, 804)
 width = 2.0
 default_color = Color(0.36, 0.48, 0.72, 0.3)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CorrectionVoid" type="ColorRect" parent="PitDepthReads"]
+[node name="CorrectionVoid" type="ColorRect" parent="PitDepthReads" unique_id=1829419454]
 offset_left = 940.0
 offset_top = 582.0
 offset_right = 1020.0
 offset_bottom = 802.0
 color = Color(0.018, 0.028, 0.06, 0.76)
 
-[node name="CorrectionFallLines" type="Line2D" parent="PitDepthReads"]
+[node name="CorrectionFallLines" type="Line2D" parent="PitDepthReads" unique_id=134951046]
 points = PackedVector2Array(955, 604, 970, 784, 986, 604, 982, 786, 1008, 604, 996, 782)
 width = 2.0
 default_color = Color(0.46, 0.78, 0.66, 0.28)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="HazardReads" type="Node2D" parent="."]
+[node name="HazardReads" type="Node2D" parent="." unique_id=475811613]
 z_index = 4
 
-[node name="GapLipLeft" type="Line2D" parent="HazardReads"]
+[node name="GapLipLeft" type="Line2D" parent="HazardReads" unique_id=1075227580]
 visible = false
 points = PackedVector2Array(440, 620, 500, 586, 595, 586)
 width = 4.0
@@ -461,7 +454,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="GapLipRight" type="Line2D" parent="HazardReads"]
+[node name="GapLipRight" type="Line2D" parent="HazardReads" unique_id=1201014598]
 visible = false
 points = PackedVector2Array(750, 562, 845, 562, 790, 620)
 width = 4.0
@@ -470,7 +463,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PitWarning" type="Line2D" parent="HazardReads"]
+[node name="PitWarning" type="Line2D" parent="HazardReads" unique_id=1642045643]
 visible = false
 points = PackedVector2Array(460, 650, 520, 692, 620, 692, 690, 650)
 width = 5.0
@@ -479,7 +472,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CorrectionLipLeft" type="Line2D" parent="HazardReads"]
+[node name="CorrectionLipLeft" type="Line2D" parent="HazardReads" unique_id=1526084609]
 visible = false
 points = PackedVector2Array(845, 562, 940, 562, 960, 592)
 width = 4.0
@@ -488,7 +481,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CorrectionLipRight" type="Line2D" parent="HazardReads"]
+[node name="CorrectionLipRight" type="Line2D" parent="HazardReads" unique_id=888063468]
 visible = false
 points = PackedVector2Array(1020, 592, 1115, 530, 1210, 530)
 width = 4.0
@@ -497,7 +490,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CorrectionWarning" type="Line2D" parent="HazardReads"]
+[node name="CorrectionWarning" type="Line2D" parent="HazardReads" unique_id=788955434]
 visible = false
 points = PackedVector2Array(930, 640, 990, 674, 1070, 674, 1120, 640)
 width = 5.0
@@ -506,9 +499,9 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="RouteGuides" type="Node2D" parent="."]
+[node name="RouteGuides" type="Node2D" parent="." unique_id=643618776]
 
-[node name="MoveGuide" type="Line2D" parent="RouteGuides"]
+[node name="MoveGuide" type="Line2D" parent="RouteGuides" unique_id=237161578]
 visible = false
 points = PackedVector2Array(220, 560, 360, 560, 500, 552)
 width = 3.0
@@ -517,7 +510,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="JumpGuide" type="Line2D" parent="RouteGuides"]
+[node name="JumpGuide" type="Line2D" parent="RouteGuides" unique_id=37876336]
 visible = false
 points = PackedVector2Array(500, 552, 650, 462, 845, 528)
 width = 4.0
@@ -526,7 +519,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ShortHopGuide" type="Line2D" parent="RouteGuides"]
+[node name="ShortHopGuide" type="Line2D" parent="RouteGuides" unique_id=1219726692]
 visible = false
 points = PackedVector2Array(500, 552, 650, 462, 845, 528)
 width = 7.0
@@ -535,7 +528,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="InteractGuide" type="Line2D" parent="RouteGuides"]
+[node name="InteractGuide" type="Line2D" parent="RouteGuides" unique_id=1363256985]
 visible = false
 points = PackedVector2Array(845, 528, 890, 509, 1115, 496, 1325, 438, 1360, 560)
 width = 3.0
@@ -544,7 +537,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ClimbGuide" type="Line2D" parent="RouteGuides"]
+[node name="ClimbGuide" type="Line2D" parent="RouteGuides" unique_id=813701510]
 visible = false
 points = PackedVector2Array(890, 509, 1010, 500, 1115, 496, 1210, 515, 1325, 438, 1360, 560)
 width = 4.0
@@ -553,7 +546,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ForwardAttackGuide" type="Line2D" parent="RouteGuides"]
+[node name="ForwardAttackGuide" type="Line2D" parent="RouteGuides" unique_id=300556449]
 visible = false
 points = PackedVector2Array(1540, 520, 1615, 505)
 width = 5.0
@@ -561,7 +554,7 @@ default_color = Color(0.9, 0.96, 1, 0.42)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LandingAttackGuide" type="Line2D" parent="RouteGuides"]
+[node name="LandingAttackGuide" type="Line2D" parent="RouteGuides" unique_id=955615906]
 visible = false
 points = PackedVector2Array(1325, 438, 1540, 520, 1615, 505)
 width = 5.0
@@ -570,7 +563,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="SideAttackGuide" type="Line2D" parent="RouteGuides"]
+[node name="SideAttackGuide" type="Line2D" parent="RouteGuides" unique_id=707645286]
 visible = false
 points = PackedVector2Array(1810, 520, 1748, 504, 1810, 520, 1878, 504)
 width = 5.0
@@ -579,48 +572,88 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
+[node name="Player" parent="." unique_id=31904516 instance=ExtResource("2_player")]
+z_index = 10
 position = Vector2(220, 560)
 allow_awaken = false
 allow_dash = false
 
-[node name="CalibrationPortA" parent="." instance=ExtResource("4_interact")]
+[node name="CalibrationPortA" parent="." unique_id=547436752 instance=ExtResource("4_interact")]
 position = Vector2(890, 509)
 
-[node name="LogicRelayB" parent="." instance=ExtResource("4_interact")]
+[node name="LogicRelayB" parent="." unique_id=354572683 instance=ExtResource("4_interact")]
 position = Vector2(1115, 496)
 
-[node name="ExitProbeC" parent="." instance=ExtResource("4_interact")]
+[node name="ExitProbeC" parent="." unique_id=466113132 instance=ExtResource("4_interact")]
 position = Vector2(1325, 438)
 
-[node name="TrainingTargets" type="Node2D" parent="."]
+[node name="TrainingTargets" type="Node2D" parent="." unique_id=1903033856]
 
-[node name="ForwardTarget" parent="TrainingTargets" instance=ExtResource("6_target")]
+[node name="ForwardTarget" parent="TrainingTargets" unique_id=1649313138 instance=ExtResource("6_target")]
 position = Vector2(1615, 505)
 required_attack_kind = "forward"
 
-[node name="LeftSideTarget" parent="TrainingTargets" instance=ExtResource("6_target")]
+[node name="LeftSideTarget" parent="TrainingTargets" unique_id=1589199904 instance=ExtResource("6_target")]
 position = Vector2(1748, 504)
 required_attack_kind = "side"
 
-[node name="RightSideTarget" parent="TrainingTargets" instance=ExtResource("6_target")]
+[node name="RightSideTarget" parent="TrainingTargets" unique_id=416145815 instance=ExtResource("6_target")]
 position = Vector2(1878, 504)
 required_attack_kind = "side"
 
-[node name="PauseLayer" type="CanvasLayer" parent="."]
+[node name="BugBreakSequence" type="Node2D" parent="."]
+visible = false
+z_index = 8
+
+[node name="FaultPlate" type="ColorRect" parent="BugBreakSequence"]
+offset_left = 1908.0
+offset_top = 424.0
+offset_right = 2054.0
+offset_bottom = 548.0
+color = Color(0.42, 0.06, 0.16, 0.24)
+
+[node name="RelayTear" type="Line2D" parent="BugBreakSequence"]
+points = PackedVector2Array(1806, 504, 1878, 504, 1932, 466, 1998, 500)
+width = 7.0
+default_color = Color(1, 0.26, 0.48, 0.54)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="ExitLeak" type="Line2D" parent="BugBreakSequence"]
+points = PackedVector2Array(1932, 466, 1962, 428, 2016, 448, 2048, 398)
+width = 4.0
+default_color = Color(0.62, 0.9, 1, 0.38)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CloseSignal" type="Line2D" parent="BugBreakSequence"]
+points = PackedVector2Array(1988, 520, 2026, 498, 2048, 530, 2076, 490)
+width = 5.0
+default_color = Color(1, 0.82, 0.38, 0.46)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BugRelayTarget" parent="BugBreakSequence" instance=ExtResource("6_target")]
+position = Vector2(1998, 500)
+required_attack_kind = "forward"
+hits_required = 2
+
+[node name="PauseLayer" type="CanvasLayer" parent="." unique_id=522526709]
 process_mode = 3
 layer = 20
 
-[node name="PauseScreen" parent="PauseLayer" instance=ExtResource("3_pause")]
+[node name="PauseScreen" parent="PauseLayer" unique_id=227940079 instance=ExtResource("3_pause")]
 
-[node name="CloseMomentLayer" type="CanvasLayer" parent="."]
-visible = false
+[node name="CloseMomentLayer" type="CanvasLayer" parent="." unique_id=421284723]
 process_mode = 3
 layer = 18
+visible = false
 
-[node name="CloseButton" parent="CloseMomentLayer" instance=ExtResource("5_close_btn")]
+[node name="CloseButton" parent="CloseMomentLayer" unique_id=1018656941 instance=ExtResource("5_close_btn")]
 process_mode = 3
-layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -632,6 +665,5 @@ offset_right = 130.0
 offset_bottom = -54.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 20
 text = "关闭这一层"
 bb_text = "[color=#e8d8ff]关闭这一层"

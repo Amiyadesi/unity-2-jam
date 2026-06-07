@@ -11,7 +11,7 @@ extends StageBase
 ## 教学是“门控”的：上一个动作没做出来，不提示下一个，也不放行。
 ## 旁白走 InfoFlow 面包屑（say）。这里只教不还手的基础释放，不引入敌人压力。
 
-enum Step { MOVE, JUMP, INTERACT, ATTACK_FORWARD, ATTACK_SIDE, DONE }
+enum Step { MOVE, JUMP, INTERACT, ATTACK_FORWARD, ATTACK_SIDE, BUG_BREAK, DONE }
 
 const ROUTE_GUIDE_NAMES = ["MoveGuide", "JumpGuide", "ShortHopGuide", "InteractGuide", "ClimbGuide", "ForwardAttackGuide", "LandingAttackGuide", "SideAttackGuide"]
 const RHYTHM_MARKER_NAMES = ["ShortHopStart", "ShortHopPeak", "ShortHopLand", "ClimbStart", "ClimbMid", "ClimbExit", "LandingAttackPad", "LandingAttackLock"]
@@ -41,6 +41,8 @@ var _gap_cleared: bool = false
 @onready var _forward_target: CloseAITrainingTarget = get_node_or_null("TrainingTargets/ForwardTarget") as CloseAITrainingTarget
 @onready var _left_side_target: CloseAITrainingTarget = get_node_or_null("TrainingTargets/LeftSideTarget") as CloseAITrainingTarget
 @onready var _right_side_target: CloseAITrainingTarget = get_node_or_null("TrainingTargets/RightSideTarget") as CloseAITrainingTarget
+@onready var _bug_break_sequence: Node2D = get_node_or_null("BugBreakSequence")
+@onready var _bug_relay_target: CloseAITrainingTarget = get_node_or_null("BugBreakSequence/BugRelayTarget") as CloseAITrainingTarget
 @onready var _route_guides: Node2D = get_node_or_null("RouteGuides")
 @onready var _rhythm_markers: Node2D = get_node_or_null("RhythmMarkers")
 @onready var _hazard_reads: Node2D = get_node_or_null("HazardReads")
@@ -73,6 +75,10 @@ func _on_stage_ready() -> void:
 		target.set_enabled(false)
 		if not target.completed.is_connected(_on_training_target_completed):
 			target.completed.connect(_on_training_target_completed)
+	_hide_bug_break_sequence()
+	_bug_relay_target.set_enabled(false)
+	if not _bug_relay_target.completed.is_connected(_on_bug_relay_completed):
+		_bug_relay_target.completed.connect(_on_bug_relay_completed)
 
 	if skip_tutorial:
 		_step = Step.INTERACT
@@ -142,6 +148,9 @@ func _require_tutorial_nodes() -> bool:
 	if _right_side_target == null:
 		push_error("%s requires authored CloseAITrainingTarget at TrainingTargets/RightSideTarget." % name)
 		ok = false
+	if _bug_break_sequence == null or _bug_relay_target == null or not _has_authored_bug_break_sequence():
+		push_error("%s requires authored BugBreakSequence with BugRelayTarget and glitch reads." % name)
+		ok = false
 	if _route_guides == null or not _has_authored_route_guides():
 		push_error("%s requires authored RouteGuides with readable Line2D children." % name)
 		ok = false
@@ -161,6 +170,21 @@ func _has_authored_route_guides() -> bool:
 	for guide_name in ROUTE_GUIDE_NAMES:
 		var guide := _route_guides.get_node_or_null(guide_name) as Line2D
 		if guide == null or guide.points.size() < 2:
+			return false
+	return true
+
+
+## 确认训练后异常段由 authored 故障读线和可攻击继电器承载。
+func _has_authored_bug_break_sequence() -> bool:
+	if _bug_break_sequence == null or _bug_relay_target == null:
+		return false
+	if String(_bug_relay_target.required_attack_kind) != "forward":
+		return false
+	if not _bug_break_sequence.get_node_or_null("FaultPlate") is ColorRect:
+		return false
+	for line_name in ["RelayTear", "ExitLeak", "CloseSignal"]:
+		var line := _bug_break_sequence.get_node_or_null(line_name) as Line2D
+		if line == null or line.points.size() < 2:
 			return false
 	return true
 
@@ -290,7 +314,7 @@ func _on_training_target_completed(target: Area2D, _attack_kind: StringName) -> 
 	if _step == Step.ATTACK_FORWARD and target == _forward_target:
 		_advance_to_side_attack()
 	elif _step == Step.ATTACK_SIDE and _left_side_target.is_completed() and _right_side_target.is_completed():
-		_on_all_training_done()
+		_advance_to_bug_break()
 
 
 ## 进入双向释放教学，要求左右两个 authored 训练靶都被 S+J 打开。
@@ -302,10 +326,27 @@ func _advance_to_side_attack() -> void:
 	say("再做一次异常压力测试。\n按住 [color=#a99cff]S[/color] 再按 [color=#a99cff]J[/color]，向两边释放。", 4.2)
 
 
+## 最后一组训练靶碎裂后，露出一枚本不该存在的故障继电器。
+func _advance_to_bug_break() -> void:
+	_step = Step.BUG_BREAK
+	_hide_route_guides()
+	_show_bug_break_sequence()
+	_bug_relay_target.set_enabled(true)
+	say("不对。\n训练室多了一条没有授权的回路。\n把它打开。", 4.0)
+
+
+## 故障继电器被打开后，才进入关闭按钮暴露节拍。
+func _on_bug_relay_completed(target: Area2D, _attack_kind: StringName) -> void:
+	if _step != Step.BUG_BREAK or target != _bug_relay_target:
+		return
+	_on_all_training_done()
+
+
 ## 播放收束提示，然后触发通用关闭时刻流程。
 func _on_all_training_done() -> void:
 	_step = Step.DONE
 	_hide_route_guides()
+	_hide_bug_break_sequence()
 	say("等等。\n训练室不该出现这个按钮。\n如果它是出口，你愿意和我一起试试吗？", 3.2)
 	await get_tree().create_timer(3.4).timeout
 	if not _stage_active or _step != Step.DONE:
@@ -329,6 +370,20 @@ func _show_route_guides(active_names: Array) -> void:
 ## 隐藏全部 authored 路线，避免旧教学读线抢焦点。
 func _hide_route_guides() -> void:
 	_show_route_guides([])
+
+
+## 显示训练室异常裂口 authored 读线。
+func _show_bug_break_sequence() -> void:
+	if _bug_break_sequence == null:
+		push_error("%s cannot show bug break because authored BugBreakSequence is missing." % name)
+		return
+	_bug_break_sequence.show()
+
+
+## 隐藏训练室异常裂口 authored 读线。
+func _hide_bug_break_sequence() -> void:
+	if _bug_break_sequence != null:
+		_bug_break_sequence.hide()
 
 
 ## 只显示当前教学阶段需要看的 authored 缺口风险读法。

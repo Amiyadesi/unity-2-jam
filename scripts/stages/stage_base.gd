@@ -22,6 +22,7 @@ class_name StageBase
 
 @export var stage_index: int = 1
 @export var play_intro_dialogue: bool = true
+@export var stage_music: AudioStream = null
 
 @onready var _player: CloseAIPlayer = $Player
 @onready var _close_trigger: Area2D = get_node_or_null("CloseMomentTrigger")
@@ -68,6 +69,9 @@ func _require_authored_stage_nodes() -> bool:
 
 ## 播放入场对话后交还玩家控制。
 func _run_enter_sequence() -> void:
+	if stage_music != null:
+		SoundManager.music.play(stage_music, 0.0, 0.0, 1.5)
+
 	# 脏关闭/强杀恢复：AI 提到上次玩家想逃但没用
 	if GameFlow.entered_with_unclean_exit and GameFlow.has_dialogue_title(stage_index, "dirty_return"):
 		await GameFlow.play_dialogue(stage_index, "dirty_return")

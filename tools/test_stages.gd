@@ -59,6 +59,7 @@ func _run() -> void:
 			_check_stage_1_platform_rhythm(inst)
 			_check_stage_1_visual_readability(inst)
 			_check_stage_1_training_targets(inst)
+			_check_stage_1_bug_break_sequence(inst)
 			await _check_stage_1_route_guides(inst)
 		if scene_path == "res://scenes/stage_2.tscn":
 			_check_stage_2_flight_training(inst)
@@ -169,6 +170,27 @@ func _check_stage_1_training_targets(inst: Node) -> void:
 	_check("stage_1 LeftSideTarget requires side", left_side != null and str(left_side.required_attack_kind) == "side")
 	_check("stage_1 authored RightSideTarget", right_side != null and right_side.has_method("take_player_hit"))
 	_check("stage_1 RightSideTarget requires side", right_side != null and str(right_side.required_attack_kind) == "side")
+
+
+## 确认训练后还有一段 authored 故障继电器，不是直接跳出关闭按钮。
+func _check_stage_1_bug_break_sequence(inst: Node) -> void:
+	var bug_sequence := inst.get_node_or_null("BugBreakSequence") as CanvasItem
+	var bug_target := inst.get_node_or_null("BugBreakSequence/BugRelayTarget")
+	_check("stage_1 authored BugBreakSequence", bug_sequence != null)
+	_check("stage_1 authored BugRelayTarget", bug_target != null and bug_target.has_method("take_player_hit"))
+	_check("stage_1 BugRelayTarget requires forward", bug_target != null and str(bug_target.required_attack_kind) == "forward")
+	for line_name in ["RelayTear", "ExitLeak", "CloseSignal"]:
+		var line := inst.get_node_or_null("BugBreakSequence/" + line_name) as Line2D
+		_check("stage_1 authored bug read " + line_name, line != null and line.points.size() >= 2)
+	if not inst.has_method("_on_stage_ready") or not inst.has_method("_advance_to_bug_break"):
+		_check("stage_1 bug flow methods", false)
+		return
+	inst._on_stage_ready()
+	_check("stage_1 bug sequence hidden after ready", bug_sequence != null and not bug_sequence.visible)
+	_check("stage_1 bug relay disabled after ready", bug_target != null and not bug_target.monitoring)
+	inst._advance_to_bug_break()
+	_check("stage_1 bug sequence visible only at anomaly step", bug_sequence != null and bug_sequence.visible)
+	_check("stage_1 bug relay enabled only at anomaly step", bug_target != null and bug_target.monitoring)
 
 
 ## 确认第 1 关每段教学路线都用 authored Line2D 表达，并由脚本按阶段切换。
@@ -425,6 +447,9 @@ func _check_stage_2_flight_training(inst: Node) -> void:
 	_check("stage_2 authored air combat timing reads", _stage_2_air_combat_timing_reads_authored(inst))
 	_check("stage_2 air combat rooms start hidden", _stage_2_only_air_combat_room_visible(inst, ""))
 	_check("stage_2 air combat timing reads start hidden", _stage_2_only_air_combat_timing_read_visible(inst, ""))
+	_check("stage_2 authored arena bounds", _stage_2_arena_bounds_authored(inst))
+	_check("stage_2 authored close route", _stage_2_close_route_authored(inst))
+	_check("stage_2 close route starts disabled", _stage_2_close_route_enabled(inst) == false)
 
 
 ## 确认冲刺训练靶放在空中路线高处，形成斜向冲刺目标。
@@ -432,6 +457,48 @@ func _stage_2_dash_target_above_low_platform(inst: Node) -> bool:
 	var dash_target := inst.get_node_or_null("FlightTraining/DashTarget") as Node2D
 	var low := inst.get_node_or_null("PlatformLow") as Node2D
 	return dash_target != null and low != null and dash_target.global_position.y < low.global_position.y
+
+
+## 确认 Stage2 飞行房间四周有 authored 真实碰撞墙。
+func _stage_2_arena_bounds_authored(inst: Node) -> bool:
+	var bounds := inst.get_node_or_null("ArenaBounds")
+	if bounds == null:
+		return false
+	for wall_name in ["LeftWall", "RightWall", "Ceiling", "FloorClamp"]:
+		var wall := bounds.get_node_or_null(wall_name) as StaticBody2D
+		if wall == null or wall.scale != Vector2.ONE:
+			return false
+		var shape := wall.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if shape == null or shape.shape == null or shape.scale != Vector2.ONE:
+			return false
+	for read_name in ["TopPermissionLine", "LeftPermissionLine", "RightPermissionLine", "BottomPermissionLine"]:
+		var read := bounds.get_node_or_null("BoundaryReads/" + read_name) as Line2D
+		if read == null or read.points.size() < 2:
+			return false
+	return true
+
+
+## 确认 Stage2 清场后显式引导玩家去关闭触发区。
+func _stage_2_close_route_authored(inst: Node) -> bool:
+	var trigger := inst.get_node_or_null("CloseMomentTrigger") as Area2D
+	var guides := inst.get_node_or_null("CloseRouteGuides") as Node2D
+	if trigger == null or guides == null:
+		return false
+	if not trigger.get_node_or_null("CollisionShape2D") is CollisionShape2D:
+		return false
+	for guide_name in ["ExitWake", "ExitBracket", "PermissionCrack"]:
+		var guide := guides.get_node_or_null(guide_name) as Line2D
+		if guide == null or guide.points.size() < 2:
+			return false
+	return true
+
+
+## 返回 Stage2 清场出口是否已经可见且可触发。
+func _stage_2_close_route_enabled(inst: Node) -> bool:
+	var trigger := inst.get_node_or_null("CloseMomentTrigger") as Area2D
+	var guides := inst.get_node_or_null("CloseRouteGuides") as CanvasItem
+	var shape := trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D if trigger != null else null
+	return trigger != null and guides != null and shape != null and guides.visible and trigger.visible and trigger.monitoring and not shape.disabled
 
 
 ## 确认冲撞连锁靶都要求 dash，避免普通攻击跳过空中教学。
@@ -1204,6 +1271,11 @@ func _check_stage_2_enemy_waves(inst: Node) -> void:
 	_check("stage_2 wave three shows break energy pocket", _stage_2_only_wave_energy_pockets_visible(inst, ["BreakPocket"]))
 	_check("stage_2 wave three shows break air room", _stage_2_only_air_combat_room_visible(inst, "BreakRoom"))
 	_check("stage_2 wave three shows break timing read", _stage_2_only_air_combat_timing_read_visible(inst, "BreakRoom"))
+	stage._on_enemy_defeated()
+	await process_frame
+	_check("stage_2 final wave opens close route", _stage_2_close_route_enabled(inst))
+	_check("stage_2 final wave does not auto-start close moment", not stage._close_moment_started)
+	_check("stage_2 final wave hides combat reads", _stage_2_only_enemy_wave_guides_visible(inst, []) and _stage_2_only_wave_energy_pockets_visible(inst, []) and _stage_2_only_air_combat_room_visible(inst, ""))
 
 
 ## 确认第三关终战纵切由 authored Boss/HUD/门承载。
@@ -1220,6 +1292,7 @@ func _check_stage_3_finale_nodes(inst: Node) -> void:
 	_check("stage_3 authored desktop layer", inst.get_node_or_null("DesktopLayer/DesktopGrid") is Control)
 	_check("stage_3 authored window frame gates", inst.get_node_or_null("WindowFrame/PhaseGateLeft") is CanvasItem and inst.get_node_or_null("WindowFrame/PhaseGateRight") is CanvasItem)
 	_check("stage_3 authored window battle arena", inst.has_method("_has_authored_window_battle_arena") and inst._has_authored_window_battle_arena())
+	_check("stage_3 authored arena bounds", _stage_3_arena_bounds_authored(inst))
 	_check("stage_3 authored window depth reads", _stage_3_window_depth_reads_authored(inst))
 	_check("stage_3 authored phase pacing reads", _stage_3_phase_pacing_reads_authored(inst))
 	_check("stage_3 authored platform read edges", _stage_3_platform_read_edges_authored(inst))
@@ -1378,6 +1451,21 @@ func _stage_3_platform_read_edges_authored(inst: Node) -> bool:
 		if top_edge == null or shadow == null:
 			return false
 		if top_edge.color.a < 0.4 or shadow.color.a < 0.3:
+			return false
+	return true
+
+
+## 确认第三关窗口战场有真实 authored 物理墙，不只是视觉边界。
+func _stage_3_arena_bounds_authored(inst: Node) -> bool:
+	var bounds := inst.get_node_or_null("WindowBattleArena/ArenaBounds")
+	if bounds == null:
+		return false
+	for wall_name in ["LeftWall", "RightWall", "Ceiling", "FloorClamp"]:
+		var wall := bounds.get_node_or_null(wall_name) as StaticBody2D
+		if wall == null or wall.scale != Vector2.ONE:
+			return false
+		var shape := wall.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if shape == null or shape.shape == null or shape.scale != Vector2.ONE:
 			return false
 	return true
 

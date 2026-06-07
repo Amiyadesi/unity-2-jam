@@ -59,6 +59,7 @@ extends BaseBalloon
 @onready var _auto_advance_indicator: Label = %AutoAdvanceIndicator
 @onready var _speed_indicator: Label = %SpeedIndicator
 @onready var _progress_indicator: Polygon2D = %Progress
+@onready var _talk_sound: AudioStreamPlayer = %TalkSound
 @onready var _voice_player: AudioStreamPlayer = %VoicePlayer
 @onready var _auto_advance_button: Button = %AutoAdvanceButton
 @onready var _history_button: Button = %HistoryButton
@@ -195,6 +196,7 @@ func _wire_modules() -> void:
 
 	_typing_sound_module.dialogue_label = _dialogue_label
 	_typing_sound_module.character_manager = _character_manager
+	_typing_sound_module.audio_player = _talk_sound
 
 	_history_module.history_log = _history_log
 	_history_module.character_manager = _character_manager

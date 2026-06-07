@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cu0vajeeu1ueb" path="res://scenes/thanks_screen.tscn" id="4_thx"]
 [ext_resource type="Texture2D" uid="uid://bfl5vknvaskjx" path="res://assets/ui/menu_bg.png" id="5_bg"]
 [ext_resource type="Shader" uid="uid://b5o51ugax5em8" path="res://ui_kit/shaders/glitch_text.gdshader" id="6_glitch"]
+[ext_resource type="AudioStream" uid="uid://pkmkrwhw0o3y" path="res://assets/third_party/peritune/The_City_Breathes_Your_Name.mp3" id="7_music"]
 
 [sub_resource type="ShaderMaterial" id="Mat_glitch_title"]
 shader = ExtResource("6_glitch")
@@ -25,6 +26,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
+menu_music = ExtResource("7_music")
 
 [node name="Background" type="ColorRect" parent="." unique_id=2053462523]
 layout_mode = 1

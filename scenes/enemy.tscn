@@ -1,9 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://closeaienemy01"]
+[gd_scene load_steps=6 format=3 uid="uid://closeaienemy01"]
 
 [ext_resource type="Script" path="res://scripts/stages/enemy.gd" id="1_enemy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_en"]
 size = Vector2(40, 40)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.72, 0.2, 0.36, 0.88)
+
+[sub_resource type="Gradient" id="Gradient_pulse"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.72, 0.18, 0.32, 0.9, 0.48, 0.12, 0.22, 0.6, 0.72, 0.18, 0.32, 0.0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pulse"]
+gradient = SubResource("Gradient_pulse")
 
 [node name="Enemy" type="Area2D"]
 collision_layer = 4
@@ -13,16 +23,40 @@ script = ExtResource("1_enemy")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_en")
 
-[node name="Visual" type="ColorRect" parent="."]
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Body" type="ColorRect" parent="Visual"]
+offset_left = -18.0
+offset_top = -18.0
+offset_right = 18.0
+offset_bottom = 18.0
+color = Color(0.08, 0.04, 0.12, 0.92)
+
+[node name="CoreLine" type="Line2D" parent="Visual"]
+points = PackedVector2Array(-14, 0, -7, -10, 0, -14, 7, -10, 14, 0, 7, 10, 0, 14, -7, 10, -14, 0)
+width = 1.8
+default_color = Color(0.85, 0.22, 0.38, 0.9)
+
+[node name="InnerDot" type="ColorRect" parent="Visual"]
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 5.0
+offset_bottom = 5.0
+color = Color(1.0, 0.35, 0.5, 0.85)
+
+[node name="ScanLineH" type="Line2D" parent="Visual"]
+points = PackedVector2Array(-18, 0, 18, 0)
+width = 1.0
+default_color = Color(1.0, 0.3, 0.45, 0.45)
+
+[node name="ScanLineV" type="Line2D" parent="Visual"]
+points = PackedVector2Array(0, -18, 0, 18)
+width = 1.0
+default_color = Color(1.0, 0.3, 0.45, 0.28)
+
+[node name="Glitch" type="ColorRect" parent="."]
 offset_left = -20.0
 offset_top = -20.0
 offset_right = 20.0
 offset_bottom = 20.0
-color = Color(0.85, 0.25, 0.3, 0.9)
-
-[node name="Glitch" type="ColorRect" parent="."]
-offset_left = -12.0
-offset_top = -12.0
-offset_right = 12.0
-offset_bottom = 12.0
-color = Color(1, 0.6, 0.55, 0.5)
+color = Color(1, 0.6, 0.55, 0.0)

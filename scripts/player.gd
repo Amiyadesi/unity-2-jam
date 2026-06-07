@@ -71,6 +71,7 @@ const FLY_UPRIGHT_INPUT_THRESHOLD := 0.08
 var morphed: bool = false
 var frozen: bool = false
 var _action_playing: bool = false
+var _transform_motion_locked: bool = false
 var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
 var _current_anim: String = ""
@@ -96,11 +97,13 @@ var _attack_pressed_buffered: bool = false
 var _awaken_pressed_buffered: bool = false
 var _dash_pressed_buffered: bool = false
 var _last_fly_input: Vector2 = Vector2.ZERO
+var _move_sfx_timer: float = 0.0
 
 @onready var _body: Node2D = $Body
 @onready var _sprite: Sprite2D = $Body/Sprite2D
 @onready var _anim: AnimationPlayer = $AnimationPlayer
 @onready var _camera: Camera2D = $Camera2D
+@onready var _combat_hitboxes: Node2D = $Body/CombatHitboxes
 @onready var _forward_hitbox: Area2D = $Body/CombatHitboxes/ForwardHitbox
 @onready var _left_hitbox: Area2D = $Body/CombatHitboxes/LeftHitbox
 @onready var _right_hitbox: Area2D = $Body/CombatHitboxes/RightHitbox
@@ -117,6 +120,14 @@ var _last_fly_input: Vector2 = Vector2.ZERO
 @onready var _cast_impact_ring: Node2D = $Body/CombatVFX/CastImpactRing
 @onready var _awaken_center_particles: GPUParticles2D = $AwakenCenterVFX/AwakenCenterParticles
 @onready var _awaken_center_ring: Node2D = $AwakenCenterVFX/AwakenCenterRing
+@onready var _jump_sfx: AudioStreamPlayer2D = $Audio/JumpSfx
+@onready var _move_sfx: AudioStreamPlayer2D = $Audio/MoveSfx
+@onready var _attack_sfx: AudioStreamPlayer2D = $Audio/AttackSfx
+@onready var _dash_sfx: AudioStreamPlayer2D = $Audio/DashSfx
+@onready var _transform_sfx: AudioStreamPlayer2D = $Audio/TransformSfx
+@onready var _untransform_sfx: AudioStreamPlayer2D = $Audio/UntransformSfx
+@onready var _hit_confirm_sfx: AudioStreamPlayer2D = $Audio/HitConfirmSfx
+@onready var _whiff_sfx: AudioStreamPlayer2D = $Audio/WhiffSfx
 
 
 ## 初始化玩家组、能量与 authored hitbox 状态。
@@ -130,6 +141,11 @@ func _ready() -> void:
 		_play_anim("idle")
 
 
+## 提前缓存鼠标冲刺，避免对话框或 HUD Control 在 _unhandled_input 前吞掉左键。
+func _input(event: InputEvent) -> void:
+	_buffer_dash_input(event)
+
+
 ## 缓存离散输入事件，避免低物理帧率下丢失单次按键。
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("jump", false):
@@ -140,12 +156,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_attack_pressed_buffered = true
 	if InputMap.has_action("awaken") and event.is_action_pressed("awaken", false):
 		_awaken_pressed_buffered = true
-	if InputMap.has_action("dash") and event.is_action_pressed("dash", false):
-		_dash_pressed_buffered = true
-	if event is InputEventMouseButton:
-		var mouse_event := event as InputEventMouseButton
-		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
-			_dash_pressed_buffered = true
+	_buffer_dash_input(event)
 
 
 ## 每个物理帧更新觉醒/能量/战斗，再执行当前形态移动。
@@ -167,6 +178,9 @@ func _physics_process(delta: float) -> void:
 
 ## 普通形态横版移动、跳跃、攻击。
 func _physics_ground(delta: float) -> void:
+	if _transform_motion_locked:
+		_physics_transform_locked(delta)
+		return
 	if not is_on_floor():
 		velocity.y = minf(velocity.y + gravity * delta, max_fall_speed)
 	if frozen:
@@ -185,6 +199,7 @@ func _physics_ground(delta: float) -> void:
 	_handle_jump()
 	_handle_attack()
 	move_and_slide()
+	_update_move_sfx(delta, absf(velocity.x) > 44.0 and is_on_floor(), 0.28)
 	_update_facing_horizontal()
 	if not _action_playing:
 		_update_ground_anim()
@@ -207,6 +222,7 @@ func _handle_jump() -> void:
 		velocity.y = JUMP_VELOCITY
 		_jump_buffer_timer = 0.0
 		_coyote_timer = 0.0
+		_play_sfx(_jump_sfx)
 	if _consume_jump_released() and velocity.y < 0.0:
 		velocity.y *= 0.45
 
@@ -227,6 +243,7 @@ func _update_facing_horizontal() -> void:
 	if not is_instance_valid(_body):
 		return
 	_body.rotation = 0.0
+	_set_combat_hitbox_angle(0.0)
 	if velocity.x > 5.0:
 		_body.scale.x = absf(_body.scale.x)
 	elif velocity.x < -5.0:
@@ -239,6 +256,10 @@ func _update_facing_horizontal() -> void:
 
 ## 觉醒形态飞行移动、鼠标冲刺攻击、飞行动画。
 func _physics_fly(delta: float) -> void:
+	if _transform_motion_locked:
+		_physics_transform_locked(delta)
+		return
+	_poll_dash_input_fallback()
 	_handle_attack()
 	var input := Vector2.ZERO
 	if not frozen and not _action_playing:
@@ -250,6 +271,7 @@ func _physics_fly(delta: float) -> void:
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, FLY_FRICTION * delta)
 	move_and_slide()
+	_update_move_sfx(delta, input.length() > 0.01 and velocity.length() > 80.0, 0.18)
 	_update_facing_fly(delta)
 	if not _action_playing:
 		if velocity.length() > 16.0:
@@ -268,9 +290,9 @@ func _update_facing_fly(delta: float) -> void:
 	var should_follow_motion := not frozen and not _action_playing and (has_input or has_motion)
 	var target := 0.0
 	if has_input:
-		target = _last_fly_input.angle()
+		target = _fly_visual_angle(_last_fly_input)
 	elif has_motion:
-		target = velocity.angle()
+		target = _fly_visual_angle(velocity)
 	_body.scale.x = absf(_body.scale.x)
 	var turn_weight := clampf(ROT_LERP * delta, 0.0, 1.0)
 	var turn_delta := wrapf(target - _body.rotation, -PI, PI)
@@ -278,6 +300,34 @@ func _update_facing_fly(delta: float) -> void:
 		_body.rotation = target
 	else:
 		_body.rotation = lerp_angle(_body.rotation, target, turn_weight)
+	if is_dashing():
+		_set_combat_hitbox_angle(_camera_dash_dir.angle())
+
+
+## 把飞行方向转换成站立素材的视觉角度：左右横飞，向下才倒飞。
+func _fly_visual_angle(direction: Vector2) -> float:
+	if direction.length() <= 0.01:
+		return 0.0
+	return wrapf(direction.angle() - Vector2.UP.angle(), -PI, PI)
+
+
+## 让战斗 hitbox 继续按真实攻击方向工作，不继承飞行姿态的视觉旋转。
+func _set_combat_hitbox_angle(world_angle: float) -> void:
+	if not is_instance_valid(_combat_hitboxes):
+		return
+	var parent_angle := _body.global_rotation if is_instance_valid(_body) else 0.0
+	_combat_hitboxes.rotation = wrapf(world_angle - parent_angle, -PI, PI)
+
+
+## 变身/解除变身动画拥有身体控制权时，锁住位移并清掉输入缓存。
+func _physics_transform_locked(_delta: float) -> void:
+	_clear_discrete_inputs()
+	velocity = Vector2.ZERO
+	if morphed:
+		correct_flight_pose()
+	else:
+		_update_facing_horizontal()
+	move_and_slide()
 
 
 # ──────────────────────────────────────────────
@@ -319,6 +369,32 @@ func _handle_attack() -> void:
 			_start_cast_attack("cast_forward", forward_attack_energy_cost)
 
 
+## 判断当前是否应该接收飞行冲刺输入，避免 UI 点击在冻结/动作锁期间穿透成攻击。
+func _can_buffer_dash_input() -> bool:
+	return morphed and not frozen and not _action_playing and not _transform_motion_locked
+
+
+## 从原始事件里缓存 dash；左键原始判断作为 InputMap 被 UI 消耗时的保险。
+func _buffer_dash_input(event: InputEvent) -> void:
+	if not _can_buffer_dash_input():
+		return
+	if InputMap.has_action("dash") and event.is_action_pressed("dash", false):
+		_dash_pressed_buffered = true
+		return
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed and not mouse_event.canceled:
+			_dash_pressed_buffered = true
+
+
+## 物理帧再读一次全局 just_pressed，覆盖少数没有事件回调的输入路径。
+func _poll_dash_input_fallback() -> void:
+	if not _can_buffer_dash_input():
+		return
+	if InputMap.has_action("dash") and Input.is_action_just_pressed("dash"):
+		_dash_pressed_buffered = true
+
+
 ## 启动普通形态施法攻击动画与命中窗口。
 func _start_cast_attack(animation_name: String, energy_cost: float) -> void:
 	if not _try_spend_energy(energy_cost):
@@ -349,6 +425,7 @@ func _can_release_cast(animation_name: String) -> bool:
 func _release_cast_hitboxes(hitboxes: Array[Area2D]) -> void:
 	_start_hitbox_window(hitboxes, attack_hitbox_duration)
 	_trigger_cast_vfx(hitboxes)
+	_play_sfx(_attack_sfx)
 	_kick_camera(0.10, 5.0)
 
 
@@ -366,12 +443,14 @@ func _start_dash_attack() -> void:
 	_fly_angle = dash_dir.angle()
 	if is_instance_valid(_body):
 		_body.scale.x = absf(_body.scale.x)
-		_body.rotation = _fly_angle
+		_body.rotation = _fly_visual_angle(dash_dir)
+	_set_combat_hitbox_angle(dash_dir.angle())
 	_play_anim("morph_move")
 	_start_hitbox_window([_forward_hitbox], dash_hitbox_duration)
 	_dash_attack_timer = dash_hitbox_duration
 	_dash_confirmed_this_window = false
 	_trigger_dash_vfx(dash_dir)
+	_play_sfx(_dash_sfx)
 	_camera_dash_dir = dash_dir
 	_camera_dash_timer = camera_dash_hold_time
 	_kick_camera(0.16, 8.0)
@@ -546,6 +625,7 @@ func _trigger_dash_hit_confirm_vfx(hit_dir: Vector2) -> void:
 		return
 	_dash_hit_confirm.rotation = _local_vfx_angle(hit_dir)
 	_play_one_shot_vfx(_dash_hit_confirm, 0.16, Vector2(0.56, 0.56), Vector2(1.34, 1.34))
+	_play_sfx(_hit_confirm_sfx)
 
 
 ## 播放 authored 撞空读性，提示本次高速冲撞没有形成确认。
@@ -559,6 +639,7 @@ func _trigger_dash_whiff_vfx() -> void:
 		whiff_dir = Vector2.RIGHT.rotated(_fly_angle)
 	_dash_whiff_read.rotation = _local_vfx_angle(whiff_dir)
 	_play_one_shot_vfx(_dash_whiff_read, 0.14, Vector2(0.86, 0.86), Vector2(1.18, 1.02))
+	_play_sfx(_whiff_sfx)
 	dash_whiffed.emit(whiff_dir)
 
 
@@ -591,6 +672,26 @@ func _play_one_shot_vfx(node: Node2D, seconds: float, start_scale: Vector2 = Vec
 	tween.tween_property(item, "scale", end_scale, seconds).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(item, "modulate:a", 0.0, seconds).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_callback(Callable(self, "_finish_one_shot_vfx").bind(item, node_id))
+
+
+## 用 authored 播放器播放一次短音效，不创建运行时音频节点。
+func _play_sfx(player: AudioStreamPlayer2D) -> void:
+	if not is_instance_valid(player) or player.stream == null:
+		return
+	player.stop()
+	player.play()
+
+
+## 按移动节奏触发 authored 步点或飞行推进音，静止/冻结/动作锁时静音。
+func _update_move_sfx(delta: float, moving: bool, interval: float) -> void:
+	if not moving or frozen or _action_playing or _transform_motion_locked:
+		_move_sfx_timer = 0.0
+		return
+	_move_sfx_timer -= delta
+	if _move_sfx_timer > 0.0:
+		return
+	_move_sfx_timer = interval
+	_play_sfx(_move_sfx)
 
 
 ## Hides a completed one-shot VFX and restores reusable authored state.
@@ -811,22 +912,27 @@ func play_action(name: String) -> void:
 ## 播放觉醒动画并切换到飞行形态。
 func _do_transform() -> void:
 	_action_playing = true
+	_transform_motion_locked = true
 	velocity = Vector2.ZERO
+	_play_sfx(_transform_sfx)
 	if _anim.has_animation("transform"):
 		_current_anim = "transform"
 		_anim.play("transform")
 		await _anim.animation_finished
 	morphed = true
-	_fly_angle = 0.0 if _body.scale.x >= 0 else PI
+	correct_flight_pose()
 	_trigger_ability_release_vfx()
 	morph_changed.emit(true)
+	_transform_motion_locked = false
 	_action_playing = false
 
 
 ## 播放解除觉醒动画并恢复普通形态朝向。
 func _do_untransform() -> void:
 	_action_playing = true
+	_transform_motion_locked = true
 	velocity = Vector2.ZERO
+	_play_sfx(_untransform_sfx)
 	if _anim.has_animation("untransform"):
 		_current_anim = "untransform"
 		_anim.play("untransform")
@@ -835,6 +941,7 @@ func _do_untransform() -> void:
 	if is_instance_valid(_body):
 		_body.rotation = 0.0
 	morph_changed.emit(false)
+	_transform_motion_locked = false
 	_action_playing = false
 
 
@@ -857,6 +964,7 @@ func correct_flight_pose() -> void:
 		return
 	_body.scale.x = absf(_body.scale.x)
 	_body.rotation = 0.0
+	_set_combat_hitbox_angle(0.0)
 
 
 ## 外部奖励能量，供善意信息流和终战超载调用。

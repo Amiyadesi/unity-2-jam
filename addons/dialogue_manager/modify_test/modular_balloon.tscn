@@ -46,6 +46,7 @@
 [ext_resource type="Script" uid="uid://c6bj8ca2mj2ti" path="res://addons/dialogue_manager/text_effects/dmfx_wfc.gd" id="34_pviqj"]
 [ext_resource type="Script" uid="uid://beh7kaa580cli" path="res://addons/richtext2/text_effects/effects/rte_woo.gd" id="36_ju67t"]
 [ext_resource type="Script" uid="uid://b1n8ljkxq1ns" path="res://addons/richtext2/text_effects/effects/rte_wave.gd" id="37_cdfve"]
+[ext_resource type="AudioStream" path="res://assets/generated/sfx/dialogue_tick.wav" id="38_dialogue_tick"]
 
 [sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_qnahx"]
 
@@ -341,6 +342,10 @@ auto_save_progress = false
 typing_sound = SubResource("AudioStreamGenerator_qnahx")
 
 [node name="TalkSound" type="AudioStreamPlayer" parent="." unique_id=467482644]
+unique_name_in_owner = true
+stream = ExtResource("38_dialogue_tick")
+volume_db = -14.0
+bus = &"UI"
 
 [node name="VoicePlayer" type="AudioStreamPlayer" parent="." unique_id=815329956]
 unique_name_in_owner = true

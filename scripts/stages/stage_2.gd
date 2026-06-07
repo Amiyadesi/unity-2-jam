@@ -71,8 +71,15 @@ var _air_room_timing_tween: Tween = null
 @onready var _wave_pressure_reads: Node2D = get_node_or_null("EnemyWaveGuides/PressureReads")
 @onready var _wave_speed_gate_reads: Node2D = get_node_or_null("EnemyWaveGuides/SpeedGateReads")
 @onready var _air_combat_rooms: Node2D = get_node_or_null("AirCombatRooms")
+@onready var _arena_bounds: Node2D = get_node_or_null("ArenaBounds")
+@onready var _close_route_guides: Node2D = get_node_or_null("CloseRouteGuides")
 
-## 统计敌人并连接击败信号。
+## 关闭时刻前播放 Caretaker 假崩溃，制造"被挽留"节拍。
+func _on_close_moment_ready() -> void:
+	await GameFlow.play_dialogue(stage_index, "caretaker_interrupt")
+
+
+## 初始化觉醒飞行训练、冲撞靶链和逐波敌人。
 func _on_stage_ready() -> void:
 	if not _require_training_nodes():
 		_stage_active = false
@@ -92,6 +99,7 @@ func _on_stage_ready() -> void:
 	_hide_wave_speed_gate_reads()
 	_hide_wave_energy_pockets()
 	_hide_air_combat_rooms()
+	_set_close_route_enabled(false)
 	for e in enemies:
 		if e.has_signal("defeated") and not e.defeated.is_connected(_on_enemy_defeated):
 			e.defeated.connect(_on_enemy_defeated)
@@ -111,7 +119,7 @@ func _on_stage_ready() -> void:
 		player.dash_whiffed.connect(_on_player_dash_whiffed)
 	player.restore_energy(player.max_energy)
 	_step = Step.AWAKEN
-	say("按 [color=#a99cff]Shift[/color]。这次，不要只站在地上。", 4.0)
+	say("按 [color=#a99cff]Shift[/color]。这次，不一样了。试试。", 4.0)
 
 
 ## 每帧推进 Stage2 飞行移动训练。
@@ -184,6 +192,12 @@ func _require_training_nodes() -> bool:
 		ok = false
 	if _air_combat_rooms == null or not _has_authored_air_combat_rooms():
 		push_error("%s requires authored AirCombatRooms with room markers and route reads." % name)
+		ok = false
+	if _arena_bounds == null or not _has_authored_arena_bounds():
+		push_error("%s requires authored ArenaBounds with four collision walls." % name)
+		ok = false
+	if _close_route_guides == null or not _has_authored_close_route():
+		push_error("%s requires authored CloseRouteGuides and CloseMomentTrigger exit route." % name)
 		ok = false
 	return ok
 
@@ -427,6 +441,38 @@ func _has_authored_air_combat_rooms() -> bool:
 	return true
 
 
+## 确认 Stage2 飞行房间有 authored 真实碰撞墙，阻止玩家飞出地图。
+func _has_authored_arena_bounds() -> bool:
+	if _arena_bounds == null:
+		return false
+	for wall_name in ["LeftWall", "RightWall", "Ceiling", "FloorClamp"]:
+		var wall := _arena_bounds.get_node_or_null(wall_name) as StaticBody2D
+		if wall == null:
+			return false
+		if wall.scale != Vector2.ONE:
+			return false
+		var shape := wall.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if shape == null or shape.shape == null or shape.scale != Vector2.ONE:
+			return false
+	if not _arena_bounds.get_node_or_null("BoundaryReads") is Node2D:
+		return false
+	return true
+
+
+## 确认 Stage2 清场后的关闭路线和触发区都由 authored 节点承载。
+func _has_authored_close_route() -> bool:
+	if _close_route_guides == null or _close_trigger == null:
+		return false
+	var trigger_shape := _close_trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if trigger_shape == null or trigger_shape.shape == null:
+		return false
+	for guide_name in ["ExitWake", "ExitBracket", "PermissionCrack"]:
+		var guide := _close_route_guides.get_node_or_null(guide_name) as Line2D
+		if guide == null or guide.points.size() < 2:
+			return false
+	return true
+
+
 ## 从 authored 波次容器里收集敌人子节点。
 func _collect_wave_enemies(wave_container: Node) -> Array[Node]:
 	var wave: Array[Node] = []
@@ -473,12 +519,8 @@ func _on_enemy_defeated() -> void:
 		_hide_wave_speed_gate_reads()
 		_hide_wave_energy_pockets()
 		_hide_air_combat_rooms()
-		say("安静下来了。……按关闭按钮，继续。", 2.6)
-		if _close_trigger == null:
-			await get_tree().create_timer(2.8).timeout
-			if not _stage_active or _step != Step.DONE:
-				return
-			trigger_close_moment()
+		_enable_close_route()
+		say("安静下来了。\n沿着裂口飞过去，在它允许我们之前关掉。", 3.2)
 	elif _current_wave_left <= 0:
 		_enable_next_enemy_wave()
 	else:
@@ -577,7 +619,25 @@ func _start_enemy_clear() -> void:
 		_hide_wave_speed_gate_reads()
 		_hide_wave_energy_pockets()
 		_hide_air_combat_rooms()
-		trigger_close_moment()
+		_enable_close_route()
+		say("没有守卫。沿着裂口飞过去，亲手关掉这一层。", 3.0)
+
+
+## 清场后点亮 authored 出口航线，并打开玩家可飞入的关闭触发区。
+func _enable_close_route() -> void:
+	_set_close_route_enabled(true)
+
+
+## 切换 Stage2 出口航线和触发区，默认禁用，通关后才响应玩家。
+func _set_close_route_enabled(enabled: bool) -> void:
+	if _close_route_guides != null:
+		_close_route_guides.visible = enabled
+	if _close_trigger != null:
+		_close_trigger.visible = enabled
+		_close_trigger.monitoring = enabled
+		var shape := _close_trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if shape != null:
+			shape.disabled = not enabled
 
 
 ## 启用下一组 authored 敌人，逐步增加空中压力。

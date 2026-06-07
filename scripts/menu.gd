@@ -10,6 +10,8 @@ extends Control
 ## 若上次是强杀恢复，顶部状态条变红并嘲讽。
 ## 菜单本身也无法被玩家关闭（GameFlow 全局拦截）。
 
+@export var menu_music: AudioStream = null
+
 @onready var _primary_button: Button = $ButtonColumn/PrimaryButton
 @onready var _settings_button: Button = $ButtonColumn/SettingsButton
 @onready var _thanks_button: Button = $ButtonColumn/ThanksButton
@@ -34,6 +36,8 @@ func _ready() -> void:
 	_refresh_primary()
 	_refresh_status()
 	_play_boot_flash()
+	if menu_music != null:
+		SoundManager.music.play(menu_music, 0.0, 0.0, 1.2)
 
 
 ## 开始/继续 文案与副标题

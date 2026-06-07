@@ -60,6 +60,7 @@ func _run() -> void:
 	_check("dash_started signal exists", p.has_signal("dash_started"))
 	_check("dash_hit_confirmed signal exists", p.has_signal("dash_hit_confirmed"))
 	_check("dash_whiffed signal exists", p.has_signal("dash_whiffed"))
+	_check_player_sfx_nodes(p)
 	await _check_training_target_hit(p)
 	_check_ability_gates(p)
 	await _check_cast_release_frame(p)
@@ -74,11 +75,24 @@ func _run() -> void:
 		p.play_action("transform")
 		await process_frame
 		_check("play_action('transform') runs", true)
+		_check("transform sfx plays", (p.get_node_or_null("Audio/TransformSfx") as AudioStreamPlayer2D).playing)
 		p.play_action("untransform")
 		await process_frame
 		_check("play_action('untransform') runs", true)
+		_check("untransform sfx plays", (p.get_node_or_null("Audio/UntransformSfx") as AudioStreamPlayer2D).playing)
 	p.queue_free()
 	_finish()
+
+
+## 确认玩家短音效全部由 authored AudioStreamPlayer2D 节点承载。
+func _check_player_sfx_nodes(player: Node) -> void:
+	var audio := player.get_node_or_null("Audio")
+	_check("player authored Audio root", audio is Node2D)
+	for node_name in ["JumpSfx", "MoveSfx", "AttackSfx", "DashSfx", "TransformSfx", "UntransformSfx", "HitConfirmSfx", "WhiffSfx"]:
+		var sfx := player.get_node_or_null("Audio/" + node_name) as AudioStreamPlayer2D
+		_check("player authored " + node_name, sfx != null)
+		_check("player " + node_name + " has stream", sfx != null and sfx.stream != null)
+		_check("player " + node_name + " uses Sounds bus", sfx != null and sfx.bus == "Sounds")
 
 ## 验证玩家 authored hitbox 真的能命中 typed 训练靶，而不只是场景节点存在。
 func _check_training_target_hit(player: Node) -> void:
@@ -122,6 +136,9 @@ func _check_training_target_hit(player: Node) -> void:
 func _check_dash_vfx_and_camera(player: Node) -> void:
 	player.morphed = true
 	player.frozen = false
+	player._action_playing = false
+	player._transform_motion_locked = false
+	player.allow_dash = true
 	player.energy = player.max_energy
 	player.velocity = Vector2.ZERO
 	var body := player.get_node_or_null("Body") as Node2D
@@ -135,6 +152,17 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 	_check("dash vfx prerequisites available", body != null and lines != null and wind_ring != null and trail != null and confirm_vfx != null and whiff_vfx != null and particles != null and camera != null)
 	if body == null or lines == null or wind_ring == null or trail == null or confirm_vfx == null or whiff_vfx == null or particles == null or camera == null:
 		return
+	var left_click := InputEventMouseButton.new()
+	left_click.button_index = MOUSE_BUTTON_LEFT
+	left_click.pressed = true
+	player._input(left_click)
+	player._physics_fly(0.016)
+	_check("left mouse input buffers dash before UI can consume it", player.is_dashing() and player.velocity.length() > player.FLY_SPEED)
+	_check("left mouse dash sfx plays", (player.get_node_or_null("Audio/DashSfx") as AudioStreamPlayer2D).playing)
+	player._disable_all_hitboxes()
+	player._hide_combat_vfx()
+	player.energy = player.max_energy
+	player.velocity = Vector2.ZERO
 	var expected_dir: Vector2 = player.get_global_mouse_position() - player.global_position
 	player._fly_angle = PI * 0.5
 	if expected_dir.length() <= 0.01:
@@ -146,13 +174,16 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 		whiff_state["dir"] = direction
 	player.dash_whiffed.connect(whiff_handler)
 	player._start_dash_attack()
+	var expected_visual_rotation: float = player._fly_visual_angle(expected_dir)
+	var expected_local_rotation: float = wrapf(expected_dir.angle() - body.global_rotation, -PI, PI)
 	_check("dash velocity follows aim direction", player.velocity.normalized().dot(expected_dir) > 0.95)
 	_check("dash velocity is fast", player.velocity.length() >= player.dash_speed - 1.0)
 	_check("dash keeps body scale positive", body.scale.x > 0.0)
-	_check("dash rotates body to dash direction", is_equal_approx(body.rotation, expected_dir.angle()))
-	_check("dash speed lines align to body-local dash", is_equal_approx(lines.rotation, 0.0))
+	_check("dash rotates body to visual flight angle", absf(wrapf(body.rotation - expected_visual_rotation, -PI, PI)) < 0.02)
+	_check("dash hitboxes keep true aim angle", absf(wrapf(player.get_node("Body/CombatHitboxes").global_rotation - expected_dir.angle(), -PI, PI)) < 0.02)
+	_check("dash speed lines align to body-local dash", absf(wrapf(lines.rotation - expected_local_rotation, -PI, PI)) < 0.02)
 	_check("dash wind ring expands from small scale", wind_ring.scale.x < 1.0 and wind_ring.scale.y < 1.0)
-	_check("dash particles emit backward locally", is_equal_approx(wrapf(particles.rotation - PI, -PI, PI), 0.0))
+	_check("dash particles emit backward locally", absf(wrapf(particles.rotation - (expected_local_rotation + PI), -PI, PI)) < 0.02)
 	_check("dash speed lines show", lines.visible)
 	_check("dash wind ring shows", wind_ring.visible)
 	_check("dash afterimage shows", trail.visible)
@@ -166,6 +197,7 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 		player._update_active_hitboxes(0.016)
 	_check("dash attack window ends before camera tail", not player.is_dashing() and player._camera_dash_timer > 0.0)
 	_check("dash whiff read shows when window misses", whiff_vfx.visible and not confirm_vfx.visible)
+	_check("dash whiff sfx plays", (player.get_node_or_null("Audio/WhiffSfx") as AudioStreamPlayer2D).playing)
 	_check("dash whiff signal emits miss direction", whiff_state["count"] == 1 and (whiff_state["dir"] as Vector2).dot(expected_dir) > 0.95)
 	if player.dash_whiffed.is_connected(whiff_handler):
 		player.dash_whiffed.disconnect(whiff_handler)
@@ -181,13 +213,13 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 	player._last_fly_input = Vector2.LEFT
 	player.velocity = Vector2(-player.FLY_SPEED, 0.0)
 	player._update_facing_fly(0.2)
-	_check("active left flight may rotate sideways", absf(absf(body.rotation) - PI) < 0.02)
+	_check("active left flight rotates sideways", absf(wrapf(body.rotation - player._fly_visual_angle(Vector2.LEFT), -PI, PI)) < 0.02)
 	body.rotation = 0.0
 	player._fly_angle = 0.0
 	player._last_fly_input = Vector2.ZERO
 	player.velocity = Vector2.UP * player.FLY_SPEED
 	player._update_facing_fly(0.2)
-	_check("released high-speed flight follows velocity", absf(wrapf(body.rotation - Vector2.UP.angle(), -PI, PI)) < 0.02)
+	_check("released high-speed flight follows velocity visually", absf(wrapf(body.rotation - player._fly_visual_angle(Vector2.UP), -PI, PI)) < 0.02)
 	body.rotation = PI * 0.75
 	player._fly_angle = PI * 0.75
 	player._last_fly_input = Vector2.ZERO
@@ -335,6 +367,7 @@ func _check_cast_release_frame(player: Node) -> void:
 		_check("cast forward shockwave shows at release", shockwave != null and shockwave.visible)
 		_check("cast release particles emit", particles != null and particles.emitting)
 		_check("cast impact ring expands from small scale", ring != null and ring.visible and ring.scale.x < 1.0)
+		_check("cast attack sfx plays at release", (player.get_node_or_null("Audio/AttackSfx") as AudioStreamPlayer2D).playing)
 	target.queue_free()
 	player.gravity = previous_gravity
 

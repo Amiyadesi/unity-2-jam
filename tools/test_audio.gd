@@ -38,5 +38,51 @@ func _run() -> void:
 		_check("music not shared with sounds", sound_manager.music.bus != sound_manager.sound_effects.bus)
 		_check("music not shared with ui", sound_manager.music.bus != sound_manager.ui_sound_effects.bus)
 
+	_check_music_import_loops()
+	await _check_dialogue_typing_sound_authored()
+
 	print("=== RESULT: %d/%d passed, %d failed ===" % [_checks - _failures, _checks, _failures])
 	quit(1 if _failures > 0 else 0)
+
+
+## 确认三首 BGM 的 import 资源开启 loop，不靠脚本重播。
+func _check_music_import_loops() -> void:
+	for path in [
+		"res://assets/third_party/peritune/The_City_Breathes_Your_Name.mp3.import",
+		"res://assets/third_party/peritune/Ancient_Gust_Retro_6.mp3.import",
+		"res://assets/third_party/peritune/Ancient_Gust_Retro_9.mp3.import",
+	]:
+		var text := _read_text(path)
+		_check("music import exists: " + path, not text.is_empty())
+		_check("music import loops: " + path, text.contains("loop=true"))
+
+
+## 确认对话打字音使用气泡场景里的 authored TalkSound 节点。
+func _check_dialogue_typing_sound_authored() -> void:
+	var packed = load("res://addons/dialogue_manager/modify_test/modular_balloon.tscn")
+	_check("modular balloon loads", packed != null)
+	if packed == null:
+		return
+	var balloon = packed.instantiate()
+	_check("modular balloon instantiates", balloon != null)
+	if balloon == null:
+		return
+	root.add_child(balloon)
+	await process_frame
+	var talk_sound := balloon.get_node_or_null("%TalkSound") as AudioStreamPlayer
+	_check("dialogue authored TalkSound", talk_sound != null)
+	_check("dialogue TalkSound has stream", talk_sound != null and talk_sound.stream != null)
+	_check("dialogue TalkSound uses UI bus", talk_sound != null and talk_sound.bus == "UI")
+	var module: Node = balloon.get_node_or_null("TypingSoundModule")
+	_check("typing module receives authored player", module != null and "audio_player" in module and module.audio_player == talk_sound)
+	balloon.queue_free()
+	var source := _read_text("res://addons/dialogue_manager/modify_test/modules/typing_sound_module.gd")
+	_check("typing module does not create AudioStreamPlayer at runtime", not source.contains("AudioStreamPlayer.new()"))
+
+
+## 读取文本资源，失败时返回空串供断言报错。
+func _read_text(path: String) -> String:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return ""
+	return file.get_as_text()

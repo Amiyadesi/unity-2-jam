@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/Ancient_Gust_Retro_9.mp3-4f2f8e3e67ac5239529f
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0

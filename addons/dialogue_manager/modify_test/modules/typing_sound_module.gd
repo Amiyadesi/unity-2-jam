@@ -25,23 +25,15 @@ var dialogue_label: DialogueLabel
 
 ## CharacterManager 引用（由场景配置，用于读取角色音调）
 var character_manager: CharacterManager
+## authored 音频播放器引用（由 ModularBalloon 注入）
+var audio_player: AudioStreamPlayer
 
 # ════════════════════════════════════════════════════════════════
 # 内部状态
 # ════════════════════════════════════════════════════════════════
 
-var _audio_player: AudioStreamPlayer
 var _current_pitch: float = 1.0
 var _current_speed_multiplier: float = 1.0
-
-# ════════════════════════════════════════════════════════════════
-# 生命周期
-# ════════════════════════════════════════════════════════════════
-
-func _ready() -> void:
-	# 创建内部音频播放器
-	_audio_player = AudioStreamPlayer.new()
-	add_child(_audio_player)
 
 # ════════════════════════════════════════════════════════════════
 # BalloonModule 接口
@@ -93,6 +85,7 @@ func should_play_sound(c: String, i: int, speed_multiplier: float) -> bool:
 # 内部方法
 # ════════════════════════════════════════════════════════════════
 
+## 用注入的 authored 播放器播放本字的打字音。
 func _on_spoke(letter: String, letter_index: int, _speed: float) -> void:
 	if not should_play_sound(letter, letter_index, _current_speed_multiplier):
 		return
@@ -101,9 +94,9 @@ func _on_spoke(letter: String, letter_index: int, _speed: float) -> void:
 	var variance := randf_range(-pitch_variance, pitch_variance)
 	var final_pitch := clampf(_current_pitch + variance, 0.1, 4.0)
 	
-	if is_instance_valid(_audio_player):
+	if is_instance_valid(audio_player):
 		# 优先使用配置的音效，否则使用默认
 		if typing_sound != null:
-			_audio_player.stream = typing_sound
-		_audio_player.pitch_scale = final_pitch
-		_audio_player.play()
+			audio_player.stream = typing_sound
+		audio_player.pitch_scale = final_pitch
+		audio_player.play()

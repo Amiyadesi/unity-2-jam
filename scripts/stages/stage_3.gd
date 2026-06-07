@@ -167,6 +167,8 @@ func _has_authored_window_battle_arena() -> bool:
 		var line := _window_battle_arena.get_node_or_null(node_path) as Line2D
 		if line == null or line.points.size() < 2:
 			return false
+	if not _has_authored_arena_bounds():
+		return false
 	if _pierce_progress_reads == null or not _has_authored_pierce_progress_reads():
 		return false
 	if _desktop_instability_reads == null or not _has_authored_desktop_instability_reads():
@@ -182,6 +184,23 @@ func _has_authored_window_battle_arena() -> bool:
 		return false
 	if _phase_three_pressure_reads == null:
 		return false
+	return true
+
+
+## 确认真实窗口 Boss 战空间有 authored 物理墙，避免玩家飞出窗口舞台。
+func _has_authored_arena_bounds() -> bool:
+	if _window_battle_arena == null:
+		return false
+	var bounds := _window_battle_arena.get_node_or_null("ArenaBounds") as Node2D
+	if bounds == null:
+		return false
+	for wall_name in ["LeftWall", "RightWall", "Ceiling", "FloorClamp"]:
+		var wall := bounds.get_node_or_null(wall_name) as StaticBody2D
+		if wall == null or wall.scale != Vector2.ONE:
+			return false
+		var shape := wall.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if shape == null or shape.shape == null or shape.scale != Vector2.ONE:
+			return false
 	return true
 
 
