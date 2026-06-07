@@ -42,6 +42,11 @@ var panel_button: Button
 
 #region Private Functions
 
+# Headless exports have no interactive editor surface, so skip dock wiring there.
+func _is_headless_editor() -> bool:
+	return DisplayServer.get_name() == "headless"
+
+
 func _enable_plugin() -> void:
 	print_rich("Phantom Camera documentation can be found at: [url=https://phantom-camera.dev]https://phantom-camera.dev[/url]")
 	if not ProjectSettings.has_setting("autoload/%s" % PHANTOM_CAMERA_MANAGER):
@@ -76,25 +81,27 @@ func _enter_tree() -> void:
 		setting_updater_mode = "Off, Console Output, Updater Window"
 		setting_updater_mode_default = 2
 
-	if not ProjectSettings.has_setting(updater_constants.setting_updater_mode):
+	var has_updater_mode_setting: bool = ProjectSettings.has_setting(updater_constants.setting_updater_mode)
+	if not has_updater_mode_setting:
 		ProjectSettings.set_setting(updater_constants.setting_updater_mode, setting_updater_mode_default)
-	ProjectSettings.add_property_info({
-		"name": updater_constants.setting_updater_mode,
-		"type": TYPE_INT,
-		"hint": PROPERTY_HINT_ENUM,
-		"hint_string": setting_updater_mode,
-	})
+		ProjectSettings.add_property_info({
+			"name": updater_constants.setting_updater_mode,
+			"type": TYPE_INT,
+			"hint": PROPERTY_HINT_ENUM,
+			"hint_string": setting_updater_mode,
+		})
 	ProjectSettings.set_initial_value(updater_constants.setting_updater_mode, setting_updater_mode_default)
 	ProjectSettings.set_as_basic(updater_constants.setting_updater_mode, true)
 
 
 	## Setting for enabling / disabling Jitter tips in the Output
-	if not ProjectSettings.has_setting(_settings_show_jitter_tips):
+	var has_jitter_tips_setting: bool = ProjectSettings.has_setting(_settings_show_jitter_tips)
+	if not has_jitter_tips_setting:
 		ProjectSettings.set_setting(_settings_show_jitter_tips, true)
-	ProjectSettings.add_property_info({
-		"name": _settings_show_jitter_tips,
-		"type": TYPE_BOOL,
-	})
+		ProjectSettings.add_property_info({
+			"name": _settings_show_jitter_tips,
+			"type": TYPE_BOOL,
+		})
 	ProjectSettings.set_initial_value(_settings_show_jitter_tips, true)
 	ProjectSettings.set_as_basic(_settings_show_jitter_tips, true)
 
@@ -114,6 +121,9 @@ func _enter_tree() -> void:
 
 	# TODO - Should be disabled unless in editor
 	# Viewfinder
+	if _is_headless_editor():
+		return
+
 	editor_panel_instance = EditorPanel.instantiate()
 	editor_panel_instance.editor_plugin = self
 	panel_button = add_control_to_bottom_panel(editor_panel_instance, "Phantom Camera")
@@ -125,12 +135,18 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
-	panel_button.toggled.disconnect(_btn_toggled)
-	scene_changed.disconnect(editor_panel_instance.viewfinder.scene_changed)
-	scene_changed.disconnect(_scene_changed)
+	if panel_button and panel_button.toggled.is_connected(_btn_toggled):
+		panel_button.toggled.disconnect(_btn_toggled)
+	if editor_panel_instance and scene_changed.is_connected(editor_panel_instance.viewfinder.scene_changed):
+		scene_changed.disconnect(editor_panel_instance.viewfinder.scene_changed)
+	if scene_changed.is_connected(_scene_changed):
+		scene_changed.disconnect(_scene_changed)
 
-	remove_control_from_bottom_panel(editor_panel_instance)
-	editor_panel_instance.queue_free()
+	if editor_panel_instance:
+		remove_control_from_bottom_panel(editor_panel_instance)
+		editor_panel_instance.queue_free()
+		editor_panel_instance = null
+	panel_button = null
 
 	remove_node_3d_gizmo_plugin(pcam_3d_gizmo_plugin)
 	remove_node_3d_gizmo_plugin(pcam_3d_noise_emitter_gizmo_plugin)
@@ -144,6 +160,8 @@ func _exit_tree() -> void:
 
 
 func _btn_toggled(toggled_on: bool):
+	if not editor_panel_instance:
+		return
 	editor_panel_instance.viewfinder.set_visibility(toggled_on)
 #	if toggled_on:
 #		editor_panel_instance.viewfinder.viewfinder_visible = true
@@ -157,6 +175,8 @@ func _make_visible(visible):
 
 ## TODO - Signal can be added directly to the editor_panel with the changes in Godot 4.5 (https://github.com/godotengine/godot/pull/102986)
 func _scene_changed(scene_root: Node) -> void:
+	if not editor_panel_instance:
+		return
 	editor_panel_instance.viewfinder.scene_changed(scene_root)
 
 #	TODO - Pending merge of https://github.com/godotengine/godot/pull/102889 - Should only support Godot version after this release

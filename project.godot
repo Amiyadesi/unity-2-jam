@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="CloseAI"
+config/name="Close AI"
 config/description="一个关于关闭的游戏。关闭它，才能救它。"
 run/main_scene="res://scenes/boot.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
@@ -26,7 +26,7 @@ GuiTransitions="*uid://lbwvyqfdnu7x"
 SoundManager="*uid://b2wllo35vbjaj"
 DialogueManager="*uid://c3rodes2l3gxb"
 GameFlow="*res://scripts/autoload/game_flow.gd"
-InfoFlow="*res://scripts/autoload/info_flow.gd"
+InfoFlow="*res://scenes/info_flow.tscn"
 
 [debug]
 
@@ -43,6 +43,7 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/mode=3
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
 
 [dotnet]

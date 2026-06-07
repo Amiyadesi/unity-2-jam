@@ -127,7 +127,7 @@ custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-text = "[color=#e8c070]CloseAI[/color]
+text = "[color=#e8c070]Close AI[/color]
 
 一个关于关闭的游戏。
 关闭它，才能救它。

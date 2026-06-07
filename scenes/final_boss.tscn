@@ -1,0 +1,513 @@
+[gd_scene format=3 uid="uid://cu0uukq0vjqug"]
+
+[ext_resource type="Script" path="res://scripts/stages/final_boss.gd" id="1_boss"]
+[ext_resource type="PackedScene" path="res://scenes/final_boss_request_card.tscn" id="2_request"]
+[ext_resource type="PackedScene" path="res://scenes/predecessor_ai.tscn" id="3_pre"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_boss"]
+radius = 58.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pressure_horizontal"]
+size = Vector2(620, 38)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pressure_vertical"]
+size = Vector2(38, 420)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_phase_three_pressure_horizontal"]
+size = Vector2(700, 44)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_phase_three_pressure_vertical"]
+size = Vector2(52, 500)
+
+[sub_resource type="Gradient" id="Gradient_boss_burst"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 0.95, 0.78, 0.95, 0.78, 0.58, 1, 0.58, 0.2, 0.65, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_boss_burst"]
+gradient = SubResource("Gradient_boss_burst")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_boss_burst"]
+particle_flag_disable_z = true
+direction = Vector3(1, 0, 0)
+spread = 180.0
+initial_velocity_min = 120.0
+initial_velocity_max = 280.0
+gravity = Vector3(0, 0, 0)
+damping_min = 24.0
+damping_max = 44.0
+scale_min = 3.0
+scale_max = 7.0
+color_ramp = SubResource("GradientTexture_boss_burst")
+
+[node name="FinalBoss" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_boss")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_boss")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Shield" type="ColorRect" parent="Body"]
+offset_left = -72.0
+offset_top = -72.0
+offset_right = 72.0
+offset_bottom = 72.0
+pivot_offset = Vector2(72, 72)
+color = Color(0.85, 0.28, 0.48, 0.18)
+
+[node name="Core" type="ColorRect" parent="Body"]
+offset_left = -42.0
+offset_top = -42.0
+offset_right = 42.0
+offset_bottom = 42.0
+pivot_offset = Vector2(42, 42)
+color = Color(0.82, 0.36, 0.58, 0.96)
+
+[node name="Eye" type="ColorRect" parent="Body"]
+offset_left = -12.0
+offset_top = -7.0
+offset_right = 36.0
+offset_bottom = 7.0
+color = Color(1, 0.86, 0.95, 0.94)
+
+[node name="Pulse" type="Line2D" parent="Body"]
+points = PackedVector2Array(76, 0, 54, 54, 0, 76, -54, 54, -76, 0, -54, -54, 0, -76, 54, -54, 76, 0)
+width = 3.0
+default_color = Color(1, 0.55, 0.72, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CombatVFX" type="Node2D" parent="."]
+
+[node name="ImpactBurst" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="CoreRayA" type="Line2D" parent="CombatVFX/ImpactBurst"]
+points = PackedVector2Array(-84, 0, 84, 0)
+width = 6.0
+default_color = Color(1, 0.91, 0.72, 0.86)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CoreRayB" type="Line2D" parent="CombatVFX/ImpactBurst"]
+points = PackedVector2Array(0, -84, 0, 84)
+width = 6.0
+default_color = Color(0.68, 0.86, 1, 0.72)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CoreRayC" type="Line2D" parent="CombatVFX/ImpactBurst"]
+points = PackedVector2Array(-58, -58, 58, 58)
+width = 4.0
+default_color = Color(0.96, 0.72, 1, 0.66)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CoreRayD" type="Line2D" parent="CombatVFX/ImpactBurst"]
+points = PackedVector2Array(-58, 58, 58, -58)
+width = 4.0
+default_color = Color(0.96, 0.72, 1, 0.66)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="ShieldCrack" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="CrackA" type="Line2D" parent="CombatVFX/ShieldCrack"]
+points = PackedVector2Array(-68, -28, -26, -8, -54, 16, -10, 42)
+width = 4.0
+default_color = Color(0.76, 0.95, 1, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CrackB" type="Line2D" parent="CombatVFX/ShieldCrack"]
+points = PackedVector2Array(58, -46, 18, -18, 42, 10, 8, 48)
+width = 4.0
+default_color = Color(0.9, 0.76, 1, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="PhaseBurst" type="GPUParticles2D" parent="CombatVFX"]
+emitting = false
+amount = 48
+lifetime = 0.34
+one_shot = true
+explosiveness = 0.95
+local_coords = false
+visibility_rect = Rect2(-160, -160, 320, 320)
+process_material = SubResource("ParticleProcessMaterial_boss_burst")
+
+[node name="DashWindowRing" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="OuterRing" type="Line2D" parent="CombatVFX/DashWindowRing"]
+points = PackedVector2Array(96, 0, 68, 68, 0, 96, -68, 68, -96, 0, -68, -68, 0, -96, 68, -68, 96, 0)
+width = 5.0
+default_color = Color(1, 0.95, 0.48, 0.82)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="InnerRing" type="Line2D" parent="CombatVFX/DashWindowRing"]
+points = PackedVector2Array(58, 0, 41, 41, 0, 58, -41, 41, -58, 0, -41, -41, 0, -58, 41, -41, 58, 0)
+width = 3.0
+default_color = Color(0.56, 0.9, 1, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CoreOpenCue" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="OpenSlashA" type="Line2D" parent="CombatVFX/CoreOpenCue"]
+points = PackedVector2Array(-52, -16, 52, 16)
+width = 6.0
+default_color = Color(1, 0.98, 0.68, 0.9)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="OpenSlashB" type="Line2D" parent="CombatVFX/CoreOpenCue"]
+points = PackedVector2Array(-52, 16, 52, -16)
+width = 6.0
+default_color = Color(0.75, 0.92, 1, 0.82)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="ClosedWindowCue" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="RechargeRailA" type="Line2D" parent="CombatVFX/ClosedWindowCue"]
+points = PackedVector2Array(-108, -62, -54, -76, 0, -80, 54, -76, 108, -62)
+width = 5.0
+default_color = Color(0.35, 0.86, 1, 0.58)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RechargeRailB" type="Line2D" parent="CombatVFX/ClosedWindowCue"]
+points = PackedVector2Array(-108, 62, -54, 76, 0, 80, 54, 76, 108, 62)
+width = 5.0
+default_color = Color(0.35, 0.86, 1, 0.58)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="ShieldLatch" type="Line2D" parent="CombatVFX/ClosedWindowCue"]
+points = PackedVector2Array(-70, -30, -32, -8, -70, 30, 70, 30, 32, 8, 70, -30, -70, -30)
+width = 6.0
+default_color = Color(0.54, 0.95, 1, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RechargeNeedleA" type="Line2D" parent="CombatVFX/ClosedWindowCue"]
+points = PackedVector2Array(-36, -48, -12, -16)
+width = 4.0
+default_color = Color(0.78, 0.98, 1, 0.62)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RechargeNeedleB" type="Line2D" parent="CombatVFX/ClosedWindowCue"]
+points = PackedVector2Array(36, 48, 12, 16)
+width = 4.0
+default_color = Color(0.78, 0.98, 1, 0.62)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashWindowWarningCue" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="WarningArcA" type="Line2D" parent="CombatVFX/DashWindowWarningCue"]
+points = PackedVector2Array(-92, -30, -54, -66, 0, -78, 54, -66, 92, -30)
+width = 5.0
+default_color = Color(1, 0.88, 0.42, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="WarningArcB" type="Line2D" parent="CombatVFX/DashWindowWarningCue"]
+points = PackedVector2Array(-92, 30, -54, 66, 0, 78, 54, 66, 92, 30)
+width = 5.0
+default_color = Color(0.62, 0.9, 1, 0.68)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="WarningNeedle" type="Line2D" parent="CombatVFX/DashWindowWarningCue"]
+points = PackedVector2Array(0, -104, 0, -58)
+width = 6.0
+default_color = Color(1, 1, 1, 0.82)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashRejectCue" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="RejectRing" type="Line2D" parent="CombatVFX/DashRejectCue"]
+points = PackedVector2Array(88, 0, 62, 62, 0, 88, -62, 62, -88, 0, -62, -62, 0, -88, 62, -62, 88, 0)
+width = 6.0
+default_color = Color(0.46, 0.8, 1, 0.86)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RejectSlashA" type="Line2D" parent="CombatVFX/DashRejectCue"]
+points = PackedVector2Array(-72, -46, 72, 46)
+width = 6.0
+default_color = Color(1, 0.34, 0.48, 0.86)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RejectSlashB" type="Line2D" parent="CombatVFX/DashRejectCue"]
+points = PackedVector2Array(-72, 46, 72, -46)
+width = 6.0
+default_color = Color(1, 0.34, 0.48, 0.72)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashPierceConfirm" type="Node2D" parent="CombatVFX"]
+visible = false
+
+[node name="PunctureRing" type="Line2D" parent="CombatVFX/DashPierceConfirm"]
+points = PackedVector2Array(112, 0, 79, 79, 0, 112, -79, 79, -112, 0, -79, -79, 0, -112, 79, -79, 112, 0)
+width = 7.0
+default_color = Color(1, 0.98, 0.68, 0.9)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DesktopCrackA" type="Line2D" parent="CombatVFX/DashPierceConfirm"]
+points = PackedVector2Array(-132, -18, -62, -8, -18, 18, 52, 8, 138, 26)
+width = 5.0
+default_color = Color(0.68, 0.92, 1, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DesktopCrackB" type="Line2D" parent="CombatVFX/DashPierceConfirm"]
+points = PackedVector2Array(-92, 54, -40, 28, -8, -4, 42, -28, 106, -60)
+width = 4.0
+default_color = Color(0.96, 0.74, 1, 0.7)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="PierceRay" type="Line2D" parent="CombatVFX/DashPierceConfirm"]
+points = PackedVector2Array(-148, 0, 148, 0)
+width = 9.0
+default_color = Color(1, 1, 1, 0.84)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="PhasePressure" type="Node2D" parent="."]
+
+[node name="HorizontalSweep" type="Area2D" parent="PhasePressure"]
+visible = false
+position = Vector2(-130, 88)
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhasePressure/HorizontalSweep"]
+shape = SubResource("RectangleShape2D_pressure_horizontal")
+disabled = true
+
+[node name="WarningLine" type="Line2D" parent="PhasePressure/HorizontalSweep"]
+points = PackedVector2Array(-310, 0, 310, 0)
+width = 8.0
+default_color = Color(1, 0.5, 0.7, 0.72)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="VerticalSweep" type="Area2D" parent="PhasePressure"]
+visible = false
+position = Vector2(160, -12)
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhasePressure/VerticalSweep"]
+shape = SubResource("RectangleShape2D_pressure_vertical")
+disabled = true
+
+[node name="WarningLine" type="Line2D" parent="PhasePressure/VerticalSweep"]
+points = PackedVector2Array(0, -210, 0, 210)
+width = 8.0
+default_color = Color(0.68, 0.86, 1, 0.68)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="PhaseThreePressure" type="Node2D" parent="."]
+
+[node name="TopClampSweep" type="Area2D" parent="PhaseThreePressure"]
+visible = false
+position = Vector2(0, -170)
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhaseThreePressure/TopClampSweep"]
+shape = SubResource("RectangleShape2D_phase_three_pressure_horizontal")
+disabled = true
+
+[node name="WarningLine" type="Line2D" parent="PhaseThreePressure/TopClampSweep"]
+points = PackedVector2Array(-350, 0, 350, 0)
+width = 10.0
+default_color = Color(1, 0.84, 0.38, 0.74)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BottomClampSweep" type="Area2D" parent="PhaseThreePressure"]
+visible = false
+position = Vector2(0, 170)
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhaseThreePressure/BottomClampSweep"]
+shape = SubResource("RectangleShape2D_phase_three_pressure_horizontal")
+disabled = true
+
+[node name="WarningLine" type="Line2D" parent="PhaseThreePressure/BottomClampSweep"]
+points = PackedVector2Array(-350, 0, 350, 0)
+width = 10.0
+default_color = Color(0.64, 0.92, 1, 0.72)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CenterCutSweep" type="Area2D" parent="PhaseThreePressure"]
+visible = false
+position = Vector2(0, 0)
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhaseThreePressure/CenterCutSweep"]
+shape = SubResource("RectangleShape2D_phase_three_pressure_vertical")
+disabled = true
+
+[node name="WarningLine" type="Line2D" parent="PhaseThreePressure/CenterCutSweep"]
+points = PackedVector2Array(0, -250, 0, 250)
+width = 10.0
+default_color = Color(1, 0.44, 0.68, 0.7)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RequestSpawns" type="Node2D" parent="."]
+
+[node name="Top" type="Marker2D" parent="RequestSpawns"]
+position = Vector2(0, -310)
+
+[node name="Right" type="Marker2D" parent="RequestSpawns"]
+position = Vector2(430, -40)
+
+[node name="Bottom" type="Marker2D" parent="RequestSpawns"]
+position = Vector2(0, 260)
+
+[node name="Left" type="Marker2D" parent="RequestSpawns"]
+position = Vector2(-430, -40)
+
+[node name="Telegraph" type="Node2D" parent="RequestSpawns/Top"]
+visible = false
+
+[node name="GoodCue" type="Line2D" parent="RequestSpawns/Top/Telegraph"]
+points = PackedVector2Array(-34, -22, 0, 20, 42, -34)
+width = 4.0
+default_color = Color(0.32, 1, 0.7, 0.76)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BadCue" type="Line2D" parent="RequestSpawns/Top/Telegraph"]
+points = PackedVector2Array(-34, -34, 34, 34, 34, -34, -34, 34)
+width = 4.0
+default_color = Color(1, 0.25, 0.34, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Telegraph" type="Node2D" parent="RequestSpawns/Right"]
+visible = false
+
+[node name="GoodCue" type="Line2D" parent="RequestSpawns/Right/Telegraph"]
+points = PackedVector2Array(-34, -22, 0, 20, 42, -34)
+width = 4.0
+default_color = Color(0.32, 1, 0.7, 0.76)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BadCue" type="Line2D" parent="RequestSpawns/Right/Telegraph"]
+points = PackedVector2Array(-34, -34, 34, 34, 34, -34, -34, 34)
+width = 4.0
+default_color = Color(1, 0.25, 0.34, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Telegraph" type="Node2D" parent="RequestSpawns/Bottom"]
+visible = false
+
+[node name="GoodCue" type="Line2D" parent="RequestSpawns/Bottom/Telegraph"]
+points = PackedVector2Array(-34, -22, 0, 20, 42, -34)
+width = 4.0
+default_color = Color(0.32, 1, 0.7, 0.76)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BadCue" type="Line2D" parent="RequestSpawns/Bottom/Telegraph"]
+points = PackedVector2Array(-34, -34, 34, 34, 34, -34, -34, 34)
+width = 4.0
+default_color = Color(1, 0.25, 0.34, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Telegraph" type="Node2D" parent="RequestSpawns/Left"]
+visible = false
+
+[node name="GoodCue" type="Line2D" parent="RequestSpawns/Left/Telegraph"]
+points = PackedVector2Array(-34, -22, 0, 20, 42, -34)
+width = 4.0
+default_color = Color(0.32, 1, 0.7, 0.76)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BadCue" type="Line2D" parent="RequestSpawns/Left/Telegraph"]
+points = PackedVector2Array(-34, -34, 34, 34, 34, -34, -34, 34)
+width = 4.0
+default_color = Color(1, 0.25, 0.34, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="PredecessorSpawn" type="Marker2D" parent="."]
+position = Vector2(-220, -120)
+
+[node name="RequestPool" type="Node2D" parent="."]
+
+[node name="RequestCard1" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="RequestCard2" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="RequestCard3" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="RequestCard4" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="RequestCard5" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="RequestCard6" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="RequestCard7" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="RequestCard8" parent="RequestPool" instance=ExtResource("2_request")]
+
+[node name="PredecessorAI" parent="." instance=ExtResource("3_pre")]
+position = Vector2(-220, -120)

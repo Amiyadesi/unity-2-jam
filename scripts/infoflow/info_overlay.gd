@@ -4,23 +4,31 @@ extends CanvasLayer
 ## 精简：去掉 popup 与 DialogueLabel 依赖；纯 GDScript + 固定模板场景。
 ## 紫色极简装置风。布局语法：anchor[+x,y][@WxH]，如 "top_right+0,12@360x84"。
 
-const HINT_LABEL_SCENE := preload("res://scenes/ui/info_hint.tscn")
-const BREADCRUMB_ITEM_SCENE := preload("res://scenes/ui/info_breadcrumb.tscn")
-
 @onready var _breadcrumb_feed: Control = %BreadcrumbFeed
 @onready var _hint_feed: Control = %HintFeed
+@onready var _breadcrumb_pool: Node = %BreadcrumbPool
+@onready var _hint_pool: Node = %HintPool
 
 var _hints: Dictionary = {}
 var _breadcrumb_items: Array[Control] = []
 
 
-## toast：限时通知，自动淡出，纵向堆叠
+## 初始化 authored 池，确保所有预放控件默认隐藏。
+func _ready() -> void:
+	_require_authored_pools()
+	_reset_pool(_breadcrumb_pool)
+	_reset_pool(_hint_pool)
+
+
+## toast：限时通知，自动淡出，纵向堆叠。
 func show_toast(seconds: float, title: String, text: String, layout_spec: String = "top_right") -> void:
-	var item := BREADCRUMB_ITEM_SCENE.instantiate() as Control
-	_breadcrumb_feed.add_child(item)
+	var item := _take_from_pool(_breadcrumb_pool, "breadcrumb") as Control
+	if item == null:
+		return
 	_breadcrumb_items.append(item)
 	_set_label_text(item, "BreadcrumbTitle", title)
 	_set_label_text(item, "BreadcrumbText", text)
+	item.show()
 	_apply_breadcrumb_layouts(layout_spec)
 
 	var life_bar := item.get_node_or_null("%LifeBar") as ProgressBar
@@ -32,50 +40,54 @@ func show_toast(seconds: float, title: String, text: String, layout_spec: String
 	await get_tree().create_timer(maxf(seconds, 0.05)).timeout
 	if is_instance_valid(item):
 		_breadcrumb_items.erase(item)
-		item.queue_free()
+		_release_to_pool(item)
 		_apply_breadcrumb_layouts(layout_spec)
 
 
-## hint：按 channel 常驻提示，mode="hide" 隐藏
+## hint：按 channel 常驻提示，mode="hide" 隐藏。
 func show_hint(channel: String, text: String, mode: String = "show", layout_spec: String = "right") -> void:
 	if mode == "hide":
 		hide_hint(channel)
 		return
 	var item: Control = _hints.get(channel) as Control
 	if item == null:
-		item = HINT_LABEL_SCENE.instantiate() as Control
-		_hint_feed.add_child(item)
+		item = _take_from_pool(_hint_pool, "hint") as Control
+		if item == null:
+			return
 		_hints[channel] = item
 	_set_label_text(item, "HintText", text)
 	apply_canvas_layout_spec(item, layout_spec)
 	item.show()
 
 
+## 隐藏指定频道 hint 并归还池。
 func hide_hint(channel: String) -> void:
 	var item: Control = _hints.get(channel) as Control
 	if item == null:
 		return
-	item.queue_free()
+	_release_to_pool(item)
 	_hints.erase(channel)
 
 
+## 隐藏全部 hint 并归还池。
 func clear_hints() -> void:
 	for item in _hints.values():
 		if is_instance_valid(item):
-			item.queue_free()
+			_release_to_pool(item)
 	_hints.clear()
 
 
+## 根据兼容 layout spec 摆放控件。
 func apply_canvas_layout_spec(target: Control, layout_spec: String, stack_index: int = 0) -> void:
 	var parsed := _parse_layout_spec(layout_spec, target.custom_minimum_size)
 	var size: Vector2 = parsed["size"]
-	var offset: Vector2 = parsed["offset"]
-	offset.y += float(stack_index) * (size.y + 8.0)
+	var layout_offset: Vector2 = parsed["offset"]
+	layout_offset.y += float(stack_index) * (size.y + 8.0)
 	target.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	target.custom_minimum_size = size
 	target.size = size
 	var viewport_size := get_viewport().get_visible_rect().size
-	var position := _anchor_to_position(parsed["anchor"], viewport_size, size) + offset
+	var position := _anchor_to_position(parsed["anchor"], viewport_size, size) + layout_offset
 	target.position = position
 
 
@@ -86,6 +98,7 @@ func _apply_breadcrumb_layouts(layout_spec: String) -> void:
 			apply_canvas_layout_spec(item, layout_spec, index)
 
 
+## 给池内模板控件写入 Label/RichTextLabel 文案。
 func _set_label_text(root: Node, node_name: String, value: String) -> void:
 	var node := root.get_node_or_null("%" + node_name)
 	if node is RichTextLabel:
@@ -94,6 +107,52 @@ func _set_label_text(root: Node, node_name: String, value: String) -> void:
 		node.text = value
 
 
+## 校验 authored 池节点存在。
+func _require_authored_pools() -> void:
+	if _breadcrumb_feed == null or _breadcrumb_pool == null:
+		push_error("InfoOverlay requires authored BreadcrumbFeed/BreadcrumbPool.")
+	if _hint_feed == null or _hint_pool == null:
+		push_error("InfoOverlay requires authored HintFeed/HintPool.")
+
+
+## 将池内控件隐藏并清空运行时文本。
+func _reset_pool(pool: Node) -> void:
+	if pool == null:
+		return
+	for child in pool.get_children():
+		if child is Control:
+			_release_to_pool(child)
+
+
+## 从 authored 池中租用一个隐藏控件；池不够时显式报错。
+func _take_from_pool(pool: Node, label: String) -> Control:
+	if pool == null:
+		push_error("InfoOverlay missing authored %s pool." % label)
+		return null
+	for child in pool.get_children():
+		if child is Control and not (child as Control).visible:
+			return child
+	push_error("InfoOverlay %s pool exhausted; add more authored pool items." % label)
+	return null
+
+
+## 归还控件到池并隐藏。
+func _release_to_pool(item: Control) -> void:
+	if item == null:
+		return
+	item.hide()
+	item.modulate.a = 1.0
+	if item is PanelContainer:
+		item.scale = Vector2.ONE
+	_set_label_text(item, "BreadcrumbTitle", "")
+	_set_label_text(item, "BreadcrumbText", "")
+	_set_label_text(item, "HintText", "")
+	var life_bar := item.get_node_or_null("%LifeBar") as ProgressBar
+	if life_bar != null:
+		life_bar.value = 1.0
+
+
+## 解析兼容布局 DSL。
 func _parse_layout_spec(layout_spec: String, fallback_size: Vector2) -> Dictionary:
 	var spec := layout_spec.strip_edges()
 	if spec.is_empty():
@@ -107,18 +166,19 @@ func _parse_layout_spec(layout_spec: String, fallback_size: Vector2) -> Dictiona
 		anchor_part = spec.substr(0, at_index)
 		size = _parse_size(spec.substr(at_index + 1), size)
 	var anchor := anchor_part
-	var offset := Vector2.ZERO
+	var layout_offset := Vector2.ZERO
 	var plus_index := anchor_part.find("+")
 	if plus_index >= 0:
 		anchor = anchor_part.substr(0, plus_index)
-		offset = _parse_offset(anchor_part.substr(plus_index + 1))
+		layout_offset = _parse_offset(anchor_part.substr(plus_index + 1))
 	elif anchor_part.find("-") > 0:
 		var minus_index := anchor_part.find("-")
 		anchor = anchor_part.substr(0, minus_index)
-		offset = -_parse_offset(anchor_part.substr(minus_index + 1))
-	return {"anchor": anchor.strip_edges(), "offset": offset, "size": size}
+		layout_offset = -_parse_offset(anchor_part.substr(minus_index + 1))
+	return {"anchor": anchor.strip_edges(), "offset": layout_offset, "size": size}
 
 
+## 解析 "WxH" 尺寸片段。
 func _parse_size(value: String, fallback: Vector2) -> Vector2:
 	var parts := value.to_lower().split("x", false)
 	if parts.size() != 2:
@@ -128,6 +188,7 @@ func _parse_size(value: String, fallback: Vector2) -> Vector2:
 	return Vector2(w, h) if w > 0.0 and h > 0.0 else fallback
 
 
+## 解析 "x,y" 偏移片段。
 func _parse_offset(value: String) -> Vector2:
 	var parts := value.split(",", false)
 	if parts.size() != 2:
@@ -135,6 +196,7 @@ func _parse_offset(value: String) -> Vector2:
 	return Vector2(parts[0].to_float(), parts[1].to_float())
 
 
+## 将布局锚点名转换为屏幕位置。
 func _anchor_to_position(anchor: String, vp: Vector2, size: Vector2) -> Vector2:
 	match anchor:
 		"top": return Vector2((vp.x - size.x) * 0.5, 24)

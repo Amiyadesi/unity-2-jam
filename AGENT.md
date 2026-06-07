@@ -54,7 +54,6 @@
 ```
 
 已知噪声：
-- SoundManager 输出 `Both music and sounds are using the same bus: Master`。
 - PhantomCameraManager 编辑器插件在 headless 导入时报 singleton 错误（运行时无关）。
 - 测试打印 OK / RESULT 后仍可能因 Godot 资源泄漏清理警告返回非零；判断时看 RESULT 行而非退出码。
 

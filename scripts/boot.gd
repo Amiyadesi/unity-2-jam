@@ -13,15 +13,16 @@ extends Control
 ## 启动画面停留时长（秒）
 @export var boot_duration: float = 1.1
 
+## 根据 post-game 状态跳过启动黑屏，否则播放普通启动演出。
 func _ready() -> void:
-	_enforce_display_mode()
-	if GameFlow.has_openai_flag():
+	if GameFlow.has_openai_flag() or GameFlow.has_finished_game():
 		await get_tree().process_frame
 		GameFlow.enter_after_boot()
 		return
+	_enforce_display_mode()
 	_boot_label.modulate.a = 0.0
 	await _play_boot_intro()
-	# 根据进度路由：未开始→菜单；通关→结局；游玩中→当前关卡
+	# 根据进度路由：未开始→菜单；游玩中→当前关卡。
 	GameFlow.enter_after_boot()
 
 

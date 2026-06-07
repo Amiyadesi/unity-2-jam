@@ -65,6 +65,11 @@ func get_ui_sound_volume() -> float:
 func set_sound_volume(volume_between_0_and_1: float) -> void:
 	_show_shared_bus_warning()
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(sound_effects.bus), linear_to_db(volume_between_0_and_1))
+
+
+# Sets interface sound volume on the dedicated UI bus.
+func set_ui_sound_volume(volume_between_0_and_1: float) -> void:
+	_show_shared_bus_warning()
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(ui_sound_effects.bus), linear_to_db(volume_between_0_and_1))
 
 

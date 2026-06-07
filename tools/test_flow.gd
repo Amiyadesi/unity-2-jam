@@ -76,8 +76,11 @@ func _run() -> void:
 
 	gf.set_current_stage(gf.TOTAL_STAGES)
 	if gf.get_current_stage() >= gf.TOTAL_STAGES:
-		gf._set_app_value(gf.FINISHED_KEY, true)
+		gf.prepare_openai_shell()
 	_check("final stage sets finished", gf.has_finished_game() == true)
+	_check("final stage prepares OpenAI flag", gf.has_openai_flag() == true)
+	gf.clear_openai_flag()
+	_check("legacy finished save routes to OpenAI note", gf.get_scene_path_after_boot() == gf.SCENE_OPENAI_NOTE)
 
 	# --- start_game 标记 started ---
 	gf.reset_progress()
@@ -92,11 +95,15 @@ func _run() -> void:
 	_check("OpenAI flag exists after reveal", gf.has_openai_flag() == true)
 	gf.clear_openai_flag()
 	_check("clear_openai_flag removes flag", gf.has_openai_flag() == false)
-	var rename_plan: Dictionary = gf._build_post_game_executable_rename_plan_from_path("D:/Builds/CloseAI/CloseAI.exe")
-	_check("post-game rename plan accepts CloseAI.exe", rename_plan.get("target", "") == "D:/Builds/CloseAI/OpenAI.exe")
-	_check("post-game rename plan rejects OpenAI.exe", gf._build_post_game_executable_rename_plan_from_path("D:/Builds/CloseAI/OpenAI.exe").is_empty())
+	var rename_plan: Dictionary = gf._build_post_game_executable_rename_plan_from_path("D:/Builds/CloseAI/Close AI.exe")
+	_check("post-game rename plan accepts Close AI.exe", rename_plan.get("target", "") == "D:/Builds/CloseAI/Open AI.exe")
+	_check("post-game rename plan rejects Open AI.exe", gf._build_post_game_executable_rename_plan_from_path("D:/Builds/CloseAI/Open AI.exe").is_empty())
 	var rename_script: String = gf._build_post_game_rename_script_text(rename_plan)
-	_check("post-game rename script renames to OpenAI.exe", rename_script.contains("ren \"%SRC%\" \"%DST_NAME%\""))
+	_check("post-game rename script renames to Open AI.exe", rename_script.contains("ren \"%SRC%\" \"%DST_NAME%\""))
+	gf.apply_openai_identity()
+	_check("OpenAI identity enables transparent viewport", root.transparent_bg == true)
+	gf.apply_closeai_identity()
+	_check("CloseAI identity restores opaque viewport", root.transparent_bg == false)
 
 	# --- pre_self_close 演出钩子被 await ---
 	gf.pre_self_close.connect(func(r): _pre_close_fired = true, CONNECT_ONE_SHOT)

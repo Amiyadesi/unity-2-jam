@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://c7x0d2p2w4rmb"]
+
+[ext_resource type="Script" path="res://scripts/stages/predecessor_ai.gd" id="1_pre"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pre"]
+radius = 32.0
+
+[node name="PredecessorAI" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_pre")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pre")
+disabled = true
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Trail" type="Line2D" parent="Body"]
+points = PackedVector2Array(-74, 0, -20, 0, 0, 0)
+width = 8.0
+default_color = Color(0.38, 0.76, 1, 0.55)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Core" type="ColorRect" parent="Body"]
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+pivot_offset = Vector2(24, 24)
+color = Color(0.55, 0.78, 1, 0.92)
+
+[node name="Eye" type="ColorRect" parent="Body"]
+offset_left = 6.0
+offset_top = -5.0
+offset_right = 24.0
+offset_bottom = 5.0
+color = Color(0.96, 0.99, 1, 0.95)

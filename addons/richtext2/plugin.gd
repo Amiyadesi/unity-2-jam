@@ -5,10 +5,13 @@ func _enter_tree() -> void:
 	var fh := FontHelper.new()
 	var fonts := {}
 	fh._scan_for_fonts(fonts, "res://", true)
+	var has_fonts_setting := ProjectSettings.has_setting("richer_text_label/fonts")
 	ProjectSettings.set("richer_text_label/fonts", fonts)
-	ProjectSettings.add_property_info({ "name": "richer_text_label/fonts", "type": TYPE_DICTIONARY })
+	if not has_fonts_setting:
+		ProjectSettings.add_property_info({ "name": "richer_text_label/fonts", "type": TYPE_DICTIONARY })
 	
 	if not ProjectSettings.has_setting("richer_text_label/colors"):
+		ProjectSettings.set("richer_text_label/colors", {})
 		if Engine.get_version_info().hex >= 0x040400:
 			ProjectSettings.add_property_info({ 
 				"name": "richer_text_label/colors", 

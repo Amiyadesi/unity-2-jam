@@ -48,6 +48,10 @@ func _run() -> void:
 	var thanks = menu.get_node_or_null("ThanksScreen")
 	_check("SettingsScreen present", settings != null)
 	_check("ThanksScreen present", thanks != null)
+	_check("settings removed fullscreen button", settings != null and settings.get_node_or_null("Panel/Margin/VBox/DisplayRow/FullscreenCheck") == null)
+	_check("settings has UI volume slider", settings != null and settings.get_node_or_null("Panel/Margin/VBox/UiRow/UiSlider") is HSlider)
+	_check("settings has Ambient volume slider", settings != null and settings.get_node_or_null("Panel/Margin/VBox/AmbientRow/AmbientSlider") is HSlider)
+	_check("settings has keybinding UI", settings != null and settings.get_node_or_null("Panel/Margin/VBox/KeybindPanel/KeybindingUI") != null)
 
 	# 回归守护："overlay 挡住菜单按钮"——close_mock 等常驻 overlay 的所有
 	# 可见控件都必须 mouse_filter=IGNORE(2)，否则会挡住其覆盖范围内的按钮点击。
@@ -58,6 +62,7 @@ func _run() -> void:
 	if bad != "":
 		print("    blocking node: ", bad)
 	mock.free()
+	await _check_info_flow_authored_pool()
 
 	# --- settings modal open/close ---
 	if settings != null and settings.has_method("open_modal"):
@@ -114,12 +119,60 @@ func _run() -> void:
 	var hud_fill = hud.get_node_or_null("Root/BarFrame/FillClip/Fill")
 	_check("energy HUD label present", hud_label is Label)
 	_check("energy HUD fill present", hud_fill is ColorRect)
-	hud_player._set_energy(42.0)
+	hud_player.drain_energy(58.0)
 	await _wait(0.2)
 	_check("energy HUD label follows player energy", hud_label != null and hud_label.text == "42")
 	_check("energy HUD fill shrinks", hud_fill != null and hud_fill.size.x < 260.0)
 	holder.queue_free()
 
+	# --- post-game OpenAI note is a paper note, not a black-screen scene ---
+	var note = load("res://scenes/openai_note.tscn").instantiate()
+	root.add_child(note)
+	await process_frame
+	await process_frame
+	var paper = note.get_node_or_null("Paper")
+	_check("OpenAI note has paper", paper is PanelContainer)
+	_check("OpenAI note has no black background", note.get_node_or_null("Background") == null)
+	_check("OpenAI note sits bottom-right", paper != null and paper.anchor_left >= 0.99 and paper.anchor_top >= 0.99)
+	note.queue_free()
+
 	if gf: gf.reset_progress()
 	print("=== RESULT: %d/%d passed, %d failed ===" % [_checks - _failures, _checks, _failures])
 	quit(1 if _failures > 0 else 0)
+
+
+## 确认 InfoFlow/InfoOverlay 由 authored scene 和固定池承载，不运行时新增 UI 节点。
+func _check_info_flow_authored_pool() -> void:
+	var flow_scene: PackedScene = load("res://scenes/info_flow.tscn")
+	_check("InfoFlow authored scene loads", flow_scene != null)
+	if flow_scene == null:
+		return
+	var flow = flow_scene.instantiate()
+	root.add_child(flow)
+	await process_frame
+	var overlay = flow.get_node_or_null("InfoOverlay")
+	_check("InfoFlow authored child InfoOverlay", overlay != null and overlay.has_method("show_toast"))
+	var breadcrumb_pool := overlay.get_node_or_null("OverlayRoot/BreadcrumbFeed/BreadcrumbPool") if overlay != null else null
+	var hint_pool := overlay.get_node_or_null("OverlayRoot/HintFeed/HintPool") if overlay != null else null
+	_check("InfoOverlay authored breadcrumb pool", breadcrumb_pool != null and breadcrumb_pool.get_child_count() >= 4)
+	_check("InfoOverlay authored hint pool", hint_pool != null and hint_pool.get_child_count() >= 2)
+	if overlay != null and breadcrumb_pool != null and hint_pool != null:
+		var breadcrumb_count := breadcrumb_pool.get_child_count()
+		var hint_count := hint_pool.get_child_count()
+		overlay.show_toast(0.08, "T", "池化提示", "top_right")
+		overlay.show_hint("test", "常驻提示", "show", "right")
+		await process_frame
+		_check("InfoOverlay toast uses existing pool item", breadcrumb_pool.get_child_count() == breadcrumb_count)
+		_check("InfoOverlay hint uses existing pool item", hint_pool.get_child_count() == hint_count)
+		overlay.hide_hint("test")
+		await _wait(0.12)
+		_check("InfoOverlay returns pool items hidden", _pool_all_hidden(breadcrumb_pool) and _pool_all_hidden(hint_pool))
+	flow.queue_free()
+
+
+## 检查池内控件是否全部归还隐藏。
+func _pool_all_hidden(pool: Node) -> bool:
+	for child in pool.get_children():
+		if child is Control and (child as Control).visible:
+			return false
+	return true

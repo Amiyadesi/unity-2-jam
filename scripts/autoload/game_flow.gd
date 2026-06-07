@@ -41,8 +41,8 @@ const STARTED_KEY := "closeai_started"
 const STAGE_KEY := "closeai_stage"
 const FINISHED_KEY := "closeai_finished"
 
-const NORMAL_GAME_TITLE := "CloseAI"
-const POST_GAME_TITLE := "OpenAI"
+const NORMAL_GAME_TITLE := "Close AI"
+const POST_GAME_TITLE := "Open AI"
 const POST_GAME_FLAG_PATH := "user://saves/openai.flag"
 const POST_GAME_RENAME_SCRIPT_PATH := "user://saves/openai_rename.cmd"
 const WINDOWS_EXECUTABLE_EXTENSION := ".exe"
@@ -181,7 +181,7 @@ func has_started() -> bool:
 func reach_close_moment(stage_index: int) -> void:
 	close_moment_ready.emit(stage_index)
 	if stage_index >= TOTAL_STAGES:
-		_set_app_value(FINISHED_KEY, true)
+		prepare_openai_shell()
 	else:
 		set_current_stage(stage_index + 1)
 	self_close("stage_close_moment")
@@ -221,7 +221,12 @@ func mark_openai_revealed() -> bool:
 	_schedule_post_game_executable_rename()
 	return true
 
-## 安排 Windows 导出版在进程退出后把 CloseAI.exe 改成 OpenAI.exe。
+## 记录完整通关状态并写入下次启动直达纸条的 OpenAI flag。
+func prepare_openai_shell() -> bool:
+	_set_app_value(FINISHED_KEY, true)
+	return mark_openai_revealed()
+
+## 安排 Windows 导出版在进程退出后把 Close AI.exe 改成 Open AI.exe。
 func _schedule_post_game_executable_rename() -> void:
 	if not OS.has_feature("windows") or OS.has_feature("editor"):
 		return
@@ -235,7 +240,7 @@ func _schedule_post_game_executable_rename() -> void:
 	if pid <= 0:
 		push_warning("GameFlow: cannot start post-game executable rename script '%s'" % script_path)
 
-## 从可执行路径构造通关后改名计划；只接受 CloseAI.exe。
+## 从可执行路径构造通关后改名计划；只接受 Close AI.exe。
 func _build_post_game_executable_rename_plan_from_path(executable_path: String) -> Dictionary:
 	if executable_path.is_empty():
 		return {}
@@ -300,17 +305,35 @@ func clear_openai_flag() -> void:
 		if err != OK:
 			push_error("GameFlow.clear_openai_flag: cannot remove flag '%s' (err=%d)" % [POST_GAME_FLAG_PATH, err])
 
-## 切到 post-game 外壳身份：窗口标题显示 OpenAI。
+## 切到 post-game 外壳身份：窗口标题显示 Open AI。
 func apply_openai_identity() -> void:
+	var win := get_window()
+	_set_shell_transparency(true)
 	if DisplayServer.get_name() == "headless":
 		return
 	DisplayServer.window_set_title(POST_GAME_TITLE)
+	if win != null:
+		win.mode = Window.MODE_WINDOWED
+		win.borderless = true
 
-## 切到正常游戏身份：导出包元数据和游玩窗口都保持 CloseAI。
+## 切到正常游戏身份：导出包元数据和游玩窗口都保持 Close AI。
 func apply_closeai_identity() -> void:
+	_set_shell_transparency(false)
 	if DisplayServer.get_name() == "headless":
 		return
 	DisplayServer.window_set_title(NORMAL_GAME_TITLE)
+
+## 同步 viewport/window 透明背景，避免 OpenAI 纸条落回黑底。
+func _set_shell_transparency(enabled: bool) -> void:
+	var viewport := get_viewport()
+	if viewport != null:
+		viewport.transparent_bg = enabled
+	if DisplayServer.get_name() != "headless":
+		var win := get_window()
+		if win != null:
+			win.transparent_bg = enabled
+	var clear_color := Color(0, 0, 0, 0) if enabled else Color(0, 0, 0, 1)
+	RenderingServer.set_default_clear_color(clear_color)
 
 ## 是否有可继续的进度（已开始过，或已通关）
 func has_progress() -> bool:
@@ -334,16 +357,27 @@ func reset_progress() -> void:
 # ──────────────────────────────────────────────
 
 ## 再次打开游戏时由 boot 调用：根据进度进入正确场景。
-##  post-game flag → OpenAI 纸条；未开始 → 菜单；已通关 → 结局；游玩中 → 当前关卡。
+##  post-game flag → OpenAI 纸条；未开始 → 菜单；旧已通关存档 → 迁移到纸条；游玩中 → 当前关卡。
 func enter_after_boot() -> void:
 	if has_openai_flag():
 		goto_openai_note()
+	elif has_finished_game():
+		prepare_openai_shell()
+		goto_openai_note()
 	elif not has_started():
 		goto_menu()
-	elif has_finished_game():
-		goto_ending()
 	else:
 		goto_stage(get_current_stage())
+
+## 返回启动后应进入的场景路径，供流程测试和菜单文案判断使用。
+func get_scene_path_after_boot() -> String:
+	if has_openai_flag():
+		return SCENE_OPENAI_NOTE
+	if has_finished_game():
+		return SCENE_OPENAI_NOTE
+	if not has_started():
+		return SCENE_MENU
+	return STAGE_SCENE_PATTERN % get_current_stage()
 
 func goto_menu() -> void:
 	apply_closeai_identity()
@@ -355,9 +389,10 @@ func goto_stage(stage: int) -> void:
 	apply_closeai_identity()
 	_change_scene(STAGE_SCENE_PATTERN % s)
 
+## 兼容旧调用名；终局现在直接迁移到 OpenAI 纸条外壳。
 func goto_ending() -> void:
-	apply_closeai_identity()
-	_change_scene(SCENE_ENDING)
+	prepare_openai_shell()
+	goto_openai_note()
 
 ## 进入通关后的 OpenAI 纸条场景。
 func goto_openai_note() -> void:

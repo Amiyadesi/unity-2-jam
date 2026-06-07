@@ -29,38 +29,30 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_note")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Paper" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(320, 210)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.015, 0.017, 0.018, 1)
-
-[node name="Paper" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(420, 270)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -210.0
-offset_top = -136.0
-offset_right = 210.0
-offset_bottom = 134.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -356.0
+offset_top = -244.0
+offset_right = -36.0
+offset_bottom = -34.0
+grow_horizontal = 0
+grow_vertical = 0
 rotation = -0.025
+mouse_filter = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_paper")
 
 [node name="Margin" type="MarginContainer" parent="Paper"]
 layout_mode = 2
 theme_override_constants/margin_left = 34
-theme_override_constants/margin_top = 30
+theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 34
-theme_override_constants/margin_bottom = 28
+theme_override_constants/margin_bottom = 24
 
 [node name="Lines" type="VBoxContainer" parent="Paper/Margin"]
 layout_mode = 2
@@ -69,8 +61,8 @@ theme_override_constants/separation = 16
 [node name="Title" type="Label" parent="Paper/Margin/Lines"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
-theme_override_font_sizes/font_size = 34
-text = "OpenAI"
+theme_override_font_sizes/font_size = 28
+text = "Open AI"
 horizontal_alignment = 1
 
 [node name="Rule" type="Panel" parent="Paper/Margin/Lines"]
@@ -81,19 +73,17 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_rule")
 [node name="Body" type="Label" parent="Paper/Margin/Lines"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.18, 0.16, 0.12, 1)
-theme_override_font_sizes/font_size = 21
-text = "你打开了 OpenAI。
+theme_override_font_sizes/font_size = 18
+text = "你打开了 Open AI。
 
-这里只剩下一张纸条。
-
-游戏已经关上了。"
+这里只剩这张纸条。"
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="Footer" type="Label" parent="Paper/Margin/Lines"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.28, 0.24, 0.18, 0.78)
-theme_override_font_sizes/font_size = 15
-text = "没有新的开始。"
+theme_override_font_sizes/font_size = 14
+text = "点一下，它会掉下去。"
 horizontal_alignment = 1
 autowrap_mode = 3

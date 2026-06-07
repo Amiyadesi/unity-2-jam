@@ -6,6 +6,7 @@
 [ext_resource type="Shader" uid="uid://dsukwv8pi3wl" path="res://ui_kit/shaders/defect_frame.gdshader" id="4_defect"]
 [ext_resource type="Theme" uid="uid://cu0u8nl3o0vja" path="res://ui_kit/settings_slider.tres" id="5_slider"]
 [ext_resource type="PackedScene" uid="uid://dyv3j4u5kwmm7" path="res://ui_kit/components/shader_button.tscn" id="6_btn"]
+[ext_resource type="PackedScene" uid="uid://cre0p744n82p7" path="res://addons/enhance_save_system/Components/InputRemapping/keybinding_ui.tscn" id="7_keybind"]
 
 [sub_resource type="ShaderMaterial" id="Mat_blur"]
 shader = ExtResource("2_blur")
@@ -124,18 +125,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 44
-theme_override_constants/margin_top = 36
+theme_override_constants/margin_top = 28
 theme_override_constants/margin_right = 44
-theme_override_constants/margin_bottom = 34
+theme_override_constants/margin_bottom = 26
 
 [node name="VBox" type="VBoxContainer" parent="Panel/Margin" unique_id=1930889057]
 layout_mode = 2
-theme_override_constants/separation = 22
+theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="Panel/Margin/VBox" unique_id=22204202]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.82, 0.42, 1)
-theme_override_font_sizes/font_size = 34
+theme_override_font_sizes/font_size = 30
 text = "设置"
 horizontal_alignment = 1
 
@@ -235,21 +236,81 @@ text = "80%"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="DisplayRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=1228956556]
+[node name="UiRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=1228956556]
 layout_mode = 2
 theme_override_constants/separation = 28
 
-[node name="DisplayLabel" type="Label" parent="Panel/Margin/VBox/DisplayRow" unique_id=2074465514]
+[node name="UiLabel" type="Label" parent="Panel/Margin/VBox/UiRow" unique_id=2074465514]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.88, 0.78, 1)
 theme_override_font_sizes/font_size = 20
-text = "全屏"
+text = "界面"
 vertical_alignment = 1
 
-[node name="FullscreenCheck" type="CheckButton" parent="Panel/Margin/VBox/DisplayRow" unique_id=463423567]
+[node name="UiSlider" type="HSlider" parent="Panel/Margin/VBox/UiRow" unique_id=463423567]
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
-button_pressed = true
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme = ExtResource("5_slider")
+max_value = 1.0
+step = 0.01
+value = 0.8
+
+[node name="UiValue" type="Label" parent="Panel/Margin/VBox/UiRow" unique_id=463423568]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.82, 1)
+theme_override_font_sizes/font_size = 18
+text = "80%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AmbientRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=463423569]
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="AmbientLabel" type="Label" parent="Panel/Margin/VBox/AmbientRow" unique_id=463423570]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.88, 0.78, 1)
+theme_override_font_sizes/font_size = 20
+text = "环境"
+vertical_alignment = 1
+
+[node name="AmbientSlider" type="HSlider" parent="Panel/Margin/VBox/AmbientRow" unique_id=463423571]
+custom_minimum_size = Vector2(360, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme = ExtResource("5_slider")
+max_value = 1.0
+step = 0.01
+value = 0.8
+
+[node name="AmbientValue" type="Label" parent="Panel/Margin/VBox/AmbientRow" unique_id=463423572]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.82, 1)
+theme_override_font_sizes/font_size = 18
+text = "80%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="KeybindPanel" type="PanelContainer" parent="Panel/Margin/VBox" unique_id=463423573]
+custom_minimum_size = Vector2(0, 224)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("SB_frame")
+
+[node name="KeybindingUI" parent="Panel/Margin/VBox/KeybindPanel" unique_id=463423574 instance=ExtResource("7_keybind")]
+custom_minimum_size = Vector2(0, 224)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+action_allowlist = ["move_left", "move_right", "move_up", "move_down", "jump", "attack", "awaken", "interact", "pause", "dialogue_advance"]
 
 [node name="Spacer" type="Control" parent="Panel/Margin/VBox" unique_id=1050915002]
 layout_mode = 2

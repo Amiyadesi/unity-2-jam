@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c2msrb0gq8u3a"]
+[gd_scene load_steps=18 format=3 uid="uid://c2msrb0gq8u3a"]
 
 [ext_resource type="Script" uid="uid://bxmj8tgd02vrx" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="Texture2D" uid="uid://0fpwwyonv1c6" path="res://assets/super character spritesheet.png" id="2_sheet"]
@@ -11,6 +11,55 @@ size = Vector2(52, 38)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_side_hitbox"]
 size = Vector2(44, 36)
+
+[sub_resource type="Gradient" id="Gradient_dash_particles"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(0.92, 0.97, 1, 0.92, 0.48, 0.7, 1, 0.58, 0.25, 0.16, 0.68, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_dash_particles"]
+gradient = SubResource("Gradient_dash_particles")
+
+[sub_resource type="Curve" id="Curve_particle_shrink"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_particle_shrink"]
+curve = SubResource("Curve_particle_shrink")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dash"]
+particle_flag_disable_z = true
+direction = Vector3(1, 0, 0)
+spread = 12.0
+initial_velocity_min = 300.0
+initial_velocity_max = 520.0
+gravity = Vector3(0, 0, 0)
+damping_min = 45.0
+damping_max = 70.0
+scale_min = 3.0
+scale_max = 7.0
+scale_curve = SubResource("CurveTexture_particle_shrink")
+color_ramp = SubResource("GradientTexture_dash_particles")
+
+[sub_resource type="Gradient" id="Gradient_cast_particles"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.98, 0.95, 1, 0.92, 0.62, 0.46, 1, 0.72, 0.25, 0.16, 0.68, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_cast_particles"]
+gradient = SubResource("Gradient_cast_particles")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cast"]
+particle_flag_disable_z = true
+direction = Vector3(1, 0, 0)
+spread = 95.0
+initial_velocity_min = 80.0
+initial_velocity_max = 190.0
+gravity = Vector3(0, 0, 0)
+damping_min = 18.0
+damping_max = 32.0
+scale_min = 2.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_particle_shrink")
+color_ramp = SubResource("GradientTexture_cast_particles")
 
 [sub_resource type="Animation" id="Animation_reset"]
 length = 0.001
@@ -55,6 +104,20 @@ tracks/0/keys = {
 "update": 1,
 "values": [221, 222, 223, 224, 225, 226, 227, 228]
 }
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"release_cast_forward"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_cast_side"]
 resource_name = "cast_side"
@@ -71,6 +134,20 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [238, 239, 240, 241, 242, 243, 244, 245]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"release_cast_side"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_crouch"]
@@ -392,8 +469,226 @@ monitoring = false
 shape = SubResource("RectangleShape2D_side_hitbox")
 disabled = true
 
+[node name="CombatVFX" type="Node2D" parent="Body"]
+
+[node name="ForwardShockwave" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(42, -24)
+
+[node name="Core" type="Line2D" parent="Body/CombatVFX/ForwardShockwave"]
+points = PackedVector2Array(-12, 0, 64, 0)
+width = 9.0
+default_color = Color(0.68, 0.86, 1, 0.86)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Rim" type="Line2D" parent="Body/CombatVFX/ForwardShockwave"]
+points = PackedVector2Array(4, -14, 68, 0, 4, 14)
+width = 3.0
+default_color = Color(0.95, 0.88, 1, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="LeftShockwave" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(-42, -24)
+
+[node name="Core" type="Line2D" parent="Body/CombatVFX/LeftShockwave"]
+points = PackedVector2Array(16, 0, -62, 0)
+width = 8.0
+default_color = Color(0.74, 0.66, 1, 0.84)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Rim" type="Line2D" parent="Body/CombatVFX/LeftShockwave"]
+points = PackedVector2Array(-2, -14, -66, 0, -2, 14)
+width = 3.0
+default_color = Color(0.95, 0.88, 1, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RightShockwave" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(42, -24)
+
+[node name="Core" type="Line2D" parent="Body/CombatVFX/RightShockwave"]
+points = PackedVector2Array(-16, 0, 62, 0)
+width = 8.0
+default_color = Color(0.74, 0.66, 1, 0.84)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Rim" type="Line2D" parent="Body/CombatVFX/RightShockwave"]
+points = PackedVector2Array(2, -14, 66, 0, 2, 14)
+width = 3.0
+default_color = Color(0.95, 0.88, 1, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashSpeedLines" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(0, -24)
+
+[node name="LineA" type="Line2D" parent="Body/CombatVFX/DashSpeedLines"]
+points = PackedVector2Array(-72, -18, 18, -6)
+width = 4.0
+default_color = Color(0.55, 0.9, 1, 0.68)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="LineB" type="Line2D" parent="Body/CombatVFX/DashSpeedLines"]
+points = PackedVector2Array(-96, 0, 30, 0)
+width = 6.0
+default_color = Color(0.82, 0.96, 1, 0.72)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="LineC" type="Line2D" parent="Body/CombatVFX/DashSpeedLines"]
+points = PackedVector2Array(-72, 18, 18, 6)
+width = 4.0
+default_color = Color(0.55, 0.9, 1, 0.68)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashSpeedParticles" type="GPUParticles2D" parent="Body/CombatVFX"]
+position = Vector2(0, -24)
+emitting = false
+amount = 34
+lifetime = 0.28
+one_shot = true
+explosiveness = 0.92
+local_coords = false
+visibility_rect = Rect2(-220, -96, 440, 192)
+process_material = SubResource("ParticleProcessMaterial_dash")
+
+[node name="DashWindRing" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(0, -24)
+
+[node name="RingTop" type="Line2D" parent="Body/CombatVFX/DashWindRing"]
+points = PackedVector2Array(-10, -26, 44, -18, 82, 0, 44, 18, -10, 26)
+width = 3.0
+default_color = Color(0.9, 0.96, 1, 0.74)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="RingCore" type="Line2D" parent="Body/CombatVFX/DashWindRing"]
+points = PackedVector2Array(-18, -12, 34, -8, 70, 0, 34, 8, -18, 12)
+width = 5.0
+default_color = Color(0.55, 0.65, 1, 0.42)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashAfterimageTrail" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(0, -24)
+
+[node name="TrailA" type="Line2D" parent="Body/CombatVFX/DashAfterimageTrail"]
+points = PackedVector2Array(-116, -20, -52, -10, 8, -4)
+width = 9.0
+default_color = Color(0.38, 0.24, 0.94, 0.28)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="TrailB" type="Line2D" parent="Body/CombatVFX/DashAfterimageTrail"]
+points = PackedVector2Array(-128, 0, -42, 0, 16, 0)
+width = 12.0
+default_color = Color(0.72, 0.85, 1, 0.34)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="TrailC" type="Line2D" parent="Body/CombatVFX/DashAfterimageTrail"]
+points = PackedVector2Array(-116, 20, -52, 10, 8, 4)
+width = 9.0
+default_color = Color(0.38, 0.24, 0.94, 0.28)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashHitConfirm" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(0, -24)
+
+[node name="BurstRing" type="Line2D" parent="Body/CombatVFX/DashHitConfirm"]
+points = PackedVector2Array(-18, 0, -8, -18, 18, -18, 34, 0, 18, 18, -8, 18, -18, 0)
+width = 4.0
+default_color = Color(0.9, 0.98, 1, 0.86)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BurstCore" type="Line2D" parent="Body/CombatVFX/DashHitConfirm"]
+points = PackedVector2Array(-34, 0, 48, 0)
+width = 7.0
+default_color = Color(0.58, 0.92, 1, 0.72)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BurstSlash" type="Line2D" parent="Body/CombatVFX/DashHitConfirm"]
+points = PackedVector2Array(-4, -26, 24, 0, -4, 26)
+width = 3.0
+default_color = Color(1, 0.92, 0.76, 0.72)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="DashWhiffRead" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(0, -24)
+
+[node name="BreakLineA" type="Line2D" parent="Body/CombatVFX/DashWhiffRead"]
+points = PackedVector2Array(18, -24, 52, -34, 88, -26)
+width = 3.0
+default_color = Color(0.78, 0.88, 1, 0.5)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BreakLineB" type="Line2D" parent="Body/CombatVFX/DashWhiffRead"]
+points = PackedVector2Array(24, 0, 58, 0, 96, 10)
+width = 4.0
+default_color = Color(0.95, 0.72, 1, 0.52)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BreakLineC" type="Line2D" parent="Body/CombatVFX/DashWhiffRead"]
+points = PackedVector2Array(18, 24, 52, 34, 88, 26)
+width = 3.0
+default_color = Color(0.78, 0.88, 1, 0.5)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="CastEnergyParticles" type="GPUParticles2D" parent="Body/CombatVFX"]
+position = Vector2(0, -24)
+emitting = false
+amount = 26
+lifetime = 0.24
+one_shot = true
+explosiveness = 0.88
+visibility_rect = Rect2(-128, -96, 256, 192)
+process_material = SubResource("ParticleProcessMaterial_cast")
+
+[node name="CastImpactRing" type="Node2D" parent="Body/CombatVFX"]
+visible = false
+position = Vector2(0, -24)
+
+[node name="Ring" type="Line2D" parent="Body/CombatVFX/CastImpactRing"]
+points = PackedVector2Array(-36, 0, -18, -24, 18, -24, 36, 0, 18, 24, -18, 24, -36, 0)
+width = 3.0
+default_color = Color(0.95, 0.9, 1, 0.64)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1956852386]
 position = Vector2(0, -24)
+zoom = Vector2(2, 2)
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
 

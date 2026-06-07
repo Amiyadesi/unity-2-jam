@@ -37,11 +37,32 @@ func _run() -> void:
 	var sprite = p.get_node_or_null("Body/Sprite2D")
 	_check("sprite hframes=17", sprite != null and sprite.hframes == 17)
 	_check("sprite vframes=16", sprite != null and sprite.vframes == 16)
+	var camera := p.get_node_or_null("Camera2D") as Camera2D
+	_check("has Camera2D", camera != null)
+	_check("camera zoom is 2x", camera != null and camera.zoom == Vector2(2, 2))
+	_check("cast forward release frame authored", _animation_has_method_key(anim, "cast_forward", &"release_cast_forward"))
+	_check("cast side release frame authored", _animation_has_method_key(anim, "cast_side", &"release_cast_side"))
+	_check("dash particles authored", p.get_node_or_null("Body/CombatVFX/DashSpeedParticles") is GPUParticles2D)
+	_check("dash wind ring authored", p.get_node_or_null("Body/CombatVFX/DashWindRing") is Node2D)
+	_check("dash afterimage authored", p.get_node_or_null("Body/CombatVFX/DashAfterimageTrail") is Node2D)
+	_check("dash hit confirm authored", p.get_node_or_null("Body/CombatVFX/DashHitConfirm") is Node2D)
+	_check("dash whiff read authored", p.get_node_or_null("Body/CombatVFX/DashWhiffRead") is Node2D)
+	_check("cast particles authored", p.get_node_or_null("Body/CombatVFX/CastEnergyParticles") is GPUParticles2D)
+	_check("cast impact ring authored", p.get_node_or_null("Body/CombatVFX/CastImpactRing") is Node2D)
 	var script_property_names := _get_script_property_names(p)
 	_check("has energy property", script_property_names.has("energy"))
 	_check("has max_energy property", script_property_names.has("max_energy"))
 	_check("energy starts within max", script_property_names.has("energy") and script_property_names.has("max_energy") and p.energy >= 0.0 and p.energy <= p.max_energy)
+	_check("dash speed tuned fast", p.dash_speed >= 1100.0)
 	_check("awaken action exists", InputMap.has_action("awaken"))
+	_check("dash_started signal exists", p.has_signal("dash_started"))
+	_check("dash_hit_confirmed signal exists", p.has_signal("dash_hit_confirmed"))
+	_check("dash_whiffed signal exists", p.has_signal("dash_whiffed"))
+	await _check_training_target_hit(p)
+	await _check_cast_release_frame(p)
+	await _check_dash_vfx_and_camera(p)
+	await _check_dash_hit_confirm(p)
+	await _check_ability_release_vfx(p)
 	# play_action runs without error
 	if p.has_method("play_action"):
 		p.play_action("pickup")
@@ -56,6 +77,221 @@ func _run() -> void:
 	p.queue_free()
 	_finish()
 
+## 验证玩家 authored hitbox 真的能命中 typed 训练靶，而不只是场景节点存在。
+func _check_training_target_hit(player: Node) -> void:
+	var previous_gravity: float = player.gravity
+	player.gravity = 0.0
+	player.velocity = Vector2.ZERO
+	var target_packed = load("res://scenes/training_target.tscn")
+	_check("training target scene loads", target_packed != null)
+	if target_packed == null:
+		player.gravity = previous_gravity
+		return
+	var target = target_packed.instantiate()
+	_check("training target instantiates", target != null)
+	if target == null:
+		player.gravity = previous_gravity
+		return
+	target.required_attack_kind = "forward"
+	target.starts_enabled = true
+	root.add_child(target)
+	var completed_state := {"value": false}
+	target.completed.connect(func(_target: Area2D, _kind: StringName) -> void:
+		completed_state["value"] = true
+	)
+	await physics_frame
+	var forward_hitbox := player.get_node_or_null("Body/CombatHitboxes/ForwardHitbox") as Area2D
+	_check("forward hitbox available for target test", forward_hitbox != null)
+	if forward_hitbox != null:
+		target.global_position = forward_hitbox.global_position
+		await physics_frame
+		var hitboxes: Array[Area2D] = [forward_hitbox]
+		player._start_hitbox_window(hitboxes, player.attack_hitbox_duration)
+		for _i in range(4):
+			await physics_frame
+		_check("forward attack completes training target", completed_state["value"] and target.is_completed())
+		target.reset_target()
+		_check("training target reset restores visibility", not target.is_completed() and is_equal_approx(target.modulate.a, 1.0))
+	target.queue_free()
+	player.gravity = previous_gravity
+
+## 验证觉醒冲刺触发速度、VFX、相机前移和不翻图。
+func _check_dash_vfx_and_camera(player: Node) -> void:
+	player.morphed = true
+	player.frozen = false
+	player.energy = player.max_energy
+	player.velocity = Vector2.ZERO
+	var body := player.get_node_or_null("Body") as Node2D
+	var lines := player.get_node_or_null("Body/CombatVFX/DashSpeedLines") as CanvasItem
+	var wind_ring := player.get_node_or_null("Body/CombatVFX/DashWindRing") as CanvasItem
+	var trail := player.get_node_or_null("Body/CombatVFX/DashAfterimageTrail") as CanvasItem
+	var confirm_vfx := player.get_node_or_null("Body/CombatVFX/DashHitConfirm") as CanvasItem
+	var whiff_vfx := player.get_node_or_null("Body/CombatVFX/DashWhiffRead") as CanvasItem
+	var particles := player.get_node_or_null("Body/CombatVFX/DashSpeedParticles") as GPUParticles2D
+	var camera := player.get_node_or_null("Camera2D") as Camera2D
+	_check("dash vfx prerequisites available", body != null and lines != null and wind_ring != null and trail != null and confirm_vfx != null and whiff_vfx != null and particles != null and camera != null)
+	if body == null or lines == null or wind_ring == null or trail == null or confirm_vfx == null or whiff_vfx == null or particles == null or camera == null:
+		return
+	var expected_dir: Vector2 = player.get_global_mouse_position() - player.global_position
+	player._fly_angle = PI * 0.5
+	if expected_dir.length() <= 0.01:
+		expected_dir = Vector2.RIGHT.rotated(player._fly_angle)
+	expected_dir = expected_dir.normalized()
+	var whiff_state := {"count": 0, "dir": Vector2.ZERO}
+	var whiff_handler := func(direction: Vector2) -> void:
+		whiff_state["count"] += 1
+		whiff_state["dir"] = direction
+	player.dash_whiffed.connect(whiff_handler)
+	player._start_dash_attack()
+	_check("dash velocity follows aim direction", player.velocity.normalized().dot(expected_dir) > 0.95)
+	_check("dash velocity is fast", player.velocity.length() >= player.dash_speed - 1.0)
+	_check("dash keeps body scale positive", body.scale.x > 0.0)
+	_check("dash rotates body to dash direction", is_equal_approx(body.rotation, expected_dir.angle()))
+	_check("dash speed lines align to body-local dash", is_equal_approx(lines.rotation, 0.0))
+	_check("dash wind ring expands from small scale", wind_ring.scale.x < 1.0 and wind_ring.scale.y < 1.0)
+	_check("dash particles emit backward locally", is_equal_approx(wrapf(particles.rotation - PI, -PI, PI), 0.0))
+	_check("dash speed lines show", lines.visible)
+	_check("dash wind ring shows", wind_ring.visible)
+	_check("dash afterimage shows", trail.visible)
+	_check("dash particles emit", particles.emitting)
+	await process_frame
+	_check("dash attack window active", player.is_dashing())
+	player._update_camera_lookahead(0.016)
+	_check("dash camera looks ahead", camera.offset.length() > 1.0)
+	_check("dash camera opens view", camera.zoom.x < player.camera_zoom_ground.x and camera.zoom.x > player.camera_zoom_dash.x)
+	for _i in range(24):
+		player._update_active_hitboxes(0.016)
+	_check("dash attack window ends before camera tail", not player.is_dashing() and player._camera_dash_timer > 0.0)
+	_check("dash whiff read shows when window misses", whiff_vfx.visible and not confirm_vfx.visible)
+	_check("dash whiff signal emits miss direction", whiff_state["count"] == 1 and (whiff_state["dir"] as Vector2).dot(expected_dir) > 0.95)
+	if player.dash_whiffed.is_connected(whiff_handler):
+		player.dash_whiffed.disconnect(whiff_handler)
+	player._camera_dash_timer = 0.0
+	player.morphed = true
+	player.velocity = Vector2(player.FLY_SPEED, 0.0)
+	player._update_camera_lookahead(0.12)
+	_check("flight camera opens view lightly", camera.zoom.x < player.camera_zoom_ground.x and camera.zoom.x > player.camera_zoom_dash.x)
+	player.morphed = false
+	player.velocity = Vector2.ZERO
+	for _i in range(12):
+		player._update_camera_lookahead(0.12)
+	_check("camera returns to 2x after speed state", camera.zoom.distance_to(player.camera_zoom_ground) < 0.05)
+
+## 验证高速冲撞只有在目标接受命中时才给玩家确认、续速和 VFX。
+func _check_dash_hit_confirm(player: Node) -> void:
+	var target_packed = load("res://scenes/training_target.tscn")
+	_check("dash-confirm target scene loads", target_packed != null)
+	if target_packed == null:
+		return
+	var target = target_packed.instantiate()
+	_check("dash-confirm target instantiates", target != null)
+	if target == null:
+		return
+	target.required_attack_kind = "dash"
+	target.starts_enabled = true
+	root.add_child(target)
+	await physics_frame
+	player.morphed = false
+	player.frozen = false
+	player.energy = player.max_energy
+	player.velocity = Vector2(180.0, 0.0)
+	var confirm_state := {"count": 0, "dir": Vector2.ZERO}
+	var confirm_handler := func(_target: Node, direction: Vector2) -> void:
+		confirm_state["count"] += 1
+		confirm_state["dir"] = direction
+	player.dash_hit_confirmed.connect(confirm_handler)
+	var confirm_vfx := player.get_node_or_null("Body/CombatVFX/DashHitConfirm") as CanvasItem
+	var whiff_vfx := player.get_node_or_null("Body/CombatVFX/DashWhiffRead") as CanvasItem
+	var forward_hitbox := player.get_node_or_null("Body/CombatHitboxes/ForwardHitbox") as Area2D
+	_check("dash-confirm prerequisites available", confirm_vfx != null and whiff_vfx != null and forward_hitbox != null)
+	if confirm_vfx == null or whiff_vfx == null or forward_hitbox == null:
+		target.queue_free()
+		return
+	player._hide_combat_vfx()
+	var hitboxes: Array[Area2D] = [forward_hitbox]
+	player._active_hitboxes = hitboxes
+	player._hit_targets.clear()
+	player._try_damage_target(target)
+	_check("dash-confirm rejects non-dash hit on dash target", confirm_state["count"] == 0 and not confirm_vfx.visible and not target.is_completed())
+	target.reset_target()
+	player.morphed = true
+	player.velocity = Vector2(320.0, 0.0)
+	player._active_hitboxes = hitboxes
+	player._hit_targets.clear()
+	player._try_damage_target(target)
+	_check("dash-confirm emits on accepted dash target", confirm_state["count"] == 1 and target.is_completed())
+	_check("dash-confirm vfx shows on accepted hit", confirm_vfx.visible)
+	player._dash_attack_timer = 0.01
+	player._update_active_hitboxes(0.02)
+	_check("dash-confirm suppresses whiff read", not whiff_vfx.visible)
+	_check("dash-confirm keeps chain speed", player.velocity.length() >= player.dash_speed * player.dash_hit_confirm_keep_speed_ratio - 1.0)
+	_check("dash-confirm reports forward hit direction", (confirm_state["dir"] as Vector2).dot(Vector2.RIGHT) > 0.95)
+	if player.dash_hit_confirmed.is_connected(confirm_handler):
+		player.dash_hit_confirmed.disconnect(confirm_handler)
+	target.queue_free()
+
+## 验证觉醒/超载释放会触发 authored 粒子和冲击圈。
+func _check_ability_release_vfx(player: Node) -> void:
+	var particles := player.get_node_or_null("Body/CombatVFX/CastEnergyParticles") as GPUParticles2D
+	var ring := player.get_node_or_null("Body/CombatVFX/CastImpactRing") as CanvasItem
+	_check("ability-release prerequisites available", particles != null and ring != null)
+	if particles == null or ring == null:
+		return
+	player.morphed = false
+	particles.emitting = false
+	ring.hide()
+	player.start_overload(0.5)
+	await process_frame
+	_check("overload enters morph state", player.morphed)
+	_check("overload release particles emit", particles.emitting)
+	_check("overload release ring shows", ring.visible and ring.scale.x < 1.0)
+	player.morphed = false
+
+## 验证普通释放不会在按下瞬间命中，而是在动画释放帧打开 hitbox。
+func _check_cast_release_frame(player: Node) -> void:
+	var previous_gravity: float = player.gravity
+	player.gravity = 0.0
+	player.velocity = Vector2.ZERO
+	var target_packed = load("res://scenes/training_target.tscn")
+	_check("release-frame target scene loads", target_packed != null)
+	if target_packed == null:
+		player.gravity = previous_gravity
+		return
+	var target = target_packed.instantiate()
+	target.required_attack_kind = "forward"
+	target.starts_enabled = true
+	root.add_child(target)
+	if player.has_method("_disable_all_hitboxes"):
+		player._disable_all_hitboxes()
+	var completed_state := {"value": false}
+	target.completed.connect(func(_target: Area2D, _kind: StringName) -> void:
+		completed_state["value"] = true
+	)
+	await physics_frame
+	await physics_frame
+	var forward_hitbox := player.get_node_or_null("Body/CombatHitboxes/ForwardHitbox") as Area2D
+	_check("forward hitbox available for release-frame test", forward_hitbox != null)
+	if forward_hitbox != null:
+		target.global_position = forward_hitbox.global_position
+		player._start_cast_attack("cast_forward", 0.0)
+		await process_frame
+		await physics_frame
+		_check("cast target not hit before release frame", not completed_state["value"])
+		var shockwave := player.get_node_or_null("Body/CombatVFX/ForwardShockwave") as CanvasItem
+		var particles := player.get_node_or_null("Body/CombatVFX/CastEnergyParticles") as GPUParticles2D
+		var ring := player.get_node_or_null("Body/CombatVFX/CastImpactRing") as CanvasItem
+		for _i in range(30):
+			await process_frame
+			await physics_frame
+			if completed_state["value"]:
+				break
+		_check("cast target hit at animation release frame", completed_state["value"] and target.is_completed())
+		_check("cast forward shockwave shows at release", shockwave != null and shockwave.visible)
+		_check("cast release particles emit", particles != null and particles.emitting)
+		_check("cast impact ring expands from small scale", ring != null and ring.visible and ring.scale.x < 1.0)
+	target.queue_free()
+	player.gravity = previous_gravity
+
 ## 读取脚本导出的/声明的属性名，避免测试依赖私有实现。
 func _get_script_property_names(node: Object) -> Array[String]:
 	var names: Array[String] = []
@@ -64,6 +300,22 @@ func _get_script_property_names(node: Object) -> Array[String]:
 		if property_name != "":
 			names.append(property_name)
 	return names
+
+## 查找 AnimationPlayer 中指定动画的 authored 方法轨。
+func _animation_has_method_key(anim_player: AnimationPlayer, animation_name: String, method_name: StringName) -> bool:
+	if anim_player == null or not anim_player.has_animation(animation_name):
+		return false
+	var animation := anim_player.get_animation(animation_name)
+	if animation == null:
+		return false
+	for track_index in range(animation.get_track_count()):
+		if animation.track_get_type(track_index) != Animation.TYPE_METHOD:
+			continue
+		for key_index in range(animation.track_get_key_count(track_index)):
+			var value = animation.track_get_key_value(track_index, key_index)
+			if value is Dictionary and value.get("method", &"") == method_name and animation.track_get_key_time(track_index, key_index) >= 0.25:
+				return true
+	return false
 
 ## 输出测试汇总并设置退出码。
 func _finish() -> void:

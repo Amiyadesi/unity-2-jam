@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c2msq32lhaoq5"]
+
+[ext_resource type="Script" path="res://scripts/autoload/info_flow.gd" id="1_flow"]
+[ext_resource type="PackedScene" uid="uid://closeaiinfoovl1" path="res://scenes/ui/info_overlay.tscn" id="2_overlay"]
+
+[node name="InfoFlow" type="Node"]
+process_mode = 3
+script = ExtResource("1_flow")
+
+[node name="InfoOverlay" parent="." instance=ExtResource("2_overlay")]

@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://closeaiinfoovl1"]
+[gd_scene load_steps=4 format=3 uid="uid://closeaiinfoovl1"]
 
 [ext_resource type="Script" path="res://scripts/infoflow/info_overlay.gd" id="1_ovl"]
+[ext_resource type="PackedScene" uid="uid://closeaiinfobread" path="res://scenes/ui/info_breadcrumb.tscn" id="2_bread"]
+[ext_resource type="PackedScene" uid="uid://closeaiinfohint" path="res://scenes/ui/info_hint.tscn" id="3_hint"]
 
 [node name="InfoOverlay" type="CanvasLayer"]
 layer = 110
@@ -25,6 +27,48 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="BreadcrumbPool" type="Control" parent="OverlayRoot/BreadcrumbFeed"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Toast1" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
+[node name="Toast2" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
+[node name="Toast3" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
+[node name="Toast4" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
+[node name="Toast5" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
+[node name="Toast6" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
+[node name="Toast7" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
+[node name="Toast8" parent="OverlayRoot/BreadcrumbFeed/BreadcrumbPool" instance=ExtResource("2_bread")]
+visible = false
+layout_mode = 1
+
 [node name="HintFeed" type="Control" parent="OverlayRoot"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -34,3 +78,37 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="HintPool" type="Control" parent="OverlayRoot/HintFeed"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Hint1" parent="OverlayRoot/HintFeed/HintPool" instance=ExtResource("3_hint")]
+visible = false
+layout_mode = 1
+
+[node name="Hint2" parent="OverlayRoot/HintFeed/HintPool" instance=ExtResource("3_hint")]
+visible = false
+layout_mode = 1
+
+[node name="Hint3" parent="OverlayRoot/HintFeed/HintPool" instance=ExtResource("3_hint")]
+visible = false
+layout_mode = 1
+
+[node name="Hint4" parent="OverlayRoot/HintFeed/HintPool" instance=ExtResource("3_hint")]
+visible = false
+layout_mode = 1
+
+[node name="Hint5" parent="OverlayRoot/HintFeed/HintPool" instance=ExtResource("3_hint")]
+visible = false
+layout_mode = 1
+
+[node name="Hint6" parent="OverlayRoot/HintFeed/HintPool" instance=ExtResource("3_hint")]
+visible = false
+layout_mode = 1

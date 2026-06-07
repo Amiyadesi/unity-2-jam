@@ -27,6 +27,8 @@ extends Control
 
 ## 若非空，不显示这些 action；为空则显示全部用户 action
 @export var action_filter: PackedStringArray = []
+## 若非空，只显示这些 action，并保持这里给出的顺序。
+@export var action_allowlist: PackedStringArray = []
 
 ## 行的场景资源（可在 Inspector 中替换为自定义美化场景）
 @export var row_scene: PackedScene = preload("res://addons/enhance_save_system/Components/InputRemapping/keybinding_row.tscn")
@@ -111,6 +113,12 @@ func _get_actions_to_show() -> PackedStringArray:
 		for a in InputMap.get_actions():
 			if not a.begins_with("ui_"):
 				result.append(a)
+	if action_allowlist.size() > 0:
+		var allowed: PackedStringArray = []
+		for action in action_allowlist:
+			if result.has(action):
+				allowed.append(action)
+		return allowed
 	if action_filter.size() > 0:
 		for i in action_filter:
 			if result.has(i):

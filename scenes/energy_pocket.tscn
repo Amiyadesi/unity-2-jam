@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://d0omqeqxu8lyp"]
+
+[ext_resource type="Script" path="res://scripts/stages/energy_pocket.gd" id="1_pocket"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pocket"]
+radius = 38.0
+
+[node name="EnergyPocket" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_pocket")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pocket")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Ring" type="Line2D" parent="Visual"]
+points = PackedVector2Array(38, 0, 27, 27, 0, 38, -27, 27, -38, 0, -27, -27, 0, -38, 27, -27, 38, 0)
+width = 4.0
+default_color = Color(0.44, 0.9, 1, 0.78)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Core" type="ColorRect" parent="Visual"]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+pivot_offset = Vector2(10, 10)
+color = Color(0.72, 0.96, 1, 0.68)
+
+[node name="Pulse" type="Line2D" parent="."]
+points = PackedVector2Array(55, 0, 39, 39, 0, 55, -39, 39, -55, 0, -39, -39, 0, -55, 39, -39, 55, 0)
+width = 2.0
+default_color = Color(1, 0.95, 0.55, 0.58)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
