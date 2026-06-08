@@ -53,7 +53,8 @@ func _run() -> void:
 	_check("has energy property", script_property_names.has("energy"))
 	_check("has max_energy property", script_property_names.has("max_energy"))
 	_check("energy starts within max", script_property_names.has("energy") and script_property_names.has("max_energy") and p.energy >= 0.0 and p.energy <= p.max_energy)
-	_check("dash speed tuned fast", p.dash_speed >= 1100.0)
+	_check("flight speed tuned slightly slower", p.FLY_SPEED <= 580.0)
+	_check("dash speed tuned longer", p.dash_speed >= 1240.0 and p.dash_hitbox_duration >= 0.26 and p.camera_dash_hold_time >= 0.30)
 	_check("awaken action exists", InputMap.has_action("awaken"))
 	_check("dash action exists", InputMap.has_action("dash"))
 	_check("dash action includes left mouse", _input_action_has_mouse_button("dash", MOUSE_BUTTON_LEFT))
@@ -193,7 +194,7 @@ func _check_dash_vfx_and_camera(player: Node) -> void:
 	player._update_camera_lookahead(0.016)
 	_check("dash camera looks ahead", camera.offset.length() > 1.0)
 	_check("dash camera opens view", camera.zoom.x < player.camera_zoom_ground.x and camera.zoom.x > player.camera_zoom_dash.x)
-	for _i in range(24):
+	for _i in range(28):
 		player._update_active_hitboxes(0.016)
 	_check("dash attack window ends before camera tail", not player.is_dashing() and player._camera_dash_timer > 0.0)
 	_check("dash whiff read shows when window misses", whiff_vfx.visible and not confirm_vfx.visible)

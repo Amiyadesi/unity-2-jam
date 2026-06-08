@@ -123,8 +123,8 @@ func _die(source: Node = null) -> void:
 ## Enables authored enemies when their tutorial section begins.
 func set_enabled(value: bool) -> void:
 	_enabled = value and not _dead
-	monitoring = _enabled
+	set_deferred("monitoring", _enabled)
 	visible = _enabled
 	var shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if shape != null:
-		shape.disabled = not _enabled
+		shape.set_deferred("disabled", not _enabled)

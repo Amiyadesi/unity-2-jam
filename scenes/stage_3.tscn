@@ -404,6 +404,23 @@ position = Vector2(640, 240)
 [node name="RightRest" type="Marker2D" parent="WindowBattleArena/SafePockets"]
 position = Vector2(980, 370)
 
+[node name="ArenaEnergyPockets" type="Node2D" parent="WindowBattleArena"]
+
+[node name="LeftLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" instance=ExtResource("9_pocket")]
+position = Vector2(248, 292)
+energy_amount = 22.0
+cooldown_seconds = 0.46
+
+[node name="UpperLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" instance=ExtResource("9_pocket")]
+position = Vector2(640, 178)
+energy_amount = 24.0
+cooldown_seconds = 0.46
+
+[node name="RightLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" instance=ExtResource("9_pocket")]
+position = Vector2(1030, 438)
+energy_amount = 22.0
+cooldown_seconds = 0.46
+
 [node name="PhaseThreeRestPockets" type="Node2D" parent="WindowBattleArena"]
 visible = false
 modulate = Color(1, 1, 1, 0.0)

@@ -26,8 +26,8 @@ const COYOTE_TIME := 0.10
 const JUMP_BUFFER := 0.10
 
 ## 飞行速度与加速度
-const FLY_SPEED := 620.0
-const FLY_ACCEL := 3900.0
+const FLY_SPEED := 560.0
+const FLY_ACCEL := 3500.0
 const FLY_FRICTION := 2500.0
 ## 精灵旋转跟随速度（弧度/秒插值因子）
 const ROT_LERP := 12.0
@@ -52,15 +52,15 @@ const FLY_UPRIGHT_INPUT_THRESHOLD := 0.08
 @export_group("Combat")
 @export var attack_damage: int = 1
 @export var attack_hitbox_duration: float = 0.16
-@export var dash_hitbox_duration: float = 0.20
-@export var dash_speed: float = 1120.0
+@export var dash_hitbox_duration: float = 0.28
+@export var dash_speed: float = 1260.0
 @export_range(0.1, 1.0, 0.01) var dash_hit_confirm_keep_speed_ratio: float = 0.78
 @export_group("Camera")
 @export var camera_lookahead_ground: float = 18.0
 @export var camera_lookahead_flight: float = 74.0
 @export var camera_lookahead_dash: float = 138.0
 @export var camera_lookahead_lerp: float = 9.5
-@export var camera_dash_hold_time: float = 0.22
+@export var camera_dash_hold_time: float = 0.32
 @export var camera_zoom_ground: Vector2 = Vector2(2.0, 2.0)
 @export var camera_zoom_flight: Vector2 = Vector2(1.82, 1.82)
 @export var camera_zoom_dash: Vector2 = Vector2(1.66, 1.66)

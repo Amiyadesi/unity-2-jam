@@ -453,6 +453,7 @@ func _check_stage_2_flight_training(inst: Node) -> void:
 	_check("stage_2 air combat rooms start hidden", _stage_2_only_air_combat_room_visible(inst, ""))
 	_check("stage_2 air combat timing reads start hidden", _stage_2_only_air_combat_timing_read_visible(inst, ""))
 	_check("stage_2 authored arena bounds", _stage_2_arena_bounds_authored(inst))
+	_check("stage_2 arena is widened for flight", _stage_2_arena_is_widened(inst))
 	_check("stage_2 authored close route", _stage_2_close_route_authored(inst))
 	_check("stage_2 close route starts disabled", _stage_2_close_route_enabled(inst) == false)
 
@@ -513,6 +514,17 @@ func _stage_2_arena_bounds_authored(inst: Node) -> bool:
 		if read == null or read.points.size() < 2:
 			return false
 	return true
+
+
+## 确认 Stage2 飞行房间比首屏更宽，给慢飞和长冲刺留出空间。
+func _stage_2_arena_is_widened(inst: Node) -> bool:
+	var right_wall := inst.get_node_or_null("ArenaBounds/RightWall") as StaticBody2D
+	var floor_shape := inst.get_node_or_null("ArenaBounds/FloorClamp/CollisionShape2D") as CollisionShape2D
+	var close_trigger := inst.get_node_or_null("CloseMomentTrigger") as Area2D
+	if right_wall == null or floor_shape == null or close_trigger == null:
+		return false
+	var rect := floor_shape.shape as RectangleShape2D
+	return rect != null and rect.size.x >= 2500.0 and right_wall.position.x >= 2400.0 and close_trigger.position.x >= 2200.0
 
 
 ## 确认 Stage2 清场后显式引导玩家去关闭触发区。
@@ -1288,6 +1300,8 @@ func _check_stage_3_finale_nodes(inst: Node) -> void:
 	_check("stage_3 authored phase pacing reads", _stage_3_phase_pacing_reads_authored(inst))
 	_check("stage_3 authored platform read edges", _stage_3_platform_read_edges_authored(inst))
 	_check("stage_3 window arena has safe pockets", _stage_3_window_arena_safe_pockets(inst))
+	_check("stage_3 boss arena has active energy pockets", _stage_3_arena_energy_pockets_authored(inst))
+	_check("stage_3 boss arena energy pocket refills player", _stage_3_arena_energy_pocket_refills(inst))
 	_check("stage_3 phase three has rest energy pockets", _stage_3_phase_three_rest_pockets_authored(inst))
 	_check("stage_3 rest energy pocket refills player", _stage_3_rest_pocket_refills(inst))
 	_check("stage_3 phase reads start in authored state", _stage_3_phase_reads_start_authored(inst))
@@ -1479,6 +1493,37 @@ func _stage_3_window_arena_safe_pockets(inst: Node) -> bool:
 	var top := arena.get_node_or_null("SafePockets/TopRest") as Marker2D
 	var right := arena.get_node_or_null("SafePockets/RightRest") as Marker2D
 	return left != null and top != null and right != null and left.global_position.x < top.global_position.x and right.global_position.x > top.global_position.x and top.global_position.y < left.global_position.y
+
+
+## 确认第三关 Boss 全程补能口是实际 Area，而不是三阶段专用口或装饰。
+func _stage_3_arena_energy_pockets_authored(inst: Node) -> bool:
+	var pockets := inst.get_node_or_null("WindowBattleArena/ArenaEnergyPockets")
+	if pockets == null or pockets.get_child_count() < 3:
+		return false
+	for child in pockets.get_children():
+		if not child is Area2D:
+			return false
+		if not child.has_method("_on_body_entered"):
+			return false
+		if not child.get_node_or_null("CollisionShape2D") is CollisionShape2D:
+			return false
+		if not child.get_node_or_null("Visual") is CanvasItem:
+			return false
+		if not child.get_node_or_null("Pulse") is CanvasItem:
+			return false
+	return true
+
+
+## 确认 Boss 全程补能口能直接回能，支撑空战续航。
+func _stage_3_arena_energy_pocket_refills(inst: Node) -> bool:
+	var player := inst.get_node_or_null("Player")
+	var pocket := inst.get_node_or_null("WindowBattleArena/ArenaEnergyPockets/LeftLanePocket")
+	if player == null or pocket == null or not player.has_method("drain_energy") or not pocket.has_method("_on_body_entered"):
+		return false
+	player.drain_energy(50.0)
+	var before: float = player.energy
+	pocket._on_body_entered(player)
+	return player.energy > before
 
 
 ## 确认第三关三阶段安全口是实际补能 Area，而不是只给关卡编辑看的 Marker。

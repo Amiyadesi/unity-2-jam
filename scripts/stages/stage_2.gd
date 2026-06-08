@@ -616,10 +616,15 @@ func _set_close_route_enabled(enabled: bool) -> void:
 		_close_route_guides.visible = enabled
 	if _close_trigger != null:
 		_close_trigger.visible = enabled
-		_close_trigger.monitoring = enabled
-		var shape := _close_trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D
-		if shape != null:
-			shape.disabled = not enabled
+		_set_area_collision_deferred(_close_trigger, enabled)
+
+
+## 延迟切换 Area2D 碰撞，允许关卡在命中回调中安全推进下一步。
+func _set_area_collision_deferred(area: Area2D, enabled: bool) -> void:
+	area.set_deferred("monitoring", enabled)
+	var shape := area.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape != null:
+		shape.set_deferred("disabled", not enabled)
 
 
 ## 启用下一组 authored 敌人，逐步增加空中压力。
@@ -991,10 +996,7 @@ func _show_wave_energy_pockets(active_names: Array) -> void:
 		var active := active_names.has(pocket_name)
 		pocket.visible = active
 		if pocket_node is Area2D:
-			(pocket_node as Area2D).monitoring = active
-			var shape := pocket_node.get_node_or_null("CollisionShape2D") as CollisionShape2D
-			if shape != null:
-				shape.disabled = not active
+			_set_area_collision_deferred(pocket_node as Area2D, active)
 
 
 ## 隐藏清场段补能口，教学靶链外不残留旧波次资源提示。

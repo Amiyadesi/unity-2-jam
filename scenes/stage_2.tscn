@@ -18,7 +18,7 @@
 size = Vector2(52, 720)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_horizontal"]
-size = Vector2(2100, 52)
+size = Vector2(2600, 52)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_close_trigger"]
 size = Vector2(110, 160)
@@ -107,12 +107,12 @@ color = Color(0.58, 0.44, 1, 0.13)
 [node name="CombatMemoryBand" type="ColorRect" parent="WorldBackdrop" unique_id=873813031]
 offset_left = 1120.0
 offset_top = 502.0
-offset_right = 1820.0
+offset_right = 2360.0
 offset_bottom = 512.0
 color = Color(1, 0.46, 0.72, 0.12)
 
 [node name="DistantWakeLine" type="Line2D" parent="WorldBackdrop" unique_id=67750740]
-points = PackedVector2Array(180, 500, 520, 438, 810, 452, 1045, 304, 1210, 430, 1395, 248, 1585, 430, 1840, 390)
+points = PackedVector2Array(180, 500, 520, 438, 810, 452, 1045, 304, 1210, 430, 1395, 248, 1585, 430, 2050, 428, 2280, 390)
 width = 3.0
 default_color = Color(0.45, 0.58, 0.96, 0.18)
 joint_mode = 2
@@ -165,22 +165,22 @@ texture = ExtResource("10_light")
 [node name="EnemyWavePeakZone" type="ColorRect" parent="PacingZones" unique_id=1802116618]
 offset_left = 1080.0
 offset_top = 376.0
-offset_right = 1728.0
+offset_right = 2240.0
 offset_bottom = 536.0
 color = Color(1, 0.34, 0.62, 0.025)
 
 [node name="EnemyWavePlate" type="Sprite2D" parent="PacingZones"]
 modulate = Color(1, 0.58, 0.78, 0.52)
-position = Vector2(1404, 456)
+position = Vector2(1660, 456)
 rotation = 0.08
-scale = Vector2(0.33, 0.12)
+scale = Vector2(0.46, 0.12)
 texture = ExtResource("11_pacing")
 
 [node name="EnemyWaveTexture" type="Sprite2D" parent="PacingZones"]
 modulate = Color(1, 0.52, 0.72, 0.2)
-position = Vector2(1404, 456)
+position = Vector2(1660, 456)
 rotation = 0.12
-scale = Vector2(1.28, 1.45)
+scale = Vector2(1.85, 1.45)
 texture = ExtResource("10_light")
 
 [node name="LiftSafeFrame" type="Line2D" parent="PacingZones" unique_id=1903785901]
@@ -200,7 +200,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="EnemyWaveFrame" type="Line2D" parent="PacingZones" unique_id=771719292]
-points = PackedVector2Array(1110, 468, 1210, 414, 1395, 236, 1645, 428, 1728, 536)
+points = PackedVector2Array(1110, 468, 1210, 414, 1395, 236, 1720, 500, 2050, 428, 2240, 536)
 width = 4.0
 default_color = Color(1, 0.5, 0.74, 0.18)
 joint_mode = 2
@@ -222,21 +222,21 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_arena_wall_vertical")
 
 [node name="RightWall" type="StaticBody2D" parent="ArenaBounds" unique_id=260868253]
-position = Vector2(1996, 360)
+position = Vector2(2476, 360)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/RightWall" unique_id=1827438415]
 shape = SubResource("RectangleShape2D_arena_wall_vertical")
 
 [node name="Ceiling" type="StaticBody2D" parent="ArenaBounds" unique_id=506153268]
-position = Vector2(960, 58)
+position = Vector2(1200, 58)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/Ceiling" unique_id=655286921]
 shape = SubResource("RectangleShape2D_arena_wall_horizontal")
 
 [node name="FloorClamp" type="StaticBody2D" parent="ArenaBounds" unique_id=2001705158]
-position = Vector2(960, 760)
+position = Vector2(1200, 760)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ArenaBounds/FloorClamp" unique_id=2112936914]
@@ -245,7 +245,7 @@ shape = SubResource("RectangleShape2D_arena_wall_horizontal")
 [node name="BoundaryReads" type="Node2D" parent="ArenaBounds" unique_id=340737800]
 
 [node name="TopPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads" unique_id=841006055]
-points = PackedVector2Array(0, 84, 460, 84, 960, 58, 1460, 84, 1920, 84)
+points = PackedVector2Array(0, 84, 600, 84, 1200, 58, 1800, 84, 2400, 84)
 width = 5.0
 default_color = Color(1, 0.34, 0.52, 0.34)
 joint_mode = 2
@@ -261,7 +261,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="RightPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads" unique_id=131335438]
-points = PackedVector2Array(1920, 86, 1920, 260, 1996, 360, 1920, 520, 1920, 732)
+points = PackedVector2Array(2400, 86, 2400, 260, 2476, 360, 2400, 520, 2400, 732)
 width = 5.0
 default_color = Color(0.58, 0.92, 1, 0.32)
 joint_mode = 2
@@ -269,7 +269,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="BottomPermissionLine" type="Line2D" parent="ArenaBounds/BoundaryReads" unique_id=1966386542]
-points = PackedVector2Array(0, 732, 520, 744, 960, 760, 1420, 744, 1920, 732)
+points = PackedVector2Array(0, 732, 640, 744, 1200, 760, 1800, 744, 2400, 732)
 width = 5.0
 default_color = Color(0.58, 0.92, 1, 0.22)
 joint_mode = 2
@@ -609,7 +609,7 @@ end_cap_mode = 2
 
 [node name="WaveWhiff" type="Node2D" parent="FlightTraining/DashWhiffReads" unique_id=768996341]
 visible = false
-position = Vector2(1810, 390)
+position = Vector2(2180, 410)
 
 [node name="ScatterA" type="Line2D" parent="FlightTraining/DashWhiffReads/WaveWhiff" unique_id=1962628692]
 points = PackedVector2Array(-88, -34, -24, -10, 48, -24)
@@ -774,7 +774,7 @@ starts_enabled = false
 [node name="Wave3" type="Node2D" parent="EnemyWaves" unique_id=1517753480]
 
 [node name="Enemy3" parent="EnemyWaves/Wave3" unique_id=275365557 instance=ExtResource("4_enemy")]
-position = Vector2(1645, 428)
+position = Vector2(2050, 428)
 patrol_speed = 80.0
 required_attack_kind = "dash"
 min_hit_speed = 940.0
@@ -783,7 +783,7 @@ starts_enabled = false
 
 [node name="CloseMomentTrigger" type="Area2D" parent="." unique_id=1562830026]
 visible = false
-position = Vector2(1848, 404)
+position = Vector2(2280, 404)
 collision_layer = 0
 collision_mask = 2
 monitoring = false
@@ -796,7 +796,7 @@ visible = false
 z_index = 10
 
 [node name="ExitWake" type="Line2D" parent="CloseRouteGuides" unique_id=1765459103]
-points = PackedVector2Array(1645, 428, 1720, 404, 1848, 404)
+points = PackedVector2Array(2050, 428, 2160, 404, 2280, 404)
 width = 7.0
 default_color = Color(0.76, 0.96, 1, 0.54)
 joint_mode = 2
@@ -804,7 +804,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="ExitBracket" type="Line2D" parent="CloseRouteGuides" unique_id=456081708]
-points = PackedVector2Array(1808, 324, 1888, 324, 1888, 484, 1808, 484, 1808, 324)
+points = PackedVector2Array(2240, 324, 2320, 324, 2320, 484, 2240, 484, 2240, 324)
 width = 4.0
 default_color = Color(1, 0.82, 0.42, 0.52)
 joint_mode = 2
@@ -812,7 +812,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="PermissionCrack" type="Line2D" parent="CloseRouteGuides" unique_id=1587368533]
-points = PackedVector2Array(1796, 372, 1848, 404, 1898, 356, 1868, 448, 1922, 430)
+points = PackedVector2Array(2228, 372, 2280, 404, 2330, 356, 2300, 448, 2354, 430)
 width = 5.0
 default_color = Color(1, 0.34, 0.56, 0.42)
 joint_mode = 2
@@ -841,7 +841,7 @@ end_cap_mode = 2
 
 [node name="Wave3BreakGuide" type="Line2D" parent="EnemyWaveGuides" unique_id=50514849]
 visible = false
-points = PackedVector2Array(1495, 500, 1535, 500, 1585, 462, 1645, 428)
+points = PackedVector2Array(1495, 500, 1650, 514, 1840, 462, 2050, 428)
 width = 6.0
 default_color = Color(1, 0.56, 0.74, 0.42)
 joint_mode = 2
@@ -870,7 +870,7 @@ end_cap_mode = 2
 
 [node name="BreakPressureBand" type="Line2D" parent="EnemyWaveGuides/PressureReads" unique_id=1763622857]
 visible = false
-points = PackedVector2Array(1472, 402, 1698, 402, 1698, 522, 1472, 522, 1472, 402)
+points = PackedVector2Array(1472, 402, 2110, 402, 2110, 540, 1472, 540, 1472, 402)
 width = 2.0
 default_color = Color(1, 0.56, 0.74, 0.18)
 joint_mode = 2
@@ -938,7 +938,7 @@ end_cap_mode = 2
 visible = false
 
 [node name="ApproachRail" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate" unique_id=897416610]
-points = PackedVector2Array(1495, 500, 1535, 500, 1585, 462)
+points = PackedVector2Array(1495, 500, 1650, 514, 1840, 462)
 width = 6.0
 default_color = Color(1, 0.56, 0.74, 0.5)
 joint_mode = 2
@@ -946,7 +946,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="CommitGate" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate" unique_id=126420740]
-points = PackedVector2Array(1560, 440, 1585, 462, 1610, 438)
+points = PackedVector2Array(1810, 440, 1840, 462, 1870, 438)
 width = 7.0
 default_color = Color(1, 0.96, 0.58, 0.82)
 joint_mode = 2
@@ -954,7 +954,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="ExitWake" type="Line2D" parent="EnemyWaveGuides/SpeedGateReads/BreakSpeedGate" unique_id=463143468]
-points = PackedVector2Array(1585, 462, 1645, 428, 1710, 428)
+points = PackedVector2Array(1840, 462, 2050, 428, 2160, 428)
 width = 5.0
 default_color = Color(1, 0.56, 0.74, 0.38)
 joint_mode = 2
@@ -983,7 +983,7 @@ end_cap_mode = 2
 
 [node name="BreakRecoveryRead" type="Line2D" parent="EnemyWaveGuides/RecoveryReads" unique_id=1898819650]
 visible = false
-points = PackedVector2Array(1645, 428, 1585, 462, 1495, 500)
+points = PackedVector2Array(2050, 428, 1840, 462, 1495, 500)
 width = 5.0
 default_color = Color(0.35, 1, 0.72, 0.44)
 joint_mode = 2
@@ -999,7 +999,7 @@ position = Vector2(1110, 468)
 position = Vector2(1275, 486)
 
 [node name="BreakRest" type="Marker2D" parent="EnemyWaveGuides/SafeRestPoints" unique_id=1611666207]
-position = Vector2(1495, 500)
+position = Vector2(1760, 510)
 
 [node name="WaveEnergyPockets" type="Node2D" parent="EnemyWaveGuides" unique_id=898704289]
 visible = false
@@ -1026,7 +1026,7 @@ disabled = true
 
 [node name="BreakPocket" parent="EnemyWaveGuides/WaveEnergyPockets" unique_id=321796081 instance=ExtResource("8_pocket")]
 visible = false
-position = Vector2(1495, 500)
+position = Vector2(1760, 510)
 monitoring = false
 energy_amount = 36.0
 cooldown_seconds = 0.5
@@ -1168,16 +1168,16 @@ visible = false
 position = Vector2(1495, 500)
 
 [node name="Apex" type="Marker2D" parent="AirCombatRooms/BreakRoom" unique_id=1413925274]
-position = Vector2(1585, 462)
+position = Vector2(1840, 462)
 
 [node name="Exit" type="Marker2D" parent="AirCombatRooms/BreakRoom" unique_id=1462574899]
-position = Vector2(1645, 428)
+position = Vector2(2050, 428)
 
 [node name="TimingGate" type="Marker2D" parent="AirCombatRooms/BreakRoom" unique_id=1679080030]
-position = Vector2(1585, 462)
+position = Vector2(1840, 462)
 
 [node name="RouteRead" type="Line2D" parent="AirCombatRooms/BreakRoom" unique_id=2095177838]
-points = PackedVector2Array(1495, 500, 1535, 500, 1585, 462, 1645, 428)
+points = PackedVector2Array(1495, 500, 1650, 514, 1840, 462, 2050, 428)
 width = 5.0
 default_color = Color(1, 0.56, 0.74, 0.3)
 joint_mode = 2
@@ -1185,14 +1185,14 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="FloorRead" type="Line2D" parent="AirCombatRooms/BreakRoom" unique_id=1530395554]
-points = PackedVector2Array(1472, 522, 1698, 522)
+points = PackedVector2Array(1472, 540, 2110, 540)
 width = 2.0
 default_color = Color(1, 0.56, 0.74, 0.18)
 begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="CeilingRead" type="Line2D" parent="AirCombatRooms/BreakRoom" unique_id=1861167160]
-points = PackedVector2Array(1472, 402, 1698, 402)
+points = PackedVector2Array(1472, 402, 2110, 402)
 width = 2.0
 default_color = Color(1, 0.56, 0.74, 0.13)
 begin_cap_mode = 2
@@ -1202,14 +1202,14 @@ end_cap_mode = 2
 visible = false
 
 [node name="ApproachTick" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead" unique_id=1175748902]
-points = PackedVector2Array(1490, 486, 1532, 514)
+points = PackedVector2Array(1520, 486, 1660, 518)
 width = 4.0
 default_color = Color(1, 0.56, 0.74, 0.58)
 begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="CommitWindow" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead" unique_id=1354788823]
-points = PackedVector2Array(1560, 440, 1585, 462, 1610, 438)
+points = PackedVector2Array(1810, 440, 1840, 462, 1870, 438)
 width = 5.0
 default_color = Color(1, 0.96, 0.58, 0.72)
 joint_mode = 2
@@ -1217,7 +1217,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="ExitTick" type="Line2D" parent="AirCombatRooms/BreakRoom/TimingRead" unique_id=863818468]
-points = PackedVector2Array(1634, 396, 1656, 456)
+points = PackedVector2Array(2040, 396, 2062, 456)
 width = 4.0
 default_color = Color(1, 0.56, 0.74, 0.5)
 begin_cap_mode = 2

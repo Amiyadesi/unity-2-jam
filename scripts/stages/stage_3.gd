@@ -16,6 +16,7 @@ extends StageBase
 @onready var _window_battle_arena: Node2D = $WindowBattleArena
 @onready var _phase_one_reads: CanvasItem = $WindowBattleArena/PhaseOneReads
 @onready var _phase_two_requests: CanvasItem = $WindowBattleArena/PhaseTwoRequests
+@onready var _arena_energy_pockets: Node2D = $WindowBattleArena/ArenaEnergyPockets
 @onready var _phase_three_rest_pockets: Node2D = $WindowBattleArena/PhaseThreeRestPockets
 @onready var _phase_three_pressure_reads: Node2D = $WindowBattleArena/PhaseThreePressureReads
 @onready var _desktop_risk_reads: Node2D = $WindowBattleArena/DesktopRiskReads
@@ -181,6 +182,8 @@ func _has_authored_window_battle_arena() -> bool:
 	for marker_path in ["SafePockets/LeftRest", "SafePockets/TopRest", "SafePockets/RightRest"]:
 		if not _window_battle_arena.get_node_or_null(marker_path) is Marker2D:
 			return false
+	if not _has_authored_arena_energy_pockets():
+		return false
 	if not _has_authored_phase_three_rest_pockets():
 		return false
 	if _phase_three_pressure_reads == null:
@@ -273,6 +276,24 @@ func _has_authored_desktop_instability_reads() -> bool:
 	for read_name in DESKTOP_INSTABILITY_READ_NAMES:
 		var read := _desktop_instability_reads.get_node_or_null(read_name) as Line2D
 		if read == null or read.points.size() < 2:
+			return false
+	return true
+
+
+## 确认 Boss 全程补能口由 authored EnergyPocket 承载，不依赖脚本生成。
+func _has_authored_arena_energy_pockets() -> bool:
+	if _arena_energy_pockets == null or _arena_energy_pockets.get_child_count() < 3:
+		return false
+	for child in _arena_energy_pockets.get_children():
+		if not child is Area2D:
+			return false
+		if not child.has_method("_on_body_entered"):
+			return false
+		if not child.get_node_or_null("CollisionShape2D") is CollisionShape2D:
+			return false
+		if not child.get_node_or_null("Visual") is CanvasItem:
+			return false
+		if not child.get_node_or_null("Pulse") is CanvasItem:
 			return false
 	return true
 
