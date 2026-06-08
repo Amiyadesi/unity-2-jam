@@ -123,6 +123,7 @@ func _run() -> void:
 	_check("pre_self_close emits", _pre_close_fired == true)
 	_check("pre_close hook invoked", _hook_awaited == true)
 	gf.unregister_pre_close_hook(hook)
+	await _check_single_dialogue_balloon(gf)
 
 	# --- 对话锚点 ---
 	for i in [1, 2, 3]:
@@ -133,8 +134,10 @@ func _run() -> void:
 		_check("dialogue stage %d has 'dirty_return'" % i, gf.has_dialogue_title(i, "dirty_return"))
 		var dialogue_text := _read_res_text(path)
 		_check("dialogue stage %d uses DialogueManager wait tags" % i, not dialogue_text.contains("[pause="))
+		_check("dialogue stage %d has no standalone wait tags" % i, _has_no_standalone_wait_tags(dialogue_text))
 		if i == 1:
 			_check("dialogue stage %d keeps authored wait beats" % i, dialogue_text.contains("[wait=0.4]") and dialogue_text.contains("[wait=0.8]"))
+	_check("GameFlow keeps one active dialogue balloon", game_flow_source.contains("_active_dialogue_balloon") and game_flow_source.contains("_close_active_dialogue_balloon()") and game_flow_source.contains("force_end"))
 
 	# --- 场景齐全 ---
 	for scene in ["res://scenes/boot.tscn", "res://scenes/menu.tscn", "res://scenes/ending.tscn", "res://scenes/openai_note.tscn", "res://scenes/stage_1.tscn", "res://scenes/stage_2.tscn", "res://scenes/stage_3.tscn", "res://scenes/settings_screen.tscn", "res://scenes/thanks_screen.tscn", "res://scenes/close_mock.tscn"]:
@@ -156,3 +159,42 @@ func _read_res_text(path: String) -> String:
 	var text := file.get_as_text()
 	file.close()
 	return text
+
+
+## 确认 wait 标签不是单独一条空对白。
+func _has_no_standalone_wait_tags(text: String) -> bool:
+	for line in text.split("\n"):
+		var trimmed := line.strip_edges()
+		if trimmed.begins_with("[wait=") and trimmed.ends_with("]") and trimmed.count("[") == 1:
+			return false
+	return true
+
+
+## 新对白会顶掉旧气泡，保证全局最多一个气泡。
+func _check_single_dialogue_balloon(gf: Node) -> void:
+	var dm := root.get_node_or_null("DialogueManager")
+	var resource: Resource = load("res://dialogue/closeai_stage1.dialogue")
+	_check("single-balloon test prerequisites", dm != null and resource != null)
+	if dm == null or resource == null:
+		return
+	var first: Node = gf._show_single_dialogue_balloon(dm, resource, "dirty_return")
+	var second: Node = gf._show_single_dialogue_balloon(dm, resource, "start")
+	await process_frame
+	await process_frame
+	_check("new dialogue replaces previous balloon", is_instance_valid(second) and not is_instance_valid(first))
+	_check("only one modular balloon remains", _count_modular_balloons(root) == 1)
+	gf._close_active_dialogue_balloon()
+	await process_frame
+	await process_frame
+	_check("dialogue balloon cleanup removes active balloon", _count_modular_balloons(root) == 0)
+
+
+## 统计当前场景树里的模块化对话气泡数量。
+func _count_modular_balloons(node: Node) -> int:
+	var total := 0
+	var script: Script = node.get_script() as Script
+	if script != null and script.resource_path == "res://addons/dialogue_manager/modify_test/modular_balloon.gd" and not node.is_queued_for_deletion():
+		total += 1
+	for child in node.get_children():
+		total += _count_modular_balloons(child)
+	return total

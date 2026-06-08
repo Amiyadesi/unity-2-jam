@@ -546,7 +546,9 @@ func static_id_to_line_ids(resource: DialogueResource, static_id: String) -> Pac
 
 
 # Call "start" on the given balloon.
-func _start_balloon(balloon: Node, resource: DialogueResource, title: String, extra_game_states: Array) -> void:
+func _start_balloon(balloon: Variant, resource: DialogueResource, title: String, extra_game_states: Array) -> void:
+	if not is_instance_valid(balloon) or balloon.is_queued_for_deletion():
+		return
 	dialogue_started.emit(resource)
 
 	get_current_scene.call().add_child(balloon)

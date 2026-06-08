@@ -70,6 +70,10 @@ var close_attempt_count: int = 0
 var _self_closing: bool = false
 ## 已注册的关闭前演出钩子（Callable，返回值可为协程；逐个 await）
 var _pre_close_hooks: Array[Callable] = []
+## 当前唯一的全局对话气泡；新对白会顶替旧对白，避免最终战气泡重叠。
+var _active_dialogue_balloon: Node = null
+## 当前对话令牌；旧协程看到令牌变化后会结束等待。
+var _active_dialogue_serial: int = 0
 
 # ──────────────────────────────────────────────
 # 生命周期
@@ -481,9 +485,14 @@ func play_dialogue(stage: int, title: String = "") -> void:
 	if title != "" and not ("titles" in resource and resource.titles is Dictionary and resource.titles.has(title)):
 		push_error("GameFlow.play_dialogue: 标题 '%s' 不存在于 '%s'" % [title, resource.resource_path])
 		return
-	dm.show_dialogue_balloon(resource, title)
-	if dm.has_signal("dialogue_ended"):
-		await dm.dialogue_ended
+	var balloon := _show_single_dialogue_balloon(dm, resource, title)
+	if balloon == null:
+		return
+	var serial := _active_dialogue_serial
+	await _wait_for_dialogue_balloon_end(balloon, dm, resource, serial)
+	if serial == _active_dialogue_serial and is_instance_valid(balloon) and is_instance_valid(_active_dialogue_balloon) and _active_dialogue_balloon == balloon:
+		_active_dialogue_balloon = null
+		_release_dialogue_balloon(balloon, false)
 
 ## 本关对话文件是否含某标题锚点
 func has_dialogue_title(stage: int, title: String) -> bool:
@@ -496,6 +505,53 @@ func has_dialogue_title(stage: int, title: String) -> bool:
 	if "titles" in res and res.titles is Dictionary:
 		return res.titles.has(title)
 	return false
+
+## 播放一个新的全局对话气泡，并立即顶替仍在场的旧气泡。
+func _show_single_dialogue_balloon(dm: Node, resource: Resource, title: String) -> Node:
+	_close_active_dialogue_balloon()
+	if dm == null or not dm.has_method("show_dialogue_balloon"):
+		return null
+	var balloon: Node = dm.show_dialogue_balloon(resource, title)
+	if balloon == null:
+		return null
+	_active_dialogue_serial += 1
+	_active_dialogue_balloon = balloon
+	return balloon
+
+## 结束当前全局气泡；用于新对白抢占旧对白时清场。
+func _close_active_dialogue_balloon() -> void:
+	if not is_instance_valid(_active_dialogue_balloon):
+		_active_dialogue_balloon = null
+		return
+	var balloon := _active_dialogue_balloon
+	_active_dialogue_balloon = null
+	_active_dialogue_serial += 1
+	_release_dialogue_balloon(balloon, true)
+
+## 等到气泡自己结束，或被更新的对话令牌顶替。
+func _wait_for_dialogue_balloon_end(balloon: Variant, dm: Node, resource: Resource, serial: int) -> void:
+	var ended := [false]
+	var dm_callback := Callable()
+	if is_instance_valid(balloon) and balloon.has_signal("dialogue_ended"):
+		balloon.dialogue_ended.connect(func() -> void: ended[0] = true, CONNECT_ONE_SHOT)
+	elif dm != null and dm.has_signal("dialogue_ended"):
+		dm_callback = func(ended_resource: Resource) -> void:
+			if ended_resource == resource:
+				ended[0] = true
+		dm.dialogue_ended.connect(dm_callback)
+	while not ended[0] and serial == _active_dialogue_serial and is_instance_valid(balloon) and not balloon.is_queued_for_deletion():
+		await get_tree().process_frame
+	if dm_callback.is_valid() and dm != null and dm.has_signal("dialogue_ended") and dm.dialogue_ended.is_connected(dm_callback):
+		dm.dialogue_ended.disconnect(dm_callback)
+
+## 释放一个气泡节点；force_end 会让本地等待者收到结束信号。
+func _release_dialogue_balloon(balloon: Variant, force_end: bool) -> void:
+	if not is_instance_valid(balloon):
+		return
+	if force_end and balloon.has_method("force_end"):
+		balloon.force_end()
+	if not balloon.is_queued_for_deletion():
+		balloon.queue_free()
 
 
 # ──────────────────────────────────────────────
