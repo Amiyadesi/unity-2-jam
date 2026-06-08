@@ -8,33 +8,32 @@
 [ext_resource type="PackedScene" uid="uid://dqb345w3nynvn" path="res://scenes/training_target.tscn" id="6_target"]
 [ext_resource type="Texture2D" uid="uid://b1tq8rs7jrclu" path="res://assets/generated/backgrounds/stage1_training_room.png" id="7_bg"]
 [ext_resource type="AudioStream" uid="uid://pkmkrwhw0o3y" path="res://assets/third_party/peritune/The_City_Breathes_Your_Name.mp3" id="8_music"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/training_platform_slab.png" id="9_surface"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/training_panel_plate.png" id="10_panel"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/training_light_strip.png" id="11_light"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/training_lock_bug.png" id="12_bug"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/training_pit_void.png" id="13_pit"]
+[ext_resource type="Texture2D" uid="uid://ba0qx3j6di6n1" path="res://assets/generated/props/training_platform_slab.png" id="9_surface"]
+[ext_resource type="Texture2D" uid="uid://o0m6cbyerkrg" path="res://assets/generated/props/training_panel_plate.png" id="10_panel"]
+[ext_resource type="Texture2D" uid="uid://ho0svhvp1fr7" path="res://assets/generated/props/training_light_strip.png" id="11_light"]
+[ext_resource type="Texture2D" uid="uid://ceabh43gt8e2l" path="res://assets/generated/props/training_lock_bug.png" id="12_bug"]
+[ext_resource type="Texture2D" uid="uid://2ga7pe1gq1h7" path="res://assets/generated/props/training_pit_void.png" id="13_pit"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor_left"]
-size = Vector2(440, 48)
+size = Vector2(440, 34)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor_right"]
-size = Vector2(600, 48)
+size = Vector2(600, 30)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_small_platform"]
-size = Vector2(190, 34)
+size = Vector2(190, 17.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gap_clear"]
 size = Vector2(84, 168)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pit_recover"]
-size = Vector2(520, 360)
+size = Vector2(2029, 220)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_correction_recover"]
-size = Vector2(560, 360)
+size = Vector2(1514, 224)
 
 [node name="Stage1" type="Node2D" unique_id=1920495996]
 script = ExtResource("1_stage1")
-stage_index = 1
 stage_music = ExtResource("8_music")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=2014507540]
@@ -135,22 +134,22 @@ default_color = Color(0.86, 0.9, 1, 0.12)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BackgroundMotion" type="Node2D" parent="."]
+[node name="BackgroundMotion" type="Node2D" parent="." unique_id=498613351]
 z_index = -24
 
-[node name="PulseWashA" type="Sprite2D" parent="BackgroundMotion"]
+[node name="PulseWashA" type="Sprite2D" parent="BackgroundMotion" unique_id=1925404639]
 modulate = Color(0.46, 0.95, 1, 0.16)
 position = Vector2(560, 324)
 scale = Vector2(2.2, 1.15)
 texture = ExtResource("11_light")
 
-[node name="PulseWashB" type="Sprite2D" parent="BackgroundMotion"]
+[node name="PulseWashB" type="Sprite2D" parent="BackgroundMotion" unique_id=2061899337]
 modulate = Color(1, 0.54, 0.86, 0.12)
 position = Vector2(1460, 282)
-scale = Vector2(2.0, 1.0)
+scale = Vector2(2, 1)
 texture = ExtResource("11_light")
 
-[node name="ScanNeedleA" type="Line2D" parent="BackgroundMotion"]
+[node name="ScanNeedleA" type="Line2D" parent="BackgroundMotion" unique_id=1743465523]
 modulate = Color(1, 1, 1, 0.18)
 points = PackedVector2Array(160, 250, 660, 224, 1050, 246)
 width = 3.0
@@ -159,7 +158,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ScanNeedleB" type="Line2D" parent="BackgroundMotion"]
+[node name="ScanNeedleB" type="Line2D" parent="BackgroundMotion" unique_id=1038253225]
 modulate = Color(1, 1, 1, 0.14)
 points = PackedVector2Array(720, 392, 1260, 368, 1870, 410)
 width = 3.0
@@ -168,16 +167,16 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LightStripA" type="Sprite2D" parent="BackgroundMotion"]
+[node name="LightStripA" type="Sprite2D" parent="BackgroundMotion" unique_id=1505617593]
 modulate = Color(1, 0.92, 0.62, 0.2)
 position = Vector2(980, 588)
 scale = Vector2(1.6, 0.42)
 texture = ExtResource("11_light")
 
-[node name="LightStripB" type="Sprite2D" parent="BackgroundMotion"]
+[node name="LightStripB" type="Sprite2D" parent="BackgroundMotion" unique_id=1105764695]
 modulate = Color(0.58, 1, 0.82, 0.18)
 position = Vector2(1690, 510)
-scale = Vector2(1.0, 0.34)
+scale = Vector2(1, 0.34)
 texture = ExtResource("11_light")
 
 [node name="FloorLeft" type="StaticBody2D" parent="." unique_id=1585616034]
@@ -185,6 +184,7 @@ position = Vector2(230, 620)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FloorLeft" unique_id=51642456]
+position = Vector2(0, 7)
 shape = SubResource("RectangleShape2D_floor_left")
 
 [node name="FloorVisual" type="ColorRect" parent="FloorLeft" unique_id=967613198]
@@ -194,7 +194,7 @@ offset_right = 220.0
 offset_bottom = 24.0
 color = Color(0.12, 0.14, 0.18, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="FloorLeft"]
+[node name="SurfaceSprite" type="Sprite2D" parent="FloorLeft" unique_id=90629775]
 modulate = Color(0.9, 0.98, 1, 0.94)
 scale = Vector2(0.22, 0.105)
 texture = ExtResource("9_surface")
@@ -218,6 +218,7 @@ position = Vector2(1720, 620)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FloorRight" unique_id=1152848955]
+position = Vector2(0, 9)
 shape = SubResource("RectangleShape2D_floor_right")
 
 [node name="FloorVisual" type="ColorRect" parent="FloorRight" unique_id=1343446183]
@@ -227,7 +228,7 @@ offset_right = 300.0
 offset_bottom = 24.0
 color = Color(0.12, 0.14, 0.18, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="FloorRight"]
+[node name="SurfaceSprite" type="Sprite2D" parent="FloorRight" unique_id=690900649]
 modulate = Color(0.9, 0.98, 1, 0.94)
 scale = Vector2(0.3, 0.105)
 texture = ExtResource("9_surface")
@@ -251,6 +252,7 @@ position = Vector2(500, 586)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TakeoffLedge" unique_id=1942277208]
+position = Vector2(0, 5.5)
 shape = SubResource("RectangleShape2D_small_platform")
 
 [node name="FloorVisual" type="ColorRect" parent="TakeoffLedge" unique_id=1492339231]
@@ -260,7 +262,7 @@ offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.16, 0.18, 0.25, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="TakeoffLedge"]
+[node name="SurfaceSprite" type="Sprite2D" parent="TakeoffLedge" unique_id=390029586]
 modulate = Color(0.9, 0.98, 1, 0.92)
 scale = Vector2(0.1, 0.07)
 texture = ExtResource("9_surface")
@@ -284,6 +286,7 @@ position = Vector2(845, 562)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LandingLedge" unique_id=2023192871]
+position = Vector2(0, 2.75)
 shape = SubResource("RectangleShape2D_small_platform")
 
 [node name="FloorVisual" type="ColorRect" parent="LandingLedge" unique_id=645856262]
@@ -293,7 +296,7 @@ offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.16, 0.18, 0.25, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="LandingLedge"]
+[node name="SurfaceSprite" type="Sprite2D" parent="LandingLedge" unique_id=735775350]
 modulate = Color(0.9, 0.98, 1, 0.92)
 scale = Vector2(0.1, 0.07)
 texture = ExtResource("9_surface")
@@ -317,6 +320,7 @@ position = Vector2(1115, 530)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StepPlatformA" unique_id=1436175996]
+position = Vector2(0, 3)
 shape = SubResource("RectangleShape2D_small_platform")
 
 [node name="FloorVisual" type="ColorRect" parent="StepPlatformA" unique_id=1037036279]
@@ -326,7 +330,7 @@ offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.15, 0.16, 0.24, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="StepPlatformA"]
+[node name="SurfaceSprite" type="Sprite2D" parent="StepPlatformA" unique_id=1020003000]
 modulate = Color(0.82, 1, 0.88, 0.92)
 scale = Vector2(0.1, 0.07)
 texture = ExtResource("9_surface")
@@ -350,6 +354,7 @@ position = Vector2(1325, 470)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StepPlatformB" unique_id=1305053255]
+position = Vector2(0, 3)
 shape = SubResource("RectangleShape2D_small_platform")
 
 [node name="FloorVisual" type="ColorRect" parent="StepPlatformB" unique_id=1989782047]
@@ -359,7 +364,7 @@ offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.15, 0.16, 0.24, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="StepPlatformB"]
+[node name="SurfaceSprite" type="Sprite2D" parent="StepPlatformB" unique_id=1256945246]
 modulate = Color(0.82, 1, 0.88, 0.92)
 scale = Vector2(0.1, 0.07)
 texture = ExtResource("9_surface")
@@ -392,7 +397,7 @@ offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.18, 0.16, 0.27, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="AttackLedge"]
+[node name="SurfaceSprite" type="Sprite2D" parent="AttackLedge" unique_id=1159771308]
 modulate = Color(1, 0.86, 1, 0.92)
 scale = Vector2(0.1, 0.07)
 texture = ExtResource("9_surface")
@@ -425,7 +430,7 @@ offset_right = 95.0
 offset_bottom = 17.0
 color = Color(0.18, 0.16, 0.27, 0.035)
 
-[node name="SurfaceSprite" type="Sprite2D" parent="SideCastPad"]
+[node name="SurfaceSprite" type="Sprite2D" parent="SideCastPad" unique_id=553241846]
 modulate = Color(1, 0.86, 1, 0.92)
 scale = Vector2(0.1, 0.07)
 texture = ExtResource("9_surface")
@@ -492,6 +497,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PitRecoverArea" unique_id=1085701281]
+position = Vector2(344.5, 70)
 shape = SubResource("RectangleShape2D_pit_recover")
 
 [node name="CorrectionPitRecoverArea" type="Area2D" parent="." unique_id=1157286456]
@@ -500,6 +506,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CorrectionPitRecoverArea" unique_id=420260681]
+position = Vector2(261, 68)
 shape = SubResource("RectangleShape2D_correction_recover")
 
 [node name="PitDepthReads" type="Node2D" parent="." unique_id=1764181547]
@@ -512,7 +519,7 @@ offset_right = 750.0
 offset_bottom = 820.0
 color = Color(0.015, 0.025, 0.055, 0.045)
 
-[node name="GapVoidSprite" type="Sprite2D" parent="PitDepthReads"]
+[node name="GapVoidSprite" type="Sprite2D" parent="PitDepthReads" unique_id=131333040]
 modulate = Color(0.92, 0.98, 1, 0.96)
 position = Vector2(672, 711)
 scale = Vector2(0.12, 0.23)
@@ -532,7 +539,7 @@ offset_right = 1020.0
 offset_bottom = 802.0
 color = Color(0.018, 0.028, 0.06, 0.045)
 
-[node name="CorrectionVoidSprite" type="Sprite2D" parent="PitDepthReads"]
+[node name="CorrectionVoidSprite" type="Sprite2D" parent="PitDepthReads" unique_id=187743918]
 modulate = Color(0.92, 0.98, 1, 0.9)
 position = Vector2(980, 692)
 scale = Vector2(0.075, 0.23)
@@ -685,10 +692,10 @@ allow_dash = false
 position = Vector2(890, 509)
 
 [node name="LogicRelayB" parent="." unique_id=354572683 instance=ExtResource("4_interact")]
-position = Vector2(1115, 496)
+position = Vector2(1116, 481)
 
 [node name="ExitProbeC" parent="." unique_id=466113132 instance=ExtResource("4_interact")]
-position = Vector2(1325, 438)
+position = Vector2(1323, 430)
 
 [node name="TrainingTargets" type="Node2D" parent="." unique_id=1903033856]
 
@@ -707,23 +714,23 @@ position = Vector2(1878, 504)
 required_attack_kind = "side"
 visual_variant = "side"
 
-[node name="BugBreakSequence" type="Node2D" parent="."]
+[node name="BugBreakSequence" type="Node2D" parent="." unique_id=103938182]
 visible = false
 z_index = 8
 
-[node name="FaultPlate" type="Sprite2D" parent="BugBreakSequence"]
+[node name="FaultPlate" type="Sprite2D" parent="BugBreakSequence" unique_id=251626275]
 modulate = Color(1, 0.32, 0.46, 0.52)
 position = Vector2(1981, 486)
 scale = Vector2(0.4, 0.64)
 texture = ExtResource("10_panel")
 
-[node name="FaultGlyph" type="Sprite2D" parent="BugBreakSequence"]
+[node name="FaultGlyph" type="Sprite2D" parent="BugBreakSequence" unique_id=925797158]
 modulate = Color(1, 0.72, 0.86, 0.76)
 position = Vector2(1998, 500)
 scale = Vector2(0.42, 0.42)
 texture = ExtResource("12_bug")
 
-[node name="RelayTear" type="Line2D" parent="BugBreakSequence"]
+[node name="RelayTear" type="Line2D" parent="BugBreakSequence" unique_id=277771098]
 points = PackedVector2Array(1806, 504, 1878, 504, 1932, 466, 1998, 500)
 width = 7.0
 default_color = Color(1, 0.26, 0.48, 0.54)
@@ -731,7 +738,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitLeak" type="Line2D" parent="BugBreakSequence"]
+[node name="ExitLeak" type="Line2D" parent="BugBreakSequence" unique_id=1409169322]
 points = PackedVector2Array(1932, 466, 1962, 428, 2016, 448, 2048, 398)
 width = 4.0
 default_color = Color(0.62, 0.9, 1, 0.38)
@@ -739,7 +746,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CloseSignal" type="Line2D" parent="BugBreakSequence"]
+[node name="CloseSignal" type="Line2D" parent="BugBreakSequence" unique_id=1395327356]
 points = PackedVector2Array(1988, 520, 2026, 498, 2048, 530, 2076, 490)
 width = 5.0
 default_color = Color(1, 0.82, 0.38, 0.46)
@@ -747,7 +754,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BugRelayTarget" parent="BugBreakSequence" instance=ExtResource("6_target")]
+[node name="BugRelayTarget" parent="BugBreakSequence" unique_id=451544064 instance=ExtResource("6_target")]
 position = Vector2(1998, 500)
 required_attack_kind = "forward"
 visual_variant = "bug"
@@ -756,6 +763,7 @@ hits_required = 2
 [node name="PauseLayer" type="CanvasLayer" parent="." unique_id=522526709]
 process_mode = 3
 layer = 20
+visible = false
 
 [node name="PauseScreen" parent="PauseLayer" unique_id=227940079 instance=ExtResource("3_pause")]
 
@@ -764,7 +772,7 @@ process_mode = 3
 layer = 18
 visible = false
 
-[node name="CloseCurtain" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseCurtain" type="ColorRect" parent="CloseMomentLayer" unique_id=341232289]
 modulate = Color(1, 1, 1, 0)
 anchors_preset = 15
 anchor_right = 1.0
@@ -772,23 +780,26 @@ anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.01, 0.008, 0.016, 1)
 
-[node name="CloseShutterTop" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseShutterTop" type="ColorRect" parent="CloseMomentLayer" unique_id=1974756081]
 modulate = Color(1, 1, 1, 0)
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 0.5
 mouse_filter = 2
 color = Color(0.018, 0.016, 0.028, 1)
 
-[node name="CloseShutterBottom" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseShutterBottom" type="ColorRect" parent="CloseMomentLayer" unique_id=1820380915]
 modulate = Color(1, 1, 1, 0)
+anchors_preset = -1
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.018, 0.016, 0.028, 1)
 
-[node name="CloseScanLine" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseScanLine" type="ColorRect" parent="CloseMomentLayer" unique_id=1993397479]
 modulate = Color(1, 1, 1, 0)
+anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5

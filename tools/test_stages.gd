@@ -1324,6 +1324,7 @@ func _check_stage_3_finale_nodes(inst: Node) -> void:
 	_check("stage_3 authored dash rhythm read", _stage_3_dash_rhythm_read_authored(inst))
 	_check("stage_3 authored window truth read", _stage_3_window_truth_read_authored(inst))
 	_check("stage_3 authored phase three pressure reads", _stage_3_phase_three_pressure_reads_authored(inst))
+	_check("stage_3 starts opaque until boss defeat", _stage_3_opaque_background_visible(inst))
 	if inst.has_method("_apply_stage_phase"):
 		inst._apply_stage_phase(2)
 		await process_frame
@@ -1407,6 +1408,8 @@ func _check_stage_3_finale_nodes(inst: Node) -> void:
 		_check("stage_3 request finish hides desktop risk read", _stage_3_desktop_risk_reads_hidden(inst))
 	if inst.has_method("_on_boss_defeated"):
 		inst._on_boss_defeated()
+		await create_timer(0.08).timeout
+		_check("stage_3 boss defeat starts desktop reveal", _stage_3_opaque_background_revealing(inst))
 	_check("stage_3 boss defeat shows exit route and gate", _stage_3_boss_defeat_shows_exit_route(inst))
 	_check("stage_3 boss defeat shows full pierce progress", _stage_3_pierce_progress_reads_count(inst, 3))
 	_check("stage_3 boss defeat shows full desktop instability", _stage_3_desktop_instability_reads_count(inst, 3))
@@ -1467,6 +1470,18 @@ func _stage_3_platform_read_edges_authored(inst: Node) -> bool:
 		if top_edge.color.a < 0.4 or shadow.color.a < 0.3:
 			return false
 	return true
+
+
+## 确认终战开始时仍保留不透明战斗底，不能提前透出真实桌面。
+func _stage_3_opaque_background_visible(inst: Node) -> bool:
+	var bg := inst.get_node_or_null("Background/BgColor") as CanvasItem
+	return bg != null and bg.visible and bg.modulate.a > 0.99
+
+
+## 确认只有 Boss 被击穿后才启动 DesktopReveal 的背景淡出。
+func _stage_3_opaque_background_revealing(inst: Node) -> bool:
+	var bg := inst.get_node_or_null("Background/BgColor") as CanvasItem
+	return bg != null and bg.visible and bg.modulate.a < 0.99
 
 
 ## 确认第三关窗口战场有真实 authored 物理墙，不只是视觉边界。

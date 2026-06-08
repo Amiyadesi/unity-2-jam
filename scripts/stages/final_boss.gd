@@ -409,14 +409,14 @@ func _finish_phase_pressure_sweep() -> void:
 	_pressure_timer = phase_one_pressure_interval
 
 
-## 切换单条扫线的碰撞开关。
+## 切换单条扫线的碰撞开关；延后执行，兼容从攻击/请求信号链进入的阶段切换。
 func _set_pressure_sweep_enabled(sweep: Area2D, enabled: bool) -> void:
 	if sweep == null:
 		return
-	sweep.monitoring = enabled
+	sweep.set_deferred("monitoring", enabled)
 	var shape := sweep.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if shape != null:
-		shape.disabled = not enabled
+		shape.set_deferred("disabled", not enabled)
 
 
 ## 隐藏所有 authored 一阶段扫线。
@@ -561,14 +561,14 @@ func _finish_phase_three_pressure_sweep() -> void:
 	_emit_phase_three_pressure_clear()
 
 
-## 切换三阶段单条扫压的碰撞开关。
+## 切换三阶段单条扫压的碰撞开关；延后执行，避免 request/命中回调里 flush 报错。
 func _set_phase_three_pressure_sweep_enabled(sweep: Area2D, enabled: bool) -> void:
 	if sweep == null:
 		return
-	sweep.monitoring = enabled
+	sweep.set_deferred("monitoring", enabled)
 	var shape := sweep.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if shape != null:
-		shape.disabled = not enabled
+		shape.set_deferred("disabled", not enabled)
 
 
 ## 隐藏所有 authored 三阶段闭窗扫压。

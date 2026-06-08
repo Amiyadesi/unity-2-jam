@@ -23,8 +23,7 @@ func _ready() -> void:
 func activate() -> void:
 	_active = true
 	show()
-	monitoring = true
-	_shape.disabled = false
+	_set_collision_active(true)
 	modulate.a = 0.0
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 1.0, 0.6)
@@ -35,9 +34,7 @@ func activate() -> void:
 func deactivate() -> void:
 	_active = false
 	hide()
-	monitoring = false
-	if _shape != null:
-		_shape.disabled = true
+	_set_collision_active(false)
 
 
 ## 让入口线框缓慢旋转，形成可见目标。
@@ -51,5 +48,17 @@ func _on_body_entered(body: Node) -> void:
 	if not _active or not body.is_in_group("player"):
 		return
 	_active = false
-	monitoring = false
+	_set_collision_active(false, true)
 	entered.emit()
+
+
+## 切换 authored 入口碰撞；玩家进入信号内关闭时必须 deferred。
+func _set_collision_active(active: bool, deferred: bool = false) -> void:
+	if deferred:
+		set_deferred("monitoring", active)
+		if _shape != null:
+			_shape.set_deferred("disabled", not active)
+		return
+	monitoring = active
+	if _shape != null:
+		_shape.disabled = not active

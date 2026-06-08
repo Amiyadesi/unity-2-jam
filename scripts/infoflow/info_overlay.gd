@@ -11,6 +11,7 @@ extends CanvasLayer
 
 var _hints: Dictionary = {}
 var _breadcrumb_items: Array[Control] = []
+var _breadcrumb_layout_specs: Dictionary = {}
 
 
 ## 初始化 authored 池，确保所有预放控件默认隐藏。
@@ -26,10 +27,11 @@ func show_toast(seconds: float, title: String, text: String, layout_spec: String
 	if item == null:
 		return
 	_breadcrumb_items.append(item)
+	_breadcrumb_layout_specs[item.get_instance_id()] = layout_spec
 	_set_label_text(item, "BreadcrumbTitle", title)
 	_set_label_text(item, "BreadcrumbText", text)
 	item.show()
-	_apply_breadcrumb_layouts(layout_spec)
+	_apply_breadcrumb_layouts()
 
 	var life_bar := item.get_node_or_null("%LifeBar") as ProgressBar
 	if life_bar != null:
@@ -40,8 +42,9 @@ func show_toast(seconds: float, title: String, text: String, layout_spec: String
 	await get_tree().create_timer(maxf(seconds, 0.05)).timeout
 	if is_instance_valid(item):
 		_breadcrumb_items.erase(item)
+		_breadcrumb_layout_specs.erase(item.get_instance_id())
 		_release_to_pool(item)
-		_apply_breadcrumb_layouts(layout_spec)
+		_apply_breadcrumb_layouts()
 
 
 ## hint：按 channel 常驻提示，mode="hide" 隐藏。
@@ -91,11 +94,16 @@ func apply_canvas_layout_spec(target: Control, layout_spec: String, stack_index:
 	target.position = position
 
 
-func _apply_breadcrumb_layouts(layout_spec: String) -> void:
+## 按每条 toast 自己的布局堆叠，避免新提示把旧提示迁移到另一个位置。
+func _apply_breadcrumb_layouts() -> void:
+	var stack_counts := {}
 	for index in _breadcrumb_items.size():
 		var item := _breadcrumb_items[index]
 		if is_instance_valid(item):
-			apply_canvas_layout_spec(item, layout_spec, index)
+			var layout_spec := String(_breadcrumb_layout_specs.get(item.get_instance_id(), "top_right"))
+			var stack_index := int(stack_counts.get(layout_spec, 0))
+			apply_canvas_layout_spec(item, layout_spec, stack_index)
+			stack_counts[layout_spec] = stack_index + 1
 
 
 ## 给池内模板控件写入 Label/RichTextLabel 文案。

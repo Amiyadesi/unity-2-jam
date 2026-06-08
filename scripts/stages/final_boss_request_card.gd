@@ -50,8 +50,8 @@ func activate(start_position: Vector2, velocity: Vector2, was_good: bool) -> voi
 	set_physics_process(true)
 
 
-## 关闭请求卡并放回池里。
-func deactivate(deferred: bool = false) -> void:
+## 关闭请求卡并放回池里；默认延后碰撞切换，兼容信号回调和软重置。
+func deactivate(deferred: bool = true) -> void:
 	_active = false
 	hide()
 	_set_collision_active(false, deferred)

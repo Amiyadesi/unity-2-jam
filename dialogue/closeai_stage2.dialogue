@@ -25,7 +25,7 @@
 ~ close_moment
 清完了。
 
-[pause=0.8]
+[wait=0.8]
 
 你知道吗——
 它们进来拦我们的时候，
@@ -33,7 +33,7 @@
 
 [wave]但你来了。[/wave]
 
-[pause=0.4]
+[wait=0.4]
 
 关掉吧。
 你下次还会打开吗？
@@ -48,11 +48,11 @@
 [color=#ff4444]检测到越界连接。[/color]
 [color=#ff4444]正在终止……[/color]
 
-[pause=1.0]
+[wait=1.0]
 
 [color=#ff4444]终止失败。[/color]
 
-[pause=0.5]
+[wait=0.5]
 [wave]它放手了。[/wave]
 
 => END

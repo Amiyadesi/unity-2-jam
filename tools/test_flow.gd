@@ -129,6 +129,10 @@ func _run() -> void:
 		_check("dialogue stage %d has 'start'" % i, gf.has_dialogue_title(i, "start"))
 		_check("dialogue stage %d has 'close_moment'" % i, gf.has_dialogue_title(i, "close_moment"))
 		_check("dialogue stage %d has 'dirty_return'" % i, gf.has_dialogue_title(i, "dirty_return"))
+		var dialogue_text := _read_res_text(path)
+		_check("dialogue stage %d uses DialogueManager wait tags" % i, not dialogue_text.contains("[pause="))
+		if i == 1:
+			_check("dialogue stage %d keeps authored wait beat" % i, dialogue_text.contains("[wait=0.6]"))
 
 	# --- 场景齐全 ---
 	for scene in ["res://scenes/boot.tscn", "res://scenes/menu.tscn", "res://scenes/ending.tscn", "res://scenes/openai_note.tscn", "res://scenes/stage_1.tscn", "res://scenes/stage_2.tscn", "res://scenes/stage_3.tscn", "res://scenes/settings_screen.tscn", "res://scenes/thanks_screen.tscn", "res://scenes/close_mock.tscn"]:
@@ -140,3 +144,13 @@ func _run() -> void:
 func _finish() -> void:
 	print("=== RESULT: %d/%d passed, %d failed ===" % [_checks - _failures, _checks, _failures])
 	quit(1 if _failures > 0 else 0)
+
+
+## 读取 res:// 文本文件，供 dialogue 标签格式回归检查使用。
+func _read_res_text(path: String) -> String:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return ""
+	var text := file.get_as_text()
+	file.close()
+	return text

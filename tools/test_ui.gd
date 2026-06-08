@@ -185,6 +185,14 @@ func _check_info_flow_authored_pool() -> void:
 		overlay.hide_hint("test")
 		await _wait(0.12)
 		_check("InfoOverlay returns pool items hidden", _pool_all_hidden(breadcrumb_pool) and _pool_all_hidden(hint_pool))
+		overlay.show_toast(0.25, "", "底部教学", "bottom+0,-40@520x72")
+		await process_frame
+		var bottom_item := _first_visible_control(breadcrumb_pool)
+		var bottom_position := bottom_item.position if bottom_item != null else Vector2.ZERO
+		overlay.show_toast(0.25, "", "右上计数", "top_right+0,12@200x56")
+		await process_frame
+		_check("InfoOverlay keeps existing toast layout when another layout appears", bottom_item != null and bottom_item.visible and bottom_item.position.is_equal_approx(bottom_position))
+		await _wait(0.3)
 	flow.queue_free()
 
 
@@ -194,3 +202,11 @@ func _pool_all_hidden(pool: Node) -> bool:
 		if child is Control and (child as Control).visible:
 			return false
 	return true
+
+
+## 返回池中第一条可见 Control，供布局迁移回归检查使用。
+func _first_visible_control(pool: Node) -> Control:
+	for child in pool.get_children():
+		if child is Control and (child as Control).visible:
+			return child as Control
+	return null

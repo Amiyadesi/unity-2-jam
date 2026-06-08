@@ -1,7 +1,7 @@
 extends StageBase
 ## stage_3.gd — 第 3 关终战。
 ##
-## 入场后隐藏不透明背景，玩家在真实桌面透出的窗口里和“窗口核心”战斗。
+## 入场先保留不透明战斗底；只有击穿 Boss 后才透出真实桌面。
 ## 击穿 Boss 后互联网门打开；玩家进入门才写 OpenAI flag 并干净退出。
 
 @onready var _boss = $FinalBoss
@@ -61,7 +61,7 @@ var _dash_reject_read_base_position: Vector2 = Vector2.ZERO
 var _dash_whiff_read_base_position: Vector2 = Vector2.ZERO
 
 
-## 启动桌面透出演出和 Boss 战。
+## 启动窗口 Boss 战；真正透出桌面只在 Boss 被击穿后发生。
 func _on_stage_ready() -> void:
 	if not _require_finale_nodes():
 		_stage_active = false
@@ -70,7 +70,6 @@ func _on_stage_ready() -> void:
 	_prepare_player_for_finale()
 	_exit_route_guides.hide()
 	_hide_desktop_risk_reads()
-	DesktopReveal.reveal(self, 1.2)
 	_reset_desktop_tears()
 	_set_pierce_progress_read_count(0)
 	_set_desktop_instability_read_count(0)
@@ -980,6 +979,7 @@ func _on_boss_defeated() -> void:
 	_update_pierce_hud()
 	_desktop_tears.show()
 	_boss_hud.hide()
+	DesktopReveal.reveal(self, 1.2)
 	_set_arena_hint_symbol_readable(true, 0.88, Vector2(0.082, 0.082))
 	_show_exit_route_guides()
 	_wire_internet_gate_signal()

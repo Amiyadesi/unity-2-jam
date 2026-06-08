@@ -94,6 +94,8 @@ func _run() -> void:
 	_check("boss authored request telegraphs", boss.has_method("_has_authored_request_telegraphs") and boss._has_authored_request_telegraphs())
 	_check("boss authored phase three reads", boss.has_method("_has_authored_phase_three_reads") and boss._has_authored_phase_three_reads())
 	_check("boss authored phase three pressure", boss.has_method("_has_authored_phase_three_pressure") and boss._has_authored_phase_three_pressure())
+	_check_boss_texture_keyed("res://assets/generated/props/boss_core_body.png", true)
+	_check_boss_texture_keyed("res://assets/generated/props/boss_core_shield.png", false)
 	await _check_request_card_kind_reads(boss)
 	await _check_request_card_energy_feedback(boss.get_node_or_null("RequestPool/RequestCard1"), player)
 	_check("gate starts hidden", gate is CanvasItem and not (gate as CanvasItem).visible)
@@ -477,6 +479,24 @@ func _phase_three_pressure_has_event(sweep_name: StringName, state: StringName, 
 ## 记录 Boss 被三次穿透击败。
 func _on_boss_defeated() -> void:
 	_boss_defeated_count += 1
+
+
+## 确认 Boss 生图素材已抠掉深色底，避免终战出现黑色方块背景。
+func _check_boss_texture_keyed(path: String, requires_opaque_center: bool) -> void:
+	var image := Image.new()
+	var bytes := FileAccess.get_file_as_bytes(path)
+	var loaded := image.load_png_from_buffer(bytes)
+	_check("boss texture loads: " + path, loaded == OK)
+	if loaded != OK:
+		return
+	var edge_alpha: float = maxf(
+		maxf(image.get_pixel(0, 0).a, image.get_pixel(image.get_width() - 1, 0).a),
+		maxf(image.get_pixel(0, image.get_height() - 1).a, image.get_pixel(image.get_width() - 1, image.get_height() - 1).a)
+	)
+	_check("boss texture transparent keyed edge: " + path, edge_alpha < 0.01)
+	if requires_opaque_center:
+		var center_alpha := image.get_pixel(image.get_width() / 2, image.get_height() / 2).a
+		_check("boss texture keeps opaque core: " + path, center_alpha > 0.8)
 
 
 ## 确认 Boss 请求先亮 authored 预告，再从池中发射卡片。
