@@ -69,21 +69,3 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_rule")
-
-[node name="Body" type="Label" parent="Paper/Margin/Lines"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.18, 0.16, 0.12, 1)
-theme_override_font_sizes/font_size = 18
-text = "你打开了 Open AI。
-
-这里只剩这张纸条。"
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="Footer" type="Label" parent="Paper/Margin/Lines"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.24, 0.18, 0.78)
-theme_override_font_sizes/font_size = 14
-text = "点一下，它会掉下去。"
-horizontal_alignment = 1
-autowrap_mode = 3

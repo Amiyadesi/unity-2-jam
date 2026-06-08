@@ -103,6 +103,8 @@ func _run() -> void:
 	var relaunch_script: String = gf._build_stage_relaunch_script_text("D:/Builds/CloseAI/Close AI.exe", 2)
 	_check("stage relaunch script waits before restart", relaunch_script.contains("timeout /t 2"))
 	_check("stage relaunch script starts Close AI", relaunch_script.contains("start \"\" \"%EXE%\""))
+	var game_flow_source := _read_res_text("res://scripts/autoload/game_flow.gd")
+	_check("self_close forces quit after clean save attempt", game_flow_source.contains("save_system.quit_cleanly()") and game_flow_source.find("get_tree().quit()", game_flow_source.find("save_system.quit_cleanly()")) > 0)
 	gf.apply_openai_identity()
 	_check("OpenAI identity enables transparent viewport", root.transparent_bg == true)
 	gf.apply_closeai_identity()
@@ -132,7 +134,7 @@ func _run() -> void:
 		var dialogue_text := _read_res_text(path)
 		_check("dialogue stage %d uses DialogueManager wait tags" % i, not dialogue_text.contains("[pause="))
 		if i == 1:
-			_check("dialogue stage %d keeps authored wait beat" % i, dialogue_text.contains("[wait=0.6]"))
+			_check("dialogue stage %d keeps authored wait beats" % i, dialogue_text.contains("[wait=0.4]") and dialogue_text.contains("[wait=0.8]"))
 
 	# --- 场景齐全 ---
 	for scene in ["res://scenes/boot.tscn", "res://scenes/menu.tscn", "res://scenes/ending.tscn", "res://scenes/openai_note.tscn", "res://scenes/stage_1.tscn", "res://scenes/stage_2.tscn", "res://scenes/stage_3.tscn", "res://scenes/settings_screen.tscn", "res://scenes/thanks_screen.tscn", "res://scenes/close_mock.tscn"]:

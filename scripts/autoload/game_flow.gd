@@ -139,12 +139,14 @@ func self_close(reason: String = "") -> void:
 	for hook in _pre_close_hooks:
 		if hook.is_valid():
 			await hook.call(reason)
-	# 干净退出：标记 clean_exit、存档、quit
+	# 干净退出：先让存档系统记录 clean_exit，再兜底退出，避免存档失败卡住剧情外壳。
 	_schedule_stage_relaunch(reason)
 	var save_system := _save_system()
 	if save_system != null and save_system.has_method("quit_cleanly"):
 		save_system.quit_cleanly()
 	else:
+		get_tree().quit()
+	if get_tree() != null:
 		get_tree().quit()
 
 

@@ -958,9 +958,10 @@ func _update_pierce_hud() -> void:
 		_boss_hud.set_pierce_progress(_desktop_pierce_count, DESKTOP_TEAR_NAMES.size())
 
 
-## 前辈 AI 倒下后隐藏它的血条。
+## 前辈 AI 倒下后播放台词再隐藏血条。
 func _on_predecessor_defeated() -> void:
 	_boss_hud.hide_predecessor()
+	await GameFlow.play_dialogue(stage_index, "predecessor_speaks")
 
 
 ## 失败只做软重置提示，不踢出整关。
@@ -997,6 +998,7 @@ func _on_internet_gate_entered() -> void:
 		player.set_frozen(true)
 		_set_arena_hint_symbol_readable(true, 1.0, Vector2(0.092, 0.092), Color(1.0, 0.9, 0.52, 1.0))
 	GameFlow.prepare_openai_shell()
+	await GameFlow.play_dialogue(stage_index, "internet_goodbye")
 	await get_tree().create_timer(openai_exit_delay_seconds).timeout
 	GameFlow.self_close("openai_revealed")
 

@@ -1,20 +1,26 @@
-[gd_scene load_steps=21 format=3 uid="uid://closeaistage3scn"]
+[gd_scene format=3 uid="uid://cu0u8vd6pcueb"]
 
-[ext_resource type="Script" path="res://scripts/stages/stage_3.gd" id="1_stage3"]
-[ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://cw6clcj4h7mt8" path="res://scripts/stages/stage_3.gd" id="1_stage3"]
+[ext_resource type="PackedScene" uid="uid://c2msrb0gq8u3a" path="res://scenes/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://scenes/pause_screen.tscn" id="3_pause"]
-[ext_resource type="PackedScene" path="res://ui_kit/components/shader_button.tscn" id="4_close_btn"]
-[ext_resource type="PackedScene" uid="uid://closeaienergyhud" path="res://scenes/ui/energy_hud.tscn" id="5_energy_hud"]
-[ext_resource type="PackedScene" path="res://scenes/final_boss.tscn" id="6_boss"]
-[ext_resource type="PackedScene" path="res://scenes/ui/boss_hud.tscn" id="7_boss_hud"]
-[ext_resource type="PackedScene" path="res://scenes/internet_gate.tscn" id="8_gate"]
-[ext_resource type="PackedScene" path="res://scenes/energy_pocket.tscn" id="9_pocket"]
+[ext_resource type="PackedScene" uid="uid://dyv3j4u5kwmm7" path="res://ui_kit/components/shader_button.tscn" id="4_close_btn"]
+[ext_resource type="PackedScene" uid="uid://cu0utpiiq7jv0" path="res://scenes/ui/energy_hud.tscn" id="5_energy_hud"]
+[ext_resource type="PackedScene" uid="uid://cu0uukq0vjqug" path="res://scenes/final_boss.tscn" id="6_boss"]
+[ext_resource type="PackedScene" uid="uid://cemyhdwniqyo2" path="res://scenes/ui/boss_hud.tscn" id="7_boss_hud"]
+[ext_resource type="PackedScene" uid="uid://6rnieg5gni" path="res://scenes/internet_gate.tscn" id="8_gate"]
+[ext_resource type="PackedScene" uid="uid://d0omqeqxu8lyp" path="res://scenes/energy_pocket.tscn" id="9_pocket"]
 [ext_resource type="AudioStream" uid="uid://d32cuiqqss0hj" path="res://assets/third_party/peritune/Ancient_Gust_Retro_9.mp3" id="10_music"]
 [ext_resource type="Texture2D" uid="uid://gxtf2ytee01l" path="res://assets/generated/backgrounds/stage3_window_battle_desktop_ai.png" id="11_bg"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_window_read_plate.png" id="12_window_read"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_window_gate.png" id="13_gate_strip"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_window_pane.png" id="14_window_pane"]
-[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_exit_hint_symbol.png" id="15_exit_hint"]
+[ext_resource type="Texture2D" uid="uid://1g04gxvc6qvo" path="res://assets/generated/props/stage3_window_read_plate.png" id="12_window_read"]
+[ext_resource type="Texture2D" uid="uid://c1i13qqvw6xf7" path="res://assets/generated/props/stage3_window_gate.png" id="13_gate_strip"]
+[ext_resource type="Texture2D" uid="uid://brvf8hpbpgtb3" path="res://assets/generated/props/stage3_window_pane.png" id="14_window_pane"]
+[ext_resource type="Texture2D" uid="uid://blc318gqff875" path="res://assets/generated/props/stage3_exit_hint_symbol.png" id="15_exit_hint"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_vertical"]
+size = Vector2(48, 540)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_horizontal"]
+size = Vector2(1060, 48)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(1600, 48)
@@ -25,31 +31,24 @@ size = Vector2(260, 28)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_platform_mid"]
 size = Vector2(220, 28)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_vertical"]
-size = Vector2(48, 540)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_horizontal"]
-size = Vector2(1060, 48)
-
-[node name="Stage3" type="Node2D"]
+[node name="Stage3" type="Node2D" unique_id=1990581298]
 script = ExtResource("1_stage3")
 stage_index = 3
-play_intro_dialogue = true
 stage_music = ExtResource("10_music")
 
-[node name="Background" type="CanvasLayer" parent="."]
+[node name="Background" type="CanvasLayer" parent="." unique_id=1185448422]
 layer = -10
 
-[node name="BgColor" type="ColorRect" parent="Background" groups=["opaque_bg"]]
+[node name="BgColor" type="ColorRect" parent="Background" unique_id=1999774985 groups=["opaque_bg"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.03, 0.03, 0.05, 1)
 
-[node name="DesktopLayer" type="CanvasLayer" parent="."]
+[node name="DesktopLayer" type="CanvasLayer" parent="." unique_id=779061873]
 layer = -9
 
-[node name="DesktopBattlePlate" type="TextureRect" parent="DesktopLayer"]
+[node name="DesktopBattlePlate" type="TextureRect" parent="DesktopLayer" unique_id=1636957001]
 modulate = Color(1, 1, 1, 0.42)
 anchors_preset = 15
 anchor_right = 1.0
@@ -59,7 +58,7 @@ texture = ExtResource("11_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DesktopGrid" type="Control" parent="DesktopLayer"]
+[node name="DesktopGrid" type="Control" parent="DesktopLayer" unique_id=2001853349]
 modulate = Color(1, 1, 1, 0.18)
 layout_mode = 3
 anchors_preset = 15
@@ -69,7 +68,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="DesktopTint" type="ColorRect" parent="DesktopLayer/DesktopGrid"]
+[node name="DesktopTint" type="ColorRect" parent="DesktopLayer/DesktopGrid" unique_id=1009406671]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -79,7 +78,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.03, 0.045, 0.06, 0.34)
 
-[node name="LineTop" type="ColorRect" parent="DesktopLayer/DesktopGrid"]
+[node name="LineTop" type="ColorRect" parent="DesktopLayer/DesktopGrid" unique_id=159864320]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -89,7 +88,7 @@ grow_horizontal = 2
 mouse_filter = 2
 color = Color(0.42, 0.7, 1, 0.26)
 
-[node name="LineMid" type="ColorRect" parent="DesktopLayer/DesktopGrid"]
+[node name="LineMid" type="ColorRect" parent="DesktopLayer/DesktopGrid" unique_id=286966194]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -99,7 +98,7 @@ grow_horizontal = 2
 mouse_filter = 2
 color = Color(0.42, 0.7, 1, 0.2)
 
-[node name="LineBottom" type="ColorRect" parent="DesktopLayer/DesktopGrid"]
+[node name="LineBottom" type="ColorRect" parent="DesktopLayer/DesktopGrid" unique_id=492846070]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -109,7 +108,7 @@ grow_horizontal = 2
 mouse_filter = 2
 color = Color(0.42, 0.7, 1, 0.18)
 
-[node name="ColumnLeft" type="ColorRect" parent="DesktopLayer/DesktopGrid"]
+[node name="ColumnLeft" type="ColorRect" parent="DesktopLayer/DesktopGrid" unique_id=1882176696]
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -119,7 +118,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.56, 0.74, 0.16)
 
-[node name="ColumnRight" type="ColorRect" parent="DesktopLayer/DesktopGrid"]
+[node name="ColumnRight" type="ColorRect" parent="DesktopLayer/DesktopGrid" unique_id=514028271]
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -129,38 +128,38 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.56, 0.74, 0.16)
 
-[node name="WindowFrame" type="Node2D" parent="."]
+[node name="WindowFrame" type="Node2D" parent="." unique_id=201481195]
 position = Vector2(640, 360)
 
-[node name="FrameTop" type="Line2D" parent="WindowFrame"]
+[node name="FrameTop" type="Line2D" parent="WindowFrame" unique_id=1784825405]
 points = PackedVector2Array(-500, -238, 500, -238)
 width = 4.0
 default_color = Color(0.62, 0.82, 1, 0.34)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FrameBottom" type="Line2D" parent="WindowFrame"]
+[node name="FrameBottom" type="Line2D" parent="WindowFrame" unique_id=1519354829]
 points = PackedVector2Array(-500, 238, 500, 238)
 width = 4.0
 default_color = Color(0.62, 0.82, 1, 0.26)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FrameLeft" type="Line2D" parent="WindowFrame"]
+[node name="FrameLeft" type="Line2D" parent="WindowFrame" unique_id=718138805]
 points = PackedVector2Array(-500, -238, -500, 238)
 width = 4.0
 default_color = Color(1, 0.55, 0.72, 0.24)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FrameRight" type="Line2D" parent="WindowFrame"]
+[node name="FrameRight" type="Line2D" parent="WindowFrame" unique_id=1905757222]
 points = PackedVector2Array(500, -238, 500, 238)
 width = 4.0
 default_color = Color(1, 0.55, 0.72, 0.24)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PhaseGateLeft" type="ColorRect" parent="WindowFrame"]
+[node name="PhaseGateLeft" type="ColorRect" parent="WindowFrame" unique_id=1387664438]
 modulate = Color(1, 1, 1, 0.42)
 offset_left = -520.0
 offset_top = -238.0
@@ -168,13 +167,13 @@ offset_right = -500.0
 offset_bottom = 238.0
 color = Color(0.85, 0.28, 0.48, 0.035)
 
-[node name="PhaseGateLeftSprite" type="Sprite2D" parent="WindowFrame"]
+[node name="PhaseGateLeftSprite" type="Sprite2D" parent="WindowFrame" unique_id=31303260]
 modulate = Color(1, 0.78, 0.88, 0.86)
 position = Vector2(-510, 0)
 scale = Vector2(0.046, 0.28)
 texture = ExtResource("13_gate_strip")
 
-[node name="PhaseGateRight" type="ColorRect" parent="WindowFrame"]
+[node name="PhaseGateRight" type="ColorRect" parent="WindowFrame" unique_id=1813506631]
 modulate = Color(1, 1, 1, 0.42)
 offset_left = 500.0
 offset_top = -238.0
@@ -182,72 +181,72 @@ offset_right = 520.0
 offset_bottom = 238.0
 color = Color(0.85, 0.28, 0.48, 0.035)
 
-[node name="PhaseGateRightSprite" type="Sprite2D" parent="WindowFrame"]
+[node name="PhaseGateRightSprite" type="Sprite2D" parent="WindowFrame" unique_id=1299775178]
 modulate = Color(0.82, 0.94, 1, 0.86)
 position = Vector2(510, 0)
 scale = Vector2(0.046, 0.28)
 texture = ExtResource("13_gate_strip")
 
-[node name="ArenaLines" type="Node2D" parent="."]
+[node name="ArenaLines" type="Node2D" parent="." unique_id=1466363370]
 
-[node name="Horizon" type="Line2D" parent="ArenaLines"]
+[node name="Horizon" type="Line2D" parent="ArenaLines" unique_id=669808405]
 points = PackedVector2Array(120, 500, 1160, 500)
 width = 2.0
 default_color = Color(0.5, 0.68, 1, 0.22)
 
-[node name="Axis" type="Line2D" parent="ArenaLines"]
+[node name="Axis" type="Line2D" parent="ArenaLines" unique_id=1014095691]
 points = PackedVector2Array(640, 130, 640, 620)
 width = 2.0
 default_color = Color(1, 0.55, 0.72, 0.18)
 
-[node name="WindowBattleArena" type="Node2D" parent="."]
+[node name="WindowBattleArena" type="Node2D" parent="." unique_id=1984207894]
 z_index = -1
 
-[node name="WindowDepthReads" type="Node2D" parent="WindowBattleArena"]
+[node name="WindowDepthReads" type="Node2D" parent="WindowBattleArena" unique_id=2032326257]
 z_index = -6
 
-[node name="ArenaPane" type="ColorRect" parent="WindowBattleArena/WindowDepthReads"]
+[node name="ArenaPane" type="ColorRect" parent="WindowBattleArena/WindowDepthReads" unique_id=681651356]
 offset_left = 140.0
 offset_top = 122.0
 offset_right = 1140.0
 offset_bottom = 598.0
 color = Color(0.018, 0.026, 0.042, 0.035)
 
-[node name="ArenaPaneSprite" type="Sprite2D" parent="WindowBattleArena/WindowDepthReads"]
+[node name="ArenaPaneSprite" type="Sprite2D" parent="WindowBattleArena/WindowDepthReads" unique_id=1342009489]
 modulate = Color(0.86, 0.98, 1, 0.42)
 position = Vector2(640, 360)
 scale = Vector2(0.62, 0.52)
 texture = ExtResource("14_window_pane")
 
-[node name="InnerTopShadow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads"]
+[node name="InnerTopShadow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads" unique_id=1693917704]
 offset_left = 140.0
 offset_top = 122.0
 offset_right = 1140.0
 offset_bottom = 148.0
-color = Color(0.0, 0.0, 0.01, 0.26)
+color = Color(0, 0, 0.01, 0.26)
 
-[node name="InnerBottomShadow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads"]
+[node name="InnerBottomShadow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads" unique_id=2090004792]
 offset_left = 140.0
 offset_top = 568.0
 offset_right = 1140.0
 offset_bottom = 598.0
-color = Color(0.0, 0.0, 0.01, 0.22)
+color = Color(0, 0, 0.01, 0.22)
 
-[node name="InnerLeftGlow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads"]
+[node name="InnerLeftGlow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads" unique_id=590315297]
 offset_left = 140.0
 offset_top = 122.0
 offset_right = 152.0
 offset_bottom = 598.0
 color = Color(1, 0.48, 0.68, 0.12)
 
-[node name="InnerRightGlow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads"]
+[node name="InnerRightGlow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads" unique_id=1276345139]
 offset_left = 1128.0
 offset_top = 122.0
 offset_right = 1140.0
 offset_bottom = 598.0
 color = Color(0.52, 0.82, 1, 0.12)
 
-[node name="DesktopLeakA" type="Line2D" parent="WindowBattleArena/WindowDepthReads"]
+[node name="DesktopLeakA" type="Line2D" parent="WindowBattleArena/WindowDepthReads" unique_id=566529509]
 points = PackedVector2Array(170, 168, 520, 210, 870, 184, 1110, 230)
 width = 3.0
 default_color = Color(0.5, 0.76, 1, 0.12)
@@ -255,7 +254,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DesktopLeakB" type="Line2D" parent="WindowBattleArena/WindowDepthReads"]
+[node name="DesktopLeakB" type="Line2D" parent="WindowBattleArena/WindowDepthReads" unique_id=1369905950]
 points = PackedVector2Array(188, 540, 430, 508, 760, 548, 1100, 500)
 width = 3.0
 default_color = Color(1, 0.56, 0.76, 0.1)
@@ -263,57 +262,57 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PhasePacingReads" type="Node2D" parent="WindowBattleArena"]
+[node name="PhasePacingReads" type="Node2D" parent="WindowBattleArena" unique_id=231335453]
 z_index = -5
 
-[node name="PhaseOneSweepZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseOneSweepZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads" unique_id=98475124]
 offset_left = 300.0
 offset_top = 386.0
 offset_right = 966.0
 offset_bottom = 450.0
 color = Color(1, 0.42, 0.62, 0.025)
 
-[node name="PhaseOneSweepPlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseOneSweepPlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads" unique_id=1806545549]
 modulate = Color(1, 0.56, 0.72, 0.2)
 position = Vector2(633, 418)
 scale = Vector2(0.5, 0.11)
 texture = ExtResource("12_window_read")
 
-[node name="PhaseTwoRequestZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseTwoRequestZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads" unique_id=1760397967]
 offset_left = 330.0
 offset_top = 248.0
 offset_right = 1190.0
 offset_bottom = 366.0
 color = Color(0.34, 1, 0.76, 0.02)
 
-[node name="PhaseTwoRequestPlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseTwoRequestPlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads" unique_id=1506217788]
 modulate = Color(0.46, 1, 0.82, 0.2)
 position = Vector2(760, 307)
 scale = Vector2(0.58, 0.16)
 texture = ExtResource("12_window_read")
 
-[node name="PhaseThreePierceZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseThreePierceZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads" unique_id=924149202]
 offset_left = 592.0
 offset_top = 250.0
 offset_right = 1140.0
 offset_bottom = 374.0
 color = Color(1, 0.9, 0.42, 0.022)
 
-[node name="PhaseThreePiercePlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseThreePiercePlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads" unique_id=903097477]
 modulate = Color(1, 0.92, 0.48, 0.24)
 position = Vector2(866, 312)
 rotation = -0.16
 scale = Vector2(0.42, 0.13)
 texture = ExtResource("12_window_read")
 
-[node name="PhaseOneSweepFrame" type="Line2D" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseOneSweepFrame" type="Line2D" parent="WindowBattleArena/PhasePacingReads" unique_id=818747622]
 points = PackedVector2Array(320, 418, 940, 418)
 width = 11.0
 default_color = Color(1, 0.42, 0.62, 0.1)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PhaseTwoRequestFrame" type="Line2D" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseTwoRequestFrame" type="Line2D" parent="WindowBattleArena/PhasePacingReads" unique_id=2078561008]
 points = PackedVector2Array(330, 290, 760, 330, 1190, 290)
 width = 9.0
 default_color = Color(0.34, 1, 0.76, 0.09)
@@ -321,7 +320,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PhaseThreePierceFrame" type="Line2D" parent="WindowBattleArena/PhasePacingReads"]
+[node name="PhaseThreePierceFrame" type="Line2D" parent="WindowBattleArena/PhasePacingReads" unique_id=1114624657]
 points = PackedVector2Array(260, 540, 520, 420, 760, 330, 1110, 270)
 width = 12.0
 default_color = Color(1, 0.9, 0.42, 0.1)
@@ -329,123 +328,119 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BoundaryLines" type="Node2D" parent="WindowBattleArena"]
+[node name="BoundaryLines" type="Node2D" parent="WindowBattleArena" unique_id=1146019666]
 
-[node name="Top" type="Line2D" parent="WindowBattleArena/BoundaryLines"]
+[node name="Top" type="Line2D" parent="WindowBattleArena/BoundaryLines" unique_id=693687465]
 points = PackedVector2Array(140, 122, 1140, 122)
 width = 2.0
 default_color = Color(0.7, 0.9, 1, 0.36)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Bottom" type="Line2D" parent="WindowBattleArena/BoundaryLines"]
+[node name="Bottom" type="Line2D" parent="WindowBattleArena/BoundaryLines" unique_id=1016707607]
 points = PackedVector2Array(140, 598, 1140, 598)
 width = 2.0
 default_color = Color(0.7, 0.9, 1, 0.24)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Left" type="Line2D" parent="WindowBattleArena/BoundaryLines"]
+[node name="Left" type="Line2D" parent="WindowBattleArena/BoundaryLines" unique_id=238371877]
 points = PackedVector2Array(140, 122, 140, 598)
 width = 2.0
 default_color = Color(1, 0.56, 0.74, 0.28)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Right" type="Line2D" parent="WindowBattleArena/BoundaryLines"]
+[node name="Right" type="Line2D" parent="WindowBattleArena/BoundaryLines" unique_id=512925938]
 points = PackedVector2Array(1140, 122, 1140, 598)
 width = 2.0
 default_color = Color(1, 0.56, 0.74, 0.28)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ArenaBounds" type="Node2D" parent="WindowBattleArena"]
+[node name="ArenaBounds" type="Node2D" parent="WindowBattleArena" unique_id=1387738485]
 
-[node name="LeftWall" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds"]
+[node name="LeftWall" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds" unique_id=1108810715]
 position = Vector2(116, 360)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/LeftWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/LeftWall" unique_id=1864758185]
 shape = SubResource("RectangleShape2D_arena_wall_vertical")
 
-[node name="RightWall" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds"]
+[node name="RightWall" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds" unique_id=434238637]
 position = Vector2(1164, 360)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/RightWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/RightWall" unique_id=1666968636]
 shape = SubResource("RectangleShape2D_arena_wall_vertical")
 
-[node name="Ceiling" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds"]
+[node name="Ceiling" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds" unique_id=1023360393]
 position = Vector2(640, 98)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/Ceiling"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/Ceiling" unique_id=1880539495]
 shape = SubResource("RectangleShape2D_arena_wall_horizontal")
 
-[node name="FloorClamp" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds"]
+[node name="FloorClamp" type="StaticBody2D" parent="WindowBattleArena/ArenaBounds" unique_id=143458433]
 position = Vector2(640, 622)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/FloorClamp"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowBattleArena/ArenaBounds/FloorClamp" unique_id=711678936]
 shape = SubResource("RectangleShape2D_arena_wall_horizontal")
 
-[node name="SafePockets" type="Node2D" parent="WindowBattleArena"]
+[node name="SafePockets" type="Node2D" parent="WindowBattleArena" unique_id=903459737]
 
-[node name="LeftRest" type="Marker2D" parent="WindowBattleArena/SafePockets"]
+[node name="LeftRest" type="Marker2D" parent="WindowBattleArena/SafePockets" unique_id=811163030]
 position = Vector2(300, 430)
 
-[node name="TopRest" type="Marker2D" parent="WindowBattleArena/SafePockets"]
+[node name="TopRest" type="Marker2D" parent="WindowBattleArena/SafePockets" unique_id=620005303]
 position = Vector2(640, 240)
 
-[node name="RightRest" type="Marker2D" parent="WindowBattleArena/SafePockets"]
+[node name="RightRest" type="Marker2D" parent="WindowBattleArena/SafePockets" unique_id=46188303]
 position = Vector2(980, 370)
 
-[node name="ArenaEnergyPockets" type="Node2D" parent="WindowBattleArena"]
+[node name="ArenaEnergyPockets" type="Node2D" parent="WindowBattleArena" unique_id=418972555]
 
-[node name="LeftLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" instance=ExtResource("9_pocket")]
+[node name="LeftLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" unique_id=1812033001 instance=ExtResource("9_pocket")]
 position = Vector2(248, 292)
 energy_amount = 22.0
 cooldown_seconds = 0.46
 
-[node name="UpperLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" instance=ExtResource("9_pocket")]
+[node name="UpperLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" unique_id=2129569849 instance=ExtResource("9_pocket")]
 position = Vector2(640, 178)
 energy_amount = 24.0
 cooldown_seconds = 0.46
 
-[node name="RightLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" instance=ExtResource("9_pocket")]
+[node name="RightLanePocket" parent="WindowBattleArena/ArenaEnergyPockets" unique_id=122109247 instance=ExtResource("9_pocket")]
 position = Vector2(1030, 438)
 energy_amount = 22.0
 cooldown_seconds = 0.46
 
-[node name="PhaseThreeRestPockets" type="Node2D" parent="WindowBattleArena"]
+[node name="PhaseThreeRestPockets" type="Node2D" parent="WindowBattleArena" unique_id=57752376]
 visible = false
-modulate = Color(1, 1, 1, 0.0)
+modulate = Color(1, 1, 1, 0)
 
-[node name="LeftPocket" parent="WindowBattleArena/PhaseThreeRestPockets" instance=ExtResource("9_pocket")]
+[node name="LeftPocket" parent="WindowBattleArena/PhaseThreeRestPockets" unique_id=1920236769 instance=ExtResource("9_pocket")]
 position = Vector2(300, 430)
 energy_amount = 34.0
 cooldown_seconds = 0.42
 
-[node name="TopPocket" parent="WindowBattleArena/PhaseThreeRestPockets" instance=ExtResource("9_pocket")]
+[node name="TopPocket" parent="WindowBattleArena/PhaseThreeRestPockets" unique_id=1717187591 instance=ExtResource("9_pocket")]
 position = Vector2(640, 240)
 energy_amount = 34.0
 cooldown_seconds = 0.42
 
-[node name="RightPocket" parent="WindowBattleArena/PhaseThreeRestPockets" instance=ExtResource("9_pocket")]
+[node name="RightPocket" parent="WindowBattleArena/PhaseThreeRestPockets" unique_id=1404382261 instance=ExtResource("9_pocket")]
 position = Vector2(980, 370)
 energy_amount = 34.0
 cooldown_seconds = 0.42
 
-[node name="PhaseThreePressureReads" type="Node2D" parent="WindowBattleArena"]
+[node name="PhaseThreePressureReads" type="Node2D" parent="WindowBattleArena" unique_id=380182286]
 visible = false
-modulate = Color(1, 1, 1, 0.0)
+modulate = Color(1, 1, 1, 0)
 z_index = -2
 
-[node name="TopClampRead" type="Line2D" parent="WindowBattleArena/PhaseThreePressureReads"]
+[node name="TopClampRead" type="Line2D" parent="WindowBattleArena/PhaseThreePressureReads" unique_id=2093423083]
 points = PackedVector2Array(160, 188, 420, 166, 640, 178, 860, 166, 1120, 188)
 width = 9.0
 default_color = Color(1, 0.84, 0.38, 0.42)
@@ -453,7 +448,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BottomClampRead" type="Line2D" parent="WindowBattleArena/PhaseThreePressureReads"]
+[node name="BottomClampRead" type="Line2D" parent="WindowBattleArena/PhaseThreePressureReads" unique_id=474958903]
 points = PackedVector2Array(160, 538, 420, 558, 640, 548, 860, 558, 1120, 538)
 width = 9.0
 default_color = Color(0.62, 0.9, 1, 0.38)
@@ -461,7 +456,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="CenterCutRead" type="Line2D" parent="WindowBattleArena/PhaseThreePressureReads"]
+[node name="CenterCutRead" type="Line2D" parent="WindowBattleArena/PhaseThreePressureReads" unique_id=498933693]
 points = PackedVector2Array(640, 172, 650, 252, 630, 330, 650, 408, 640, 548)
 width = 8.0
 default_color = Color(1, 0.42, 0.68, 0.36)
@@ -469,62 +464,62 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PhaseOneReads" type="Node2D" parent="WindowBattleArena"]
+[node name="PhaseOneReads" type="Node2D" parent="WindowBattleArena" unique_id=1418274915]
 modulate = Color(1, 1, 1, 0.48)
 
-[node name="HorizontalSweepRead" type="Line2D" parent="WindowBattleArena/PhaseOneReads"]
+[node name="HorizontalSweepRead" type="Line2D" parent="WindowBattleArena/PhaseOneReads" unique_id=1106250561]
 points = PackedVector2Array(320, 418, 940, 418)
 width = 5.0
 default_color = Color(1, 0.5, 0.7, 0.34)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="VerticalSweepRead" type="Line2D" parent="WindowBattleArena/PhaseOneReads"]
+[node name="VerticalSweepRead" type="Line2D" parent="WindowBattleArena/PhaseOneReads" unique_id=714625155]
 points = PackedVector2Array(920, 108, 920, 528)
 width = 5.0
 default_color = Color(0.68, 0.86, 1, 0.32)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PhaseTwoRequests" type="Node2D" parent="WindowBattleArena"]
+[node name="PhaseTwoRequests" type="Node2D" parent="WindowBattleArena" unique_id=1535067119]
 visible = false
-modulate = Color(1, 1, 1, 0.0)
+modulate = Color(1, 1, 1, 0)
 
-[node name="TopRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests"]
+[node name="TopRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests" unique_id=1102104857]
 points = PackedVector2Array(760, 20, 760, 330)
 width = 3.0
 default_color = Color(0.32, 1, 0.7, 0.42)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="RightRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests"]
+[node name="RightRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests" unique_id=1159643410]
 points = PackedVector2Array(1190, 290, 760, 330)
 width = 3.0
 default_color = Color(1, 0.34, 0.48, 0.34)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BottomRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests"]
+[node name="BottomRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests" unique_id=1057556518]
 points = PackedVector2Array(760, 590, 760, 330)
 width = 3.0
 default_color = Color(0.32, 1, 0.7, 0.34)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LeftRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests"]
+[node name="LeftRequestLane" type="Line2D" parent="WindowBattleArena/PhaseTwoRequests" unique_id=545562858]
 points = PackedVector2Array(330, 290, 760, 330)
 width = 3.0
 default_color = Color(1, 0.34, 0.48, 0.34)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DesktopRiskReads" type="Node2D" parent="WindowBattleArena"]
+[node name="DesktopRiskReads" type="Node2D" parent="WindowBattleArena" unique_id=2037624815]
 
-[node name="TopRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads"]
+[node name="TopRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads" unique_id=1806257682]
 visible = false
 position = Vector2(760, 82)
 
-[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/TopRisk"]
+[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/TopRisk" unique_id=1603088987]
 points = PackedVector2Array(-48, -14, -14, 24, 54, -30)
 width = 5.0
 default_color = Color(0.32, 1, 0.7, 0.82)
@@ -532,7 +527,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/TopRisk"]
+[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/TopRisk" unique_id=382653374]
 points = PackedVector2Array(-46, -34, 46, 34, 46, -34, -46, 34)
 width = 5.0
 default_color = Color(1, 0.25, 0.34, 0.84)
@@ -540,11 +535,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="RightRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads"]
+[node name="RightRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads" unique_id=1241794571]
 visible = false
 position = Vector2(1106, 292)
 
-[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/RightRisk"]
+[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/RightRisk" unique_id=2096450417]
 points = PackedVector2Array(-48, -14, -14, 24, 54, -30)
 width = 5.0
 default_color = Color(0.32, 1, 0.7, 0.82)
@@ -552,7 +547,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/RightRisk"]
+[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/RightRisk" unique_id=675362733]
 points = PackedVector2Array(-46, -34, 46, 34, 46, -34, -46, 34)
 width = 5.0
 default_color = Color(1, 0.25, 0.34, 0.84)
@@ -560,11 +555,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BottomRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads"]
+[node name="BottomRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads" unique_id=2112156430]
 visible = false
 position = Vector2(760, 552)
 
-[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/BottomRisk"]
+[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/BottomRisk" unique_id=219631306]
 points = PackedVector2Array(-48, -14, -14, 24, 54, -30)
 width = 5.0
 default_color = Color(0.32, 1, 0.7, 0.82)
@@ -572,7 +567,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/BottomRisk"]
+[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/BottomRisk" unique_id=1006812921]
 points = PackedVector2Array(-46, -34, 46, 34, 46, -34, -46, 34)
 width = 5.0
 default_color = Color(1, 0.25, 0.34, 0.84)
@@ -580,11 +575,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="LeftRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads"]
+[node name="LeftRisk" type="Node2D" parent="WindowBattleArena/DesktopRiskReads" unique_id=514125257]
 visible = false
 position = Vector2(374, 292)
 
-[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/LeftRisk"]
+[node name="GoodCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/LeftRisk" unique_id=190188782]
 points = PackedVector2Array(-48, -14, -14, 24, 54, -30)
 width = 5.0
 default_color = Color(0.32, 1, 0.7, 0.82)
@@ -592,7 +587,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/LeftRisk"]
+[node name="BadCue" type="Line2D" parent="WindowBattleArena/DesktopRiskReads/LeftRisk" unique_id=214547814]
 points = PackedVector2Array(-46, -34, 46, 34, 46, -34, -46, 34)
 width = 5.0
 default_color = Color(1, 0.25, 0.34, 0.84)
@@ -600,11 +595,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PhaseThreeDashRoute" type="Node2D" parent="WindowBattleArena"]
+[node name="PhaseThreeDashRoute" type="Node2D" parent="WindowBattleArena" unique_id=614998330]
 visible = false
-modulate = Color(1, 1, 1, 0.0)
+modulate = Color(1, 1, 1, 0)
 
-[node name="CoreDashLine" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="CoreDashLine" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=1110967180]
 points = PackedVector2Array(260, 540, 520, 420, 760, 330, 1110, 270)
 width = 6.0
 default_color = Color(1, 0.96, 0.58, 0.48)
@@ -612,25 +607,25 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ApertureSlashA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="ApertureSlashA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=811198041]
 points = PackedVector2Array(680, 286, 840, 374)
 width = 4.0
 default_color = Color(0.72, 0.92, 1, 0.44)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ApertureSlashB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="ApertureSlashB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=1080598521]
 points = PackedVector2Array(680, 374, 840, 286)
 width = 4.0
 default_color = Color(1, 0.62, 0.84, 0.38)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashWarningRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="DashWarningRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=1915155994]
 visible = false
 position = Vector2(760, 330)
 
-[node name="ChargeArcA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWarningRead"]
+[node name="ChargeArcA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWarningRead" unique_id=2107420245]
 points = PackedVector2Array(-154, -42, -84, -88, 0, -104, 84, -88, 154, -42)
 width = 5.0
 default_color = Color(1, 0.9, 0.42, 0.76)
@@ -638,7 +633,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ChargeArcB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWarningRead"]
+[node name="ChargeArcB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWarningRead" unique_id=1962721526]
 points = PackedVector2Array(-154, 42, -84, 88, 0, 104, 84, 88, 154, 42)
 width = 5.0
 default_color = Color(0.62, 0.9, 1, 0.64)
@@ -646,7 +641,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="AimNeedle" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWarningRead"]
+[node name="AimNeedle" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWarningRead" unique_id=568857095]
 points = PackedVector2Array(-198, 74, -92, 32, 0, 0, 126, -18, 220, -34)
 width = 4.0
 default_color = Color(1, 1, 1, 0.74)
@@ -654,25 +649,25 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashRejectRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="DashRejectRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=1392251852]
 visible = false
 position = Vector2(760, 330)
 
-[node name="RejectCrossA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRejectRead"]
+[node name="RejectCrossA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRejectRead" unique_id=549776969]
 points = PackedVector2Array(-84, -48, 84, 48)
 width = 7.0
 default_color = Color(1, 0.28, 0.38, 0.9)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="RejectCrossB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRejectRead"]
+[node name="RejectCrossB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRejectRead" unique_id=1171102964]
 points = PackedVector2Array(-84, 48, 84, -48)
 width = 7.0
 default_color = Color(1, 0.28, 0.38, 0.76)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="RejectBackwash" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRejectRead"]
+[node name="RejectBackwash" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRejectRead" unique_id=625048925]
 points = PackedVector2Array(110, -22, 48, 0, 110, 22)
 width = 5.0
 default_color = Color(0.5, 0.84, 1, 0.76)
@@ -680,11 +675,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashWhiffRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="DashWhiffRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=1176268882]
 visible = false
 position = Vector2(760, 330)
 
-[node name="WhiffBreakA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWhiffRead"]
+[node name="WhiffBreakA" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWhiffRead" unique_id=1599905513]
 points = PackedVector2Array(-96, -34, -28, -12, 52, -28)
 width = 5.0
 default_color = Color(1, 0.44, 0.58, 0.72)
@@ -692,7 +687,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="WhiffBreakB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWhiffRead"]
+[node name="WhiffBreakB" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWhiffRead" unique_id=725257899]
 points = PackedVector2Array(-86, 34, -18, 12, 62, 28)
 width = 5.0
 default_color = Color(0.58, 0.86, 1, 0.6)
@@ -700,7 +695,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="MissedAperture" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWhiffRead"]
+[node name="MissedAperture" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashWhiffRead" unique_id=739158952]
 points = PackedVector2Array(32, -54, 76, -18, 32, 18, 76, 54)
 width = 4.0
 default_color = Color(1, 0.82, 0.45, 0.44)
@@ -708,11 +703,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DashRhythmRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="DashRhythmRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=575233161]
 visible = false
 position = Vector2(760, 330)
 
-[node name="ClosedBeat" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRhythmRead"]
+[node name="ClosedBeat" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRhythmRead" unique_id=391923377]
 visible = false
 points = PackedVector2Array(-140, 88, -72, 104, 0, 108, 72, 104, 140, 88)
 width = 4.0
@@ -721,7 +716,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="WarningBeat" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRhythmRead"]
+[node name="WarningBeat" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRhythmRead" unique_id=1134224866]
 visible = false
 points = PackedVector2Array(-130, 0, -64, -30, 0, -42, 64, -30, 130, 0)
 width = 5.0
@@ -730,7 +725,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="OpenBeat" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRhythmRead"]
+[node name="OpenBeat" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/DashRhythmRead" unique_id=451357793]
 visible = false
 points = PackedVector2Array(-118, -86, -48, -108, 0, -112, 48, -108, 118, -86)
 width = 6.0
@@ -739,11 +734,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="WindowTruthRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute"]
+[node name="WindowTruthRead" type="Node2D" parent="WindowBattleArena/PhaseThreeDashRoute" unique_id=115149737]
 visible = false
 position = Vector2(760, 330)
 
-[node name="FalseAperture" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead"]
+[node name="FalseAperture" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead" unique_id=321571138]
 visible = false
 points = PackedVector2Array(-110, -48, -34, -18, 34, -18, 110, -48, 72, -10, 110, 48, 34, 18, -34, 18, -110, 48, -72, 10, -110, -48)
 width = 4.0
@@ -752,7 +747,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FalseApertureCrack" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead"]
+[node name="FalseApertureCrack" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead" unique_id=820905235]
 visible = false
 points = PackedVector2Array(-76, -34, -34, -8, -8, -28, 20, 10, 56, -18, 84, 32)
 width = 5.0
@@ -761,7 +756,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="TrueAperture" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead"]
+[node name="TrueAperture" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead" unique_id=114025797]
 visible = false
 points = PackedVector2Array(-128, 0, -70, -58, 0, -76, 70, -58, 128, 0, 70, 58, 0, 76, -70, 58, -128, 0)
 width = 6.0
@@ -770,7 +765,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="TrueCommitRay" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead"]
+[node name="TrueCommitRay" type="Line2D" parent="WindowBattleArena/PhaseThreeDashRoute/WindowTruthRead" unique_id=746097234]
 visible = false
 points = PackedVector2Array(-270, 78, -116, 36, 0, 0, 116, -36, 270, -78)
 width = 7.0
@@ -779,11 +774,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DesktopTears" type="Node2D" parent="WindowBattleArena"]
+[node name="DesktopTears" type="Node2D" parent="WindowBattleArena" unique_id=945873639]
 visible = false
 modulate = Color(1, 1, 1, 0.46)
 
-[node name="TearA" type="Line2D" parent="WindowBattleArena/DesktopTears"]
+[node name="TearA" type="Line2D" parent="WindowBattleArena/DesktopTears" unique_id=1804412629]
 visible = false
 points = PackedVector2Array(186, 166, 238, 196, 210, 238, 274, 276)
 width = 3.0
@@ -792,7 +787,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="TearB" type="Line2D" parent="WindowBattleArena/DesktopTears"]
+[node name="TearB" type="Line2D" parent="WindowBattleArena/DesktopTears" unique_id=1892693839]
 visible = false
 points = PackedVector2Array(1076, 146, 1028, 204, 1092, 246, 1042, 308)
 width = 3.0
@@ -801,7 +796,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="TearC" type="Line2D" parent="WindowBattleArena/DesktopTears"]
+[node name="TearC" type="Line2D" parent="WindowBattleArena/DesktopTears" unique_id=1784443156]
 visible = false
 points = PackedVector2Array(520, 568, 588, 536, 668, 582, 752, 540)
 width = 3.0
@@ -810,10 +805,10 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PierceProgressReads" type="Node2D" parent="WindowBattleArena"]
+[node name="PierceProgressReads" type="Node2D" parent="WindowBattleArena" unique_id=517026060]
 visible = false
 
-[node name="PierceOne" type="Line2D" parent="WindowBattleArena/PierceProgressReads"]
+[node name="PierceOne" type="Line2D" parent="WindowBattleArena/PierceProgressReads" unique_id=1791117608]
 visible = false
 points = PackedVector2Array(608, 612, 640, 596, 672, 612)
 width = 5.0
@@ -822,7 +817,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PierceTwo" type="Line2D" parent="WindowBattleArena/PierceProgressReads"]
+[node name="PierceTwo" type="Line2D" parent="WindowBattleArena/PierceProgressReads" unique_id=1047383569]
 visible = false
 points = PackedVector2Array(600, 594, 640, 574, 680, 594)
 width = 5.0
@@ -831,7 +826,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="PierceThree" type="Line2D" parent="WindowBattleArena/PierceProgressReads"]
+[node name="PierceThree" type="Line2D" parent="WindowBattleArena/PierceProgressReads" unique_id=1818475634]
 visible = false
 points = PackedVector2Array(592, 574, 640, 550, 688, 574)
 width = 6.0
@@ -840,11 +835,11 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="DesktopInstabilityReads" type="Node2D" parent="WindowBattleArena"]
+[node name="DesktopInstabilityReads" type="Node2D" parent="WindowBattleArena" unique_id=179316720]
 visible = false
-modulate = Color(1, 1, 1, 0.0)
+modulate = Color(1, 1, 1, 0)
 
-[node name="InstabilityOne" type="Line2D" parent="WindowBattleArena/DesktopInstabilityReads"]
+[node name="InstabilityOne" type="Line2D" parent="WindowBattleArena/DesktopInstabilityReads" unique_id=1412484888]
 visible = false
 points = PackedVector2Array(174, 148, 256, 172, 336, 152, 436, 178)
 width = 4.0
@@ -853,7 +848,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="InstabilityTwo" type="Line2D" parent="WindowBattleArena/DesktopInstabilityReads"]
+[node name="InstabilityTwo" type="Line2D" parent="WindowBattleArena/DesktopInstabilityReads" unique_id=370490641]
 visible = false
 points = PackedVector2Array(1050, 180, 980, 224, 1118, 286, 1016, 352)
 width = 5.0
@@ -862,7 +857,7 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="FinalPierceCue" type="Line2D" parent="WindowBattleArena/DesktopInstabilityReads"]
+[node name="FinalPierceCue" type="Line2D" parent="WindowBattleArena/DesktopInstabilityReads" unique_id=1611605170]
 visible = false
 points = PackedVector2Array(456, 520, 548, 470, 640, 506, 732, 470, 824, 520)
 width = 7.0
@@ -871,132 +866,129 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Floor" type="StaticBody2D" parent="."]
+[node name="Floor" type="StaticBody2D" parent="." unique_id=8463573]
 position = Vector2(640, 620)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1093517082]
 shape = SubResource("RectangleShape2D_floor")
 
-[node name="FloorVisual" type="ColorRect" parent="Floor"]
+[node name="FloorVisual" type="ColorRect" parent="Floor" unique_id=1565529352]
 offset_left = -800.0
 offset_top = -24.0
 offset_right = 800.0
 offset_bottom = 24.0
 color = Color(0.1, 0.1, 0.14, 0.72)
 
-[node name="TopEdge" type="ColorRect" parent="Floor"]
+[node name="TopEdge" type="ColorRect" parent="Floor" unique_id=412851808]
 offset_left = -800.0
 offset_top = -30.0
 offset_right = 800.0
 offset_bottom = -22.0
 color = Color(0.52, 0.82, 1, 0.7)
 
-[node name="UndersideShadow" type="ColorRect" parent="Floor"]
+[node name="UndersideShadow" type="ColorRect" parent="Floor" unique_id=815262253]
 offset_left = -800.0
 offset_top = 18.0
 offset_right = 800.0
 offset_bottom = 34.0
-color = Color(0.0, 0.0, 0.015, 0.54)
+color = Color(0, 0, 0.015, 0.54)
 
-[node name="LeftPlatform" type="StaticBody2D" parent="."]
+[node name="LeftPlatform" type="StaticBody2D" parent="." unique_id=1547499221]
 position = Vector2(300, 460)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftPlatform"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftPlatform" unique_id=477668565]
 shape = SubResource("RectangleShape2D_platform_wide")
 
-[node name="Visual" type="ColorRect" parent="LeftPlatform"]
+[node name="Visual" type="ColorRect" parent="LeftPlatform" unique_id=1782449124]
 offset_left = -130.0
 offset_top = -14.0
 offset_right = 130.0
 offset_bottom = 14.0
 color = Color(0.11, 0.14, 0.2, 0.68)
 
-[node name="TopEdge" type="ColorRect" parent="LeftPlatform"]
+[node name="TopEdge" type="ColorRect" parent="LeftPlatform" unique_id=1096925269]
 offset_left = -130.0
 offset_top = -20.0
 offset_right = 130.0
 offset_bottom = -13.0
 color = Color(0.52, 0.82, 1, 0.68)
 
-[node name="UndersideShadow" type="ColorRect" parent="LeftPlatform"]
+[node name="UndersideShadow" type="ColorRect" parent="LeftPlatform" unique_id=1748460367]
 offset_left = -130.0
 offset_top = 11.0
 offset_right = 130.0
 offset_bottom = 25.0
-color = Color(0.0, 0.0, 0.015, 0.48)
+color = Color(0, 0, 0.015, 0.48)
 
-[node name="RightPlatform" type="StaticBody2D" parent="."]
+[node name="RightPlatform" type="StaticBody2D" parent="." unique_id=1889681413]
 position = Vector2(980, 400)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RightPlatform"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightPlatform" unique_id=1036774411]
 shape = SubResource("RectangleShape2D_platform_wide")
 
-[node name="Visual" type="ColorRect" parent="RightPlatform"]
+[node name="Visual" type="ColorRect" parent="RightPlatform" unique_id=584234240]
 offset_left = -130.0
 offset_top = -14.0
 offset_right = 130.0
 offset_bottom = 14.0
 color = Color(0.11, 0.14, 0.2, 0.68)
 
-[node name="TopEdge" type="ColorRect" parent="RightPlatform"]
+[node name="TopEdge" type="ColorRect" parent="RightPlatform" unique_id=510174651]
 offset_left = -130.0
 offset_top = -20.0
 offset_right = 130.0
 offset_bottom = -13.0
 color = Color(0.52, 0.82, 1, 0.68)
 
-[node name="UndersideShadow" type="ColorRect" parent="RightPlatform"]
+[node name="UndersideShadow" type="ColorRect" parent="RightPlatform" unique_id=2099350654]
 offset_left = -130.0
 offset_top = 11.0
 offset_right = 130.0
 offset_bottom = 25.0
-color = Color(0.0, 0.0, 0.015, 0.48)
+color = Color(0, 0, 0.015, 0.48)
 
-[node name="TopPlatform" type="StaticBody2D" parent="."]
+[node name="TopPlatform" type="StaticBody2D" parent="." unique_id=1457231946]
 position = Vector2(640, 270)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TopPlatform"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopPlatform" unique_id=1811678701]
 shape = SubResource("RectangleShape2D_platform_mid")
 
-[node name="Visual" type="ColorRect" parent="TopPlatform"]
+[node name="Visual" type="ColorRect" parent="TopPlatform" unique_id=543847351]
 offset_left = -110.0
 offset_top = -14.0
 offset_right = 110.0
 offset_bottom = 14.0
 color = Color(0.13, 0.16, 0.23, 0.62)
 
-[node name="TopEdge" type="ColorRect" parent="TopPlatform"]
+[node name="TopEdge" type="ColorRect" parent="TopPlatform" unique_id=1634846149]
 offset_left = -110.0
 offset_top = -20.0
 offset_right = 110.0
 offset_bottom = -13.0
 color = Color(0.52, 0.82, 1, 0.68)
 
-[node name="UndersideShadow" type="ColorRect" parent="TopPlatform"]
+[node name="UndersideShadow" type="ColorRect" parent="TopPlatform" unique_id=748460382]
 offset_left = -110.0
 offset_top = 11.0
 offset_right = 110.0
 offset_bottom = 25.0
-color = Color(0.0, 0.0, 0.015, 0.48)
+color = Color(0, 0, 0.015, 0.48)
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
+[node name="Player" parent="." unique_id=246580520 instance=ExtResource("2_player")]
+z_index = 10
 position = Vector2(180, 560)
 
-[node name="FinalBoss" parent="." instance=ExtResource("6_boss")]
+[node name="FinalBoss" parent="." unique_id=854736901 instance=ExtResource("6_boss")]
 position = Vector2(760, 330)
 
-[node name="ExitRouteGuides" type="Node2D" parent="."]
+[node name="ExitRouteGuides" type="Node2D" parent="." unique_id=55862214]
 visible = false
 
-[node name="ExitBeam" type="Line2D" parent="ExitRouteGuides"]
+[node name="ExitBeam" type="Line2D" parent="ExitRouteGuides" unique_id=184379533]
 points = PackedVector2Array(760, 330, 890, 300, 1110, 270)
 width = 7.0
 default_color = Color(0.76, 0.96, 1, 0.62)
@@ -1004,48 +996,48 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitSparkA" type="Line2D" parent="ExitRouteGuides"]
+[node name="ExitSparkA" type="Line2D" parent="ExitRouteGuides" unique_id=35028326]
 points = PackedVector2Array(940, 286, 1000, 238)
 width = 3.0
 default_color = Color(1, 0.94, 0.56, 0.58)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="ExitSparkB" type="Line2D" parent="ExitRouteGuides"]
+[node name="ExitSparkB" type="Line2D" parent="ExitRouteGuides" unique_id=262241020]
 points = PackedVector2Array(970, 318, 1050, 356)
 width = 3.0
 default_color = Color(1, 0.56, 0.74, 0.46)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="InternetGate" parent="." instance=ExtResource("8_gate")]
+[node name="InternetGate" parent="." unique_id=1139664252 instance=ExtResource("8_gate")]
 position = Vector2(1110, 270)
 
-[node name="EnergyHud" parent="." instance=ExtResource("5_energy_hud")]
+[node name="EnergyHud" parent="." unique_id=1795635499 instance=ExtResource("5_energy_hud")]
 
-[node name="BossHud" parent="." instance=ExtResource("7_boss_hud")]
+[node name="BossHud" parent="." unique_id=1805456027 instance=ExtResource("7_boss_hud")]
 
-[node name="ArenaLayer" type="CanvasLayer" parent="."]
+[node name="ArenaLayer" type="CanvasLayer" parent="." unique_id=1323508479]
 layer = 11
 
-[node name="ArenaHintSymbol" type="Sprite2D" parent="ArenaLayer"]
+[node name="ArenaHintSymbol" type="Sprite2D" parent="ArenaLayer" unique_id=2146022218]
 modulate = Color(0.8, 0.96, 1, 0.52)
 position = Vector2(640, 612)
 scale = Vector2(0.065, 0.065)
 texture = ExtResource("15_exit_hint")
 
-[node name="PauseLayer" type="CanvasLayer" parent="."]
+[node name="PauseLayer" type="CanvasLayer" parent="." unique_id=1112717012]
 process_mode = 3
 layer = 20
 
-[node name="PauseScreen" parent="PauseLayer" instance=ExtResource("3_pause")]
+[node name="PauseScreen" parent="PauseLayer" unique_id=108649579 instance=ExtResource("3_pause")]
 
-[node name="CloseMomentLayer" type="CanvasLayer" parent="."]
-visible = false
+[node name="CloseMomentLayer" type="CanvasLayer" parent="." unique_id=84569279]
 process_mode = 3
 layer = 18
+visible = false
 
-[node name="CloseCurtain" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseCurtain" type="ColorRect" parent="CloseMomentLayer" unique_id=418629427]
 modulate = Color(1, 1, 1, 0)
 anchors_preset = 15
 anchor_right = 1.0
@@ -1053,23 +1045,26 @@ anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.01, 0.008, 0.016, 1)
 
-[node name="CloseShutterTop" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseShutterTop" type="ColorRect" parent="CloseMomentLayer" unique_id=2063448513]
 modulate = Color(1, 1, 1, 0)
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 0.5
 mouse_filter = 2
 color = Color(0.018, 0.016, 0.028, 1)
 
-[node name="CloseShutterBottom" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseShutterBottom" type="ColorRect" parent="CloseMomentLayer" unique_id=1475130819]
 modulate = Color(1, 1, 1, 0)
+anchors_preset = -1
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.018, 0.016, 0.028, 1)
 
-[node name="CloseScanLine" type="ColorRect" parent="CloseMomentLayer"]
+[node name="CloseScanLine" type="ColorRect" parent="CloseMomentLayer" unique_id=388032815]
 modulate = Color(1, 1, 1, 0)
+anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
@@ -1078,9 +1073,8 @@ offset_bottom = 3.0
 mouse_filter = 2
 color = Color(0.74, 0.9, 1, 0.88)
 
-[node name="CloseButton" parent="CloseMomentLayer" instance=ExtResource("4_close_btn")]
+[node name="CloseButton" parent="CloseMomentLayer" unique_id=1323963772 instance=ExtResource("4_close_btn")]
 process_mode = 3
-layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -1092,6 +1086,5 @@ offset_right = 130.0
 offset_bottom = -54.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 20
 text = "关闭这一层"
 bb_text = "[color=#e8d8ff]关闭这一层"

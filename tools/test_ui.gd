@@ -152,6 +152,10 @@ func _run() -> void:
 	_check("OpenAI note has paper", paper is PanelContainer)
 	_check("OpenAI note has no black background", note.get_node_or_null("Background") == null)
 	_check("OpenAI note sits bottom-right", paper != null and paper.anchor_left >= 0.99 and paper.anchor_top >= 0.99)
+	_check("OpenAI note removes hint body", note.get_node_or_null("Paper/Margin/Lines/Body") == null)
+	_check("OpenAI note removes click footer", note.get_node_or_null("Paper/Margin/Lines/Footer") == null)
+	_check("OpenAI note click closes shell", _read_res_text("res://scripts/ui/openai_note.gd").contains("GameFlow.self_close(\"openai_note\")"))
+	_check("OpenAI note root catches paper clicks", _read_res_text("res://scripts/ui/openai_note.gd").contains("_paper.get_global_rect().has_point"))
 	note.queue_free()
 
 	if gf: gf.reset_progress()
@@ -210,3 +214,13 @@ func _first_visible_control(pool: Node) -> Control:
 		if child is Control and (child as Control).visible:
 			return child as Control
 	return null
+
+
+## 读取 res:// 文本，用于轻量静态回归检查。
+func _read_res_text(path: String) -> String:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return ""
+	var text := file.get_as_text()
+	file.close()
+	return text
