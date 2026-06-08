@@ -7,7 +7,6 @@ extends Control
 ##  - 设置：打开设置模态（音量 / 显示模式，落盘）
 ##  - 感谢：打开感谢模态（credits）
 ##
-## 若上次是强杀恢复，顶部状态条变红并嘲讽。
 ## 菜单本身也无法被玩家关闭（GameFlow 全局拦截）。
 
 @export var menu_music: AudioStream = null
@@ -15,7 +14,6 @@ extends Control
 @onready var _primary_button: Button = $ButtonColumn/PrimaryButton
 @onready var _settings_button: Button = $ButtonColumn/SettingsButton
 @onready var _thanks_button: Button = $ButtonColumn/ThanksButton
-@onready var _status_label: Label = $StatusLabel
 @onready var _subtitle: Label = $Subtitle
 @onready var _title: Label = $Title
 @onready var _boot_flash: ColorRect = $BootFlash
@@ -34,7 +32,6 @@ func _ready() -> void:
 		_settings_screen.thanks_requested.connect(_on_settings_thanks)
 
 	_refresh_primary()
-	_refresh_status()
 	_play_boot_flash()
 	if menu_music != null:
 		SoundManager.music.play(menu_music, 0.0, 0.0, 1.2)
@@ -59,16 +56,6 @@ func _set_primary_text(label: String) -> void:
 		_primary_button.set_bbtext("[color=#e8c070]%s" % label)
 	else:
 		_primary_button.text = label
-
-
-## 强杀恢复后的状态条
-func _refresh_status() -> void:
-	if GameFlow.entered_with_unclean_exit:
-		_status_label.text = "● 检测到非正常退出 —— 你逃不掉的。"
-		_status_label.add_theme_color_override("font_color", Color(0.95, 0.45, 0.45))
-	else:
-		_status_label.text = ""
-		_status_label.add_theme_color_override("font_color", Color(0.6, 0.55, 0.78))
 
 
 # ──────────────────────────────────────────────
@@ -129,7 +116,7 @@ func _start_performance(_reason: String) -> void:
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	t.tween_property(_title, "modulate:a", 0.0, 1.0)
 	# 其余 UI 一并淡去
-	for n in [_primary_button, _settings_button, _thanks_button, _subtitle, _status_label]:
+	for n in [_primary_button, _settings_button, _thanks_button, _subtitle]:
 		if is_instance_valid(n):
 			t.tween_property(n, "modulate:a", 0.0, 0.6)
 	await t.finished

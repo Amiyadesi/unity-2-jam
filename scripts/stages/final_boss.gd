@@ -57,6 +57,8 @@ enum PressureState { REST, TELEGRAPH, ACTIVE }
 @onready var _shape: CollisionShape2D = $CollisionShape2D
 @onready var _core: ColorRect = $Body/Core
 @onready var _shield: ColorRect = $Body/Shield
+@onready var _core_sprite: Sprite2D = $Body/CoreSprite
+@onready var _shield_sprite: Sprite2D = $Body/ShieldSprite
 @onready var _pulse: Line2D = $Body/Pulse
 @onready var _impact_burst: Node2D = $CombatVFX/ImpactBurst
 @onready var _shield_crack: Node2D = $CombatVFX/ShieldCrack
@@ -104,7 +106,10 @@ var _base_request_speed: float = 0.0
 var _base_request_interval: float = 0.0
 var _base_core_color: Color = Color.WHITE
 var _base_shield_color: Color = Color.WHITE
+var _base_core_sprite_color: Color = Color.WHITE
+var _base_shield_sprite_color: Color = Color.WHITE
 var _phase_core_color: Color = Color.WHITE
+var _phase_core_sprite_color: Color = Color.WHITE
 var _dash_window_open: bool = true
 var _dash_window_timer: float = 0.0
 var _dash_window_pulse_time: float = 0.0
@@ -124,7 +129,10 @@ func _ready() -> void:
 	_base_request_interval = request_interval
 	_base_core_color = _core.color
 	_base_shield_color = _shield.color
+	_base_core_sprite_color = _core_sprite.modulate
+	_base_shield_sprite_color = _shield_sprite.modulate
 	_phase_core_color = _base_core_color
+	_phase_core_sprite_color = _base_core_sprite_color
 	_collect_phase_pressure_sweeps()
 	_collect_phase_three_pressure_sweeps()
 	_hide_combat_vfx()
@@ -182,8 +190,11 @@ func activate(player: Node) -> void:
 	request_speed = _base_request_speed
 	request_interval = _base_request_interval
 	_phase_core_color = _base_core_color
+	_phase_core_sprite_color = _base_core_sprite_color
 	_core.color = _phase_core_color
 	_shield.color = _base_shield_color
+	_core_sprite.modulate = _phase_core_sprite_color
+	_shield_sprite.modulate = _base_shield_sprite_color
 	_hide_combat_vfx()
 	_hide_phase_pressure_sweeps()
 	_hide_phase_three_pressure_sweeps()
@@ -699,8 +710,11 @@ func _set_dash_window(open: bool) -> void:
 		_hide_phase_three_pressure_sweeps()
 		_dash_window_pulse_time = 0.0
 		_phase_core_color = Color(1.0, 0.98, 0.72, 0.98)
+		_phase_core_sprite_color = Color(1.0, 0.96, 0.72, 1.0)
 		_core.color = _phase_core_color
 		_shield.color = Color(0.2, 0.75, 1.0, 0.12)
+		_core_sprite.modulate = _phase_core_sprite_color
+		_shield_sprite.modulate = Color(0.5, 0.94, 1.0, 0.22)
 		_show_dash_window_cue()
 		shield_changed.emit(false, "冲刺窗口")
 	else:
@@ -708,8 +722,11 @@ func _set_dash_window(open: bool) -> void:
 		_set_dash_window_aim_active(false)
 		_dash_window_pulse_time = 0.0
 		_phase_core_color = Color(0.72, 0.9, 1.0, 0.78)
+		_phase_core_sprite_color = Color(0.65, 0.9, 1.0, 0.66)
 		_core.color = _phase_core_color
 		_shield.color = Color(0.2, 0.75, 1.0, 0.36)
+		_core_sprite.modulate = _phase_core_sprite_color
+		_shield_sprite.modulate = Color(0.44, 0.86, 1.0, 0.48)
 		_hide_dash_window_cue()
 		_show_closed_window_cue()
 		_reset_phase_three_pressure()
@@ -1144,7 +1161,9 @@ func _flash_core() -> void:
 	_play_one_shot_vfx(_impact_burst, 0.16)
 	var tween := create_tween()
 	tween.tween_property(_core, "color", Color(1.0, 0.88, 0.74, 1.0), 0.05)
+	tween.parallel().tween_property(_core_sprite, "modulate", Color(1.0, 0.92, 0.56, 1.0), 0.05)
 	tween.tween_property(_core, "color", _phase_core_color, 0.18)
+	tween.parallel().tween_property(_core_sprite, "modulate", _phase_core_sprite_color, 0.18)
 
 
 ## 播放三阶段冲刺穿透确认，强调玩家真的击穿了桌面窗口核心。
@@ -1162,7 +1181,10 @@ func _flash_shield() -> void:
 	_play_one_shot_vfx(_shield_crack, 0.22)
 	var tween := create_tween()
 	tween.tween_property(_shield, "color:a", 0.55, 0.08)
-	tween.tween_property(_shield, "color:a", 0.18, 0.22)
+	tween.parallel().tween_property(_shield_sprite, "modulate:a", 0.78, 0.08)
+	var target_alpha := 0.48 if _phase >= 3 and not _dash_window_open else _base_shield_sprite_color.a
+	tween.tween_property(_shield, "color:a", 0.12, 0.22)
+	tween.parallel().tween_property(_shield_sprite, "modulate:a", target_alpha, 0.22)
 
 
 ## Hides authored combat VFX at reset/deactivate boundaries.

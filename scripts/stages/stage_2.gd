@@ -106,7 +106,7 @@ func _on_stage_ready() -> void:
 		player.dash_whiffed.connect(_on_player_dash_whiffed)
 	player.restore_energy(player.max_energy)
 	_step = Step.AWAKEN
-	say("按 [color=#a99cff]Shift[/color] 觉醒，进入飞行。\n之后用鼠标瞄准，按 [color=#a99cff]左键[/color] 高速冲撞。", 5.2)
+	say("按 [color=#a99cff]Shift[/color] 觉醒，进入飞行。\n用鼠标瞄准，按 [color=#a99cff]左键[/color] 冲过去。", 5.2)
 
 
 ## 每帧推进 Stage2 飞行移动训练。
@@ -502,7 +502,7 @@ func _on_enemy_defeated() -> void:
 		_hide_wave_energy_pockets()
 		_hide_air_combat_rooms()
 		_enable_close_route()
-		say("安静下来了。\n沿着裂口飞过去，在它允许我们之前关掉。", 3.2)
+		say("安静了。\n裂口在那里——在它改变主意之前，飞过去。", 3.2)
 	elif _current_wave_left <= 0:
 		_enable_next_enemy_wave()
 	else:
@@ -517,7 +517,7 @@ func _on_player_morph_changed(is_morphed: bool) -> void:
 	_flight_move_seconds = 0.0
 	_show_dash_lane_guides(["LiftGuide"])
 	_show_vertical_route_read("HighLowForkRead")
-	say("很好。用 [color=#a99cff]WASD[/color] 或方向键飞一小段。", 3.2)
+	say("很好。用 [color=#a99cff]WASD[/color] 飞一小段——感受一下。", 3.2)
 
 
 ## 累计飞行移动时间，确认玩家理解八向飞行。
@@ -539,7 +539,7 @@ func _advance_to_dash_target() -> void:
 	get_player().restore_energy(get_player().max_energy)
 	_show_dash_lane_guides(["FirstDashGuide"])
 	_show_vertical_route_read("EnergyRhythmRead")
-	say("把鼠标指向前面的锁。\n按 [color=#a99cff]左键[/color] 冲过去。", 4.0)
+	say("把鼠标指向前面那把锁，按 [color=#a99cff]左键[/color] 冲过去。", 4.0)
 
 
 ## 冲刺靶完成后进入组合清场段。
@@ -574,15 +574,15 @@ func _enable_next_dash_chain_target() -> void:
 		1:
 			_show_dash_lane_guides(["ChainGuideA"])
 			_show_vertical_route_read("DropRecoveryRead")
-			say("撞碎它，借这一下回能。\n不要停，下一枚在下面。", 3.2)
+			say("撞碎它，顺势回能。下一枚在下面，别停。", 3.2)
 		2:
 			_show_dash_lane_guides(["ChainGuideB"])
 			_show_vertical_route_read("HighLowForkRead")
-			say("很好。现在把速度折上去。", 2.6)
+			say("很好，往上折。", 2.6)
 		_:
 			_show_dash_lane_guides(["ChainGuideC", "BreakLaneGuide"])
 			_show_vertical_route_read("EnergyRhythmRead")
-			say("最后一枚。用这条突破线进战斗。", 2.8)
+			say("最后一枚。沿这条线冲进去。", 2.8)
 
 
 ## 结束教学靶链，进入逐波清场段。
@@ -641,7 +641,7 @@ func _enable_next_enemy_wave() -> void:
 			_hide_wave_recovery_reads()
 			_show_wave_energy_pockets(["LowPocket"])
 			_show_air_combat_room("LowRoom")
-			say("第一层：低空贴近，冲过去。", 2.8)
+			say("第一波——低空贴近，冲过去。", 2.8)
 		2:
 			_show_enemy_wave_guides(["Wave2AngleGuide"])
 			_show_wave_pressure_read("AnglePressureBand")
@@ -649,7 +649,7 @@ func _enable_next_enemy_wave() -> void:
 			_hide_wave_recovery_reads()
 			_show_wave_energy_pockets(["AnglePocket"])
 			_show_air_combat_room("AngleRoom")
-			say("第二层：抬高角度，从下面切上去。", 2.8)
+			say("第二波——抬高角度，从下面切上去。", 2.8)
 		_:
 			_show_enemy_wave_guides(["Wave3BreakGuide"])
 			_show_wave_pressure_read("BreakPressureBand")
@@ -657,7 +657,7 @@ func _enable_next_enemy_wave() -> void:
 			_hide_wave_recovery_reads()
 			_show_wave_energy_pockets(["BreakPocket"])
 			_show_air_combat_room("BreakRoom")
-			say("最后一层：沿突破道高速撞开。", 2.8)
+			say("最后一波——沿突破道撞开。", 2.8)
 
 
 ## 只显示当前教学步骤需要看的 authored 路线段。

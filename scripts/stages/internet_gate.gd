@@ -7,7 +7,7 @@ class_name InternetGate
 signal entered()
 
 @onready var _shape: CollisionShape2D = $CollisionShape2D
-@onready var _core: ColorRect = $Core
+@onready var _core: CanvasItem = $Core
 @onready var _ring: Line2D = $Ring
 
 var _active: bool = false

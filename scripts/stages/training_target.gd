@@ -8,15 +8,24 @@ class_name CloseAITrainingTarget
 signal completed(target: Area2D, attack_kind: StringName)
 
 @export_enum("any", "forward", "side", "dash") var required_attack_kind: String = "any"
+@export_enum("auto", "forward", "side", "dash", "bug") var visual_variant: String = "auto"
 @export_range(1, 5, 1) var hits_required: int = 1
 @export var starts_enabled: bool = false
 @export var reward_energy: float = 0.0
+
+const ICON_NODE_BY_VARIANT := {
+	"forward": "ForwardIcon",
+	"side": "SideIcon",
+	"dash": "DashIcon",
+	"bug": "BugIcon",
+}
 
 var _hits_left: int = 1
 var _enabled: bool = false
 var _completed: bool = false
 var _flash_tween: Tween
 var _complete_tween: Tween
+var _core_idle_modulate: Color = Color.WHITE
 
 @onready var _visual: CanvasItem = $Visual
 @onready var _core: CanvasItem = $Core
@@ -29,6 +38,8 @@ func _ready() -> void:
 	if not _require_authored_nodes():
 		return
 	add_to_group("training_target")
+	_apply_visual_variant()
+	_core_idle_modulate = _core.modulate
 	_hits_left = hits_required
 	set_enabled(starts_enabled)
 
@@ -48,13 +59,18 @@ func _require_authored_nodes() -> bool:
 	if _shape == null:
 		push_error("%s requires authored CollisionShape2D." % name)
 		ok = false
+	if _core != null:
+		for icon_name in ICON_NODE_BY_VARIANT.values():
+			if not _core.get_node_or_null(icon_name) is Sprite2D:
+				push_error("%s requires authored Core/%s." % [name, icon_name])
+				ok = false
 	return ok
 
 
 ## Enables or disables this target for the current tutorial step.
 func set_enabled(value: bool) -> void:
 	_enabled = value and not _completed
-	_set_collision_active(_enabled)
+	_set_collision_active(_enabled, true)
 	if _visual != null:
 		_visual.modulate.a = 1.0 if _enabled else 0.22
 	if _core != null:
@@ -120,7 +136,24 @@ func _restart_flash(color: Color) -> void:
 		_flash_tween.kill()
 	_core.modulate = color
 	_flash_tween = create_tween()
-	_flash_tween.tween_property(_core, "modulate", Color(0.62, 0.48, 1.0, 0.85), 0.16)
+	var target := _core_idle_modulate
+	target.a = 0.85
+	_flash_tween.tween_property(_core, "modulate", target, 0.16)
+
+
+## Shows the authored icon that matches this target's attack role.
+func _apply_visual_variant() -> void:
+	if _core == null:
+		return
+	var variant := visual_variant
+	if variant == "auto":
+		variant = "forward" if required_attack_kind == "any" else required_attack_kind
+	if not ICON_NODE_BY_VARIANT.has(variant):
+		variant = "forward"
+	for key in ICON_NODE_BY_VARIANT.keys():
+		var icon := _core.get_node_or_null(ICON_NODE_BY_VARIANT[key]) as CanvasItem
+		if icon != null:
+			icon.visible = key == variant
 
 
 ## Completes the target, rewards energy if requested, and fades out.

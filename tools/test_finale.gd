@@ -320,12 +320,14 @@ func _check_request_card_kind_reads(boss: Node) -> void:
 	await process_frame
 	var good_halo := card.get_node_or_null("KindRead/GoodHalo") as CanvasItem
 	var bad_hazard := card.get_node_or_null("KindRead/BadHazard") as CanvasItem
-	var label := card.get_node_or_null("Label") as Label
-	_check("good request shows check read", good_halo != null and good_halo.visible and bad_hazard != null and not bad_hazard.visible and label != null and label.text == "回应")
+	var good_sprite := card.get_node_or_null("Visual/GoodCard") as Sprite2D
+	var bad_sprite := card.get_node_or_null("Visual/BadCard") as Sprite2D
+	_check("request card has no crude text label", card.get_node_or_null("Label") == null)
+	_check("good request shows check read", good_halo != null and good_halo.visible and bad_hazard != null and not bad_hazard.visible and good_sprite != null and good_sprite.visible and bad_sprite != null and not bad_sprite.visible)
 	card.deactivate()
 	card.activate(Vector2.ZERO, Vector2.RIGHT * 100.0, false)
 	await process_frame
-	_check("bad request says avoid", good_halo != null and not good_halo.visible and bad_hazard != null and bad_hazard.visible and label != null and label.text == "避开")
+	_check("bad request shows hazard read", good_halo != null and not good_halo.visible and bad_hazard != null and bad_hazard.visible and good_sprite != null and not good_sprite.visible and bad_sprite != null and bad_sprite.visible)
 	card.deactivate()
 
 
@@ -338,12 +340,14 @@ func _check_request_card_energy_feedback(card: Node, player: Node) -> void:
 	card.activate(Vector2.ZERO, Vector2.RIGHT * 100.0, true)
 	card._on_body_entered(player)
 	await process_frame
+	await physics_frame
 	_check("good request restores player energy", player.energy > 20.0)
 	_check("request card collision disables deferred after good hit", "monitoring" in card and not card.monitoring)
 	player.energy = 70.0
 	card.activate(Vector2.ZERO, Vector2.RIGHT * 100.0, false)
 	card._on_body_entered(player)
 	await process_frame
+	await physics_frame
 	_check("bad request drains player energy", player.energy < 70.0)
 	_check("request card collision disables deferred after bad hit", "monitoring" in card and not card.monitoring)
 

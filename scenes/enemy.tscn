@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://closeaienemy01"]
+[gd_scene load_steps=7 format=3 uid="uid://closeaienemy01"]
 
 [ext_resource type="Script" path="res://scripts/stages/enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_lock_bug.png" id="2_bug"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_en"]
 size = Vector2(40, 40)
@@ -30,7 +31,12 @@ offset_left = -18.0
 offset_top = -18.0
 offset_right = 18.0
 offset_bottom = 18.0
-color = Color(0.08, 0.04, 0.12, 0.92)
+color = Color(0.08, 0.04, 0.12, 0.12)
+
+[node name="BodySprite" type="Sprite2D" parent="Visual"]
+modulate = Color(1, 0.36, 0.52, 0.88)
+scale = Vector2(0.22, 0.22)
+texture = ExtResource("2_bug")
 
 [node name="CoreLine" type="Line2D" parent="Visual"]
 points = PackedVector2Array(-14, 0, -7, -10, 0, -14, 7, -10, 14, 0, 7, 10, 0, 14, -7, 10, -14, 0)
@@ -42,7 +48,7 @@ offset_left = -5.0
 offset_top = -5.0
 offset_right = 5.0
 offset_bottom = 5.0
-color = Color(1.0, 0.35, 0.5, 0.85)
+color = Color(1.0, 0.35, 0.5, 0.18)
 
 [node name="ScanLineH" type="Line2D" parent="Visual"]
 points = PackedVector2Array(-18, 0, 18, 0)

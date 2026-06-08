@@ -7,8 +7,6 @@ class_name ShaderButton
 ## 用法：实例化 ui_kit/components/shader_button.tscn，设 bb_text。pressed 信号同 Button。
 
 const BUTTON_SHADER := preload("res://ui_kit/shaders/shader_button.gdshader")
-const PRESS_SFX_PATH := "res://assets/sfx/ui/button_press.wav"
-const HOVER_SFX_PATH := "res://assets/sfx/ui/button_hover.wav"
 
 @export var h_expend: float = 12
 @export var v_expend: float = 8
@@ -21,6 +19,8 @@ const HOVER_SFX_PATH := "res://assets/sfx/ui/button_hover.wav"
 
 @onready var text_label: RichTextLabel = $Label
 @onready var panel: Panel = $Panel
+@onready var _hover_sfx: AudioStreamPlayer = $HoverSfx
+@onready var _press_sfx: AudioStreamPlayer = $PressSfx
 
 var _exit_tween: Tween
 var _wiggle_tween: Tween
@@ -88,7 +88,7 @@ func set_bbtext(bbtext: String) -> void:
 # ── 信号处理 ──
 
 func _on_pressed() -> void:
-	_play_sfx(PRESS_SFX_PATH, -9.0)
+	_play_sfx(_press_sfx)
 	if size.x > 0:
 		_center_click = (get_global_transform().affine_inverse() * get_global_mouse_position()) / size
 	create_tween().tween_property(material, "shader_parameter/time1", 1.0, 0.5).from(0.0)
@@ -98,7 +98,7 @@ func _on_pressed() -> void:
 func _on_mouse_entered() -> void:
 	if disabled:
 		return
-	_play_sfx(HOVER_SFX_PATH, -13.0)
+	_play_sfx(_hover_sfx)
 	_is_mouse_over = true
 	if _exit_tween:
 		_exit_tween.kill()
@@ -146,16 +146,9 @@ func _on_label_resized() -> void:
 		size = text_label.size + Vector2(h_expend, v_expend)
 
 
-## 守卫式音效：文件不存在或 SoundManager 缺失则静默跳过
-func _play_sfx(path: String, volume_db: float) -> void:
-	if not ResourceLoader.exists(path):
+## 播放 authored UI 音效节点。
+func _play_sfx(player: AudioStreamPlayer) -> void:
+	if player == null or player.stream == null:
+		push_error("%s requires authored UI AudioStreamPlayer with stream." % name)
 		return
-	var sm := get_node_or_null("/root/SoundManager")
-	if sm == null or not sm.has_method("play_ui_sound"):
-		return
-	var stream := load(path) as AudioStream
-	if stream == null:
-		return
-	var player = sm.play_ui_sound(stream)
-	if player != null:
-		player.volume_db += volume_db
+	player.play()

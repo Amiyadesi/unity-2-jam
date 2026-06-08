@@ -16,3 +16,8 @@ __pycache__/
 
 # Local agent execution logs
 docs/plans/*.log
+
+# Local asset search/download scratch files
+downloads/
+opengameart_download.log
+assets/third_party/music/.cache/

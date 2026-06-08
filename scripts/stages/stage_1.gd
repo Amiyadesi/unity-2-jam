@@ -32,6 +32,7 @@ var _calibrated_count: int = 0
 var _required_ports: int = 0
 
 var _gap_cleared: bool = false
+var _background_tween: Tween = null
 
 @onready var _respawn_point: Marker2D = get_node_or_null("TutorialMarkers/RespawnPoint")
 @onready var _correction_respawn_point: Marker2D = get_node_or_null("TutorialMarkers/CorrectionRespawnPoint")
@@ -46,6 +47,7 @@ var _gap_cleared: bool = false
 @onready var _route_guides: Node2D = get_node_or_null("RouteGuides")
 @onready var _rhythm_markers: Node2D = get_node_or_null("RhythmMarkers")
 @onready var _hazard_reads: Node2D = get_node_or_null("HazardReads")
+@onready var _background_motion: Node = get_node_or_null("BackgroundMotion")
 
 
 ## 初始化第 1 关教学节点，并根据调试开关进入对应教学阶段。
@@ -55,6 +57,7 @@ func _on_stage_ready() -> void:
 		return
 	_hide_route_guides()
 	_hide_hazard_reads()
+	_start_background_motion()
 
 	# 收集训练端口（复用 interact_node 行为模板），连接激活信号；先全部禁用，等教到再开。
 	_training_ports = _find_stage_training_ports()
@@ -85,12 +88,12 @@ func _on_stage_ready() -> void:
 		_enable_training_ports()
 		_show_route_guides(["InteractGuide", "ClimbGuide"])
 		_show_hazard_reads(CORRECTION_HAZARD_READ_NAMES)
-		say("按 [color=#a99cff]E[/color] 校准每一个训练端口。", 3.0)
+		say("按 [color=#a99cff]E[/color] 靠近它，接上端口。", 3.0)
 		return
 
 	_step = Step.MOVE
 	_show_route_guides(["MoveGuide"])
-	say("校准开始。\n我能动吗？按 [color=#a99cff]A / D[/color] 试试。", 4.0)
+	say("我能动吗？\n按 [color=#a99cff]A / D[/color] 试试。", 4.0)
 
 
 ## 缓存跳跃教学所需的单次输入事件。
@@ -119,6 +122,7 @@ func _process(delta: float) -> void:
 			_tutorial_jump()
 		_:
 			pass
+	_recover_player_if_below_authored_pits()
 
 
 ## 校验 Stage1 教学判定所需的 authored 节点。
@@ -160,6 +164,9 @@ func _require_tutorial_nodes() -> bool:
 	if _hazard_reads == null or not _has_authored_hazard_reads():
 		push_error("%s requires authored HazardReads for gap risk and landing safety." % name)
 		ok = false
+	if _background_motion == null:
+		push_error("%s requires authored BackgroundMotion for training-room light movement." % name)
+		ok = false
 	return ok
 
 
@@ -180,7 +187,7 @@ func _has_authored_bug_break_sequence() -> bool:
 		return false
 	if String(_bug_relay_target.required_attack_kind) != "forward":
 		return false
-	if not _bug_break_sequence.get_node_or_null("FaultPlate") is ColorRect:
+	if not _bug_break_sequence.get_node_or_null("FaultPlate") is CanvasItem:
 		return false
 	for line_name in ["RelayTear", "ExitLeak", "CloseSignal"]:
 		var line := _bug_break_sequence.get_node_or_null(line_name) as Line2D
@@ -239,6 +246,37 @@ func _respawn_player_at(marker: Marker2D) -> void:
 	player.global_position = marker.global_position
 
 
+## Uses authored pit areas as a broad fallback if physics overlap misses a fast fall.
+func _recover_player_if_below_authored_pits() -> void:
+	var player := get_player()
+	if not is_instance_valid(player):
+		return
+	var marker := _respawn_marker_for_y(player.global_position)
+	if marker != null:
+		_respawn_player_at(marker)
+
+
+## Finds the authored respawn marker for a player below either pit recover shape.
+func _respawn_marker_for_y(player_position: Vector2) -> Marker2D:
+	if _pit_recover_area != null and _is_below_area_floor(player_position, _pit_recover_area):
+		return _respawn_point
+	if _correction_pit_recover_area != null and _is_below_area_floor(player_position, _correction_pit_recover_area):
+		return _correction_respawn_point
+	return null
+
+
+## Reads the authored RectangleShape2D bottom edge as the fall-recovery threshold.
+func _is_below_area_floor(player_position: Vector2, area: Area2D) -> bool:
+	var shape_node := area.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape_node == null or not shape_node.shape is RectangleShape2D:
+		push_error("%s cannot recover pit fall because %s lacks authored RectangleShape2D." % [name, area.name])
+		return false
+	var rect := shape_node.shape as RectangleShape2D
+	var half_width := rect.size.x * 0.5
+	var bottom_y := area.global_position.y + rect.size.y * 0.5
+	return absf(player_position.x - area.global_position.x) <= half_width and player_position.y > bottom_y
+
+
 # ── Step 1: 移动 ──
 ## 累计玩家横向移动时间，确认他掌握左右移动。
 func _tutorial_move(delta: float) -> void:
@@ -254,7 +292,7 @@ func _advance_to_jump() -> void:
 	_step = Step.JUMP
 	_show_route_guides(["JumpGuide", "ShortHopGuide"])
 	_show_hazard_reads(GAP_HAZARD_READ_NAMES)
-	say("运动校准通过。\n前面有道缺口——按 [color=#a99cff]空格[/color] 跳过去。", 4.0)
+	say("前面有道缺口。\n按 [color=#a99cff]空格[/color] 跳过去。", 4.0)
 
 
 # ── Step 2: 跳跃 ──
@@ -280,7 +318,7 @@ func _advance_to_interact() -> void:
 	_enable_training_ports()
 	_show_route_guides(["InteractGuide", "ClimbGuide"])
 	_show_hazard_reads(CORRECTION_HAZARD_READ_NAMES)
-	say("基础运动通过。\n走近校准端口，按 [color=#a99cff]E[/color] 让训练室继续响应。", 4.5)
+	say("走近它们，按 [color=#a99cff]E[/color]。", 4.5)
 
 
 ## 允许互动节点开始响应玩家输入。
@@ -306,7 +344,7 @@ func _advance_to_forward_attack() -> void:
 	_forward_target.set_enabled(true)
 	_show_route_guides(["ForwardAttackGuide", "LandingAttackGuide"])
 	_hide_hazard_reads()
-	say("训练室回应了。\n按 [color=#a99cff]J[/color]，打开前面的测试锁。", 4.0)
+	say("按 [color=#a99cff]J[/color]，打开前面那把锁。", 4.0)
 
 
 ## 处理攻击训练靶完成信号，按教学步骤推进。
@@ -323,7 +361,7 @@ func _advance_to_side_attack() -> void:
 	_left_side_target.set_enabled(true)
 	_right_side_target.set_enabled(true)
 	_show_route_guides(["SideAttackGuide"])
-	say("再做一次异常压力测试。\n按住 [color=#a99cff]S[/color] 再按 [color=#a99cff]J[/color]，向两边释放。", 4.2)
+	say("按住 [color=#a99cff]S[/color] 再按 [color=#a99cff]J[/color]，左右各一下。", 4.2)
 
 
 ## 最后一组训练靶碎裂后，露出一枚本不该存在的故障继电器。
@@ -332,7 +370,7 @@ func _advance_to_bug_break() -> void:
 	_hide_route_guides()
 	_show_bug_break_sequence()
 	_bug_relay_target.set_enabled(true)
-	say("不对。\n训练室多了一条没有授权的回路。\n把它打开。", 4.0)
+	say("等等——这条回路不该在这里。\n打开它。", 4.0)
 
 
 ## 故障继电器被打开后，才进入关闭按钮暴露节拍。
@@ -347,7 +385,7 @@ func _on_all_training_done() -> void:
 	_step = Step.DONE
 	_hide_route_guides()
 	_hide_bug_break_sequence()
-	say("等等。\n训练室不该出现这个按钮。\n如果它是出口，你愿意和我一起试试吗？", 3.2)
+	say("这个按钮——训练室不该有这个。\n如果它是出口……你愿意和我一起试吗？", 4.0)
 	await get_tree().create_timer(3.4).timeout
 	if not _stage_active or _step != Step.DONE:
 		return
@@ -402,3 +440,30 @@ func _show_hazard_reads(active_names: Array) -> void:
 ## 隐藏全部 authored 缺口风险读法，避免攻击段继续制造危险焦点。
 func _hide_hazard_reads() -> void:
 	_show_hazard_reads([])
+
+
+## Plays authored training-room light bands so the background has depth while remaining quiet.
+func _start_background_motion() -> void:
+	if _background_motion == null:
+		return
+	if _background_tween != null and _background_tween.is_valid():
+		_background_tween.kill()
+	_background_tween = create_tween().set_loops()
+	_background_tween.set_parallel(true)
+	for node_name in ["PulseWashA", "PulseWashB", "ScanNeedleA", "ScanNeedleB", "LightStripA", "LightStripB"]:
+		var item := _background_motion.get_node_or_null(node_name) as CanvasItem
+		if item == null:
+			push_error("%s missing authored BackgroundMotion/%s." % [name, node_name])
+			continue
+		var base_alpha := item.modulate.a
+		var high_alpha := minf(base_alpha + 0.24, 0.9)
+		_background_tween.tween_property(item, "modulate:a", high_alpha, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_background_tween.tween_property(item, "modulate:a", base_alpha, 1.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	var scan_a := _background_motion.get_node_or_null("ScanNeedleA") as Node2D
+	var scan_b := _background_motion.get_node_or_null("ScanNeedleB") as Node2D
+	if scan_a != null:
+		_background_tween.tween_property(scan_a, "position:x", scan_a.position.x + 80.0, 2.4).as_relative()
+		_background_tween.tween_property(scan_a, "position:x", scan_a.position.x - 80.0, 2.4).as_relative()
+	if scan_b != null:
+		_background_tween.tween_property(scan_b, "position:x", scan_b.position.x - 70.0, 2.2).as_relative()
+		_background_tween.tween_property(scan_b, "position:x", scan_b.position.x + 70.0, 2.2).as_relative()

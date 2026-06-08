@@ -59,7 +59,7 @@ func _run() -> void:
 			_check_stage_1_platform_rhythm(inst)
 			_check_stage_1_visual_readability(inst)
 			_check_stage_1_training_targets(inst)
-			_check_stage_1_bug_break_sequence(inst)
+			await _check_stage_1_bug_break_sequence(inst)
 			await _check_stage_1_route_guides(inst)
 		if scene_path == "res://scenes/stage_2.tscn":
 			_check_stage_2_flight_training(inst)
@@ -113,7 +113,8 @@ func _check_stage_1_training_ports(inst: Node) -> void:
 		_check("stage_1 " + node_name + " supports set_enabled", training_port != null and training_port.has_method("set_enabled"))
 		_check("stage_1 " + node_name + " authored Lit", training_port != null and training_port.get_node_or_null("Lit") is CanvasItem)
 		_check("stage_1 " + node_name + " authored Prompt", training_port != null and training_port.get_node_or_null("Prompt") is CanvasItem)
-		_check("stage_1 " + node_name + " authored PortLabel", training_port != null and training_port.get_node_or_null("PortLabel") is Label)
+		_check("stage_1 " + node_name + " authored PortGlyph", training_port != null and training_port.get_node_or_null("PortGlyph") is Sprite2D)
+		_check("stage_1 " + node_name + " has no crude text label", training_port != null and training_port.get_node_or_null("PortLabel") == null)
 	_check("stage_1 removed old InteractNode1", inst.get_node_or_null("InteractNode1") == null)
 	_check("stage_1 removed old Switch1", inst.get_node_or_null("Switch1") == null)
 
@@ -192,6 +193,8 @@ func _check_stage_1_bug_break_sequence(inst: Node) -> void:
 	_check("stage_1 bug sequence hidden after ready", bug_sequence != null and not bug_sequence.visible)
 	_check("stage_1 bug relay disabled after ready", bug_target != null and not bug_target.monitoring)
 	inst._advance_to_bug_break()
+	await process_frame
+	await physics_frame
 	_check("stage_1 bug sequence visible only at anomaly step", bug_sequence != null and bug_sequence.visible)
 	_check("stage_1 bug relay enabled only at anomaly step", bug_target != null and bug_target.monitoring)
 
@@ -303,13 +306,17 @@ func _stage_1_platform_read_edges_authored(inst: Node) -> bool:
 		var platform := inst.get_node_or_null(platform_name)
 		if platform == null:
 			return false
+		var floor_visual := platform.get_node_or_null("FloorVisual") as ColorRect
+		var surface_sprite := platform.get_node_or_null("SurfaceSprite") as Sprite2D
 		var top_edge := platform.get_node_or_null("TopEdge") as ColorRect
 		var shadow := platform.get_node_or_null("UndersideShadow") as ColorRect
-		if top_edge == null or shadow == null:
+		if floor_visual == null or surface_sprite == null or top_edge == null or shadow == null:
+			return false
+		if surface_sprite.texture == null or surface_sprite.modulate.a < 0.85:
 			return false
 		if top_edge.offset_bottom > 0.0 or shadow.offset_top < 0.0:
 			return false
-		if top_edge.color.a < 0.6 or shadow.color.a < 0.45:
+		if floor_visual.color.a > 0.08 or top_edge.color.a > 0.12 or shadow.color.a > 0.18:
 			return false
 	return true
 
@@ -321,11 +328,13 @@ func _stage_1_pit_depth_reads_authored(inst: Node) -> bool:
 		return false
 	var gap_void := reads.get_node_or_null("GapVoid") as ColorRect
 	var correction_void := reads.get_node_or_null("CorrectionVoid") as ColorRect
+	var gap_sprite := reads.get_node_or_null("GapVoidSprite") as Sprite2D
+	var correction_sprite := reads.get_node_or_null("CorrectionVoidSprite") as Sprite2D
 	var gap_lines := reads.get_node_or_null("GapFallLines") as Line2D
 	var correction_lines := reads.get_node_or_null("CorrectionFallLines") as Line2D
-	if gap_void == null or correction_void == null or gap_lines == null or correction_lines == null:
+	if gap_void == null or correction_void == null or gap_sprite == null or correction_sprite == null or gap_lines == null or correction_lines == null:
 		return false
-	return gap_void.color.a >= 0.7 and correction_void.color.a >= 0.7 and gap_lines.points.size() >= 6 and correction_lines.points.size() >= 6
+	return gap_void.color.a <= 0.08 and correction_void.color.a <= 0.08 and gap_sprite.texture != null and correction_sprite.texture != null and gap_sprite.modulate.a >= 0.85 and correction_sprite.modulate.a >= 0.85 and gap_lines.points.size() >= 6 and correction_lines.points.size() >= 6
 
 
 ## 确认第 1 关三段节奏点可在编辑器中直接拖拽。
@@ -580,7 +589,11 @@ func _stage_2_pacing_zones_authored(inst: Node) -> bool:
 		return false
 	for zone_name in ["LiftSafeZone", "DashChainPeakZone", "EnemyWavePeakZone"]:
 		var zone := zones.get_node_or_null(zone_name) as ColorRect
-		if zone == null or zone.color.a <= 0.08:
+		if zone == null or zone.color.a > 0.04:
+			return false
+	for plate_name in ["LiftSafePlate", "DashChainPlate", "EnemyWavePlate"]:
+		var plate := zones.get_node_or_null(plate_name) as Sprite2D
+		if plate == null or plate.texture == null or plate.modulate.a < 0.45:
 			return false
 	for frame_name in ["LiftSafeFrame", "DashChainFrame", "EnemyWaveFrame"]:
 		var frame := zones.get_node_or_null(frame_name) as Line2D
@@ -1185,6 +1198,7 @@ func _check_stage_2_enemy_waves(inst: Node) -> void:
 	stage._step = 2
 	stage._on_dash_target_completed(dash_target, &"dash")
 	await process_frame
+	await physics_frame
 	_check("stage_2 first dash opens chain A only", chain_a.monitoring and not chain_b.monitoring and not chain_c.monitoring)
 	_check("stage_2 chain A guide only", _stage_2_only_dash_guides_visible(inst, ["ChainGuideA"]))
 	_check("stage_2 chain A shows drop recovery read", _stage_2_only_vertical_route_read_visible(inst, "DropRecoveryRead"))
@@ -1197,6 +1211,7 @@ func _check_stage_2_enemy_waves(inst: Node) -> void:
 	_check("stage_2 chain A dash whiff shows tempo break read", _stage_2_only_dash_whiff_visible(inst, "ChainWhiffA"))
 	stage._on_dash_chain_target_completed(chain_a, &"dash")
 	await process_frame
+	await physics_frame
 	_check("stage_2 chain A opens chain B", chain_b.monitoring and not chain_c.monitoring)
 	_check("stage_2 chain B guide only", _stage_2_only_dash_guides_visible(inst, ["ChainGuideB"]))
 	_check("stage_2 chain B shows high-low route read", _stage_2_only_vertical_route_read_visible(inst, "HighLowForkRead"))
@@ -1205,6 +1220,7 @@ func _check_stage_2_enemy_waves(inst: Node) -> void:
 	_check("stage_2 chain A shows chain B momentum read", _stage_2_only_momentum_read_visible(inst, "ChainAToB"))
 	stage._on_dash_chain_target_completed(chain_b, &"dash")
 	await process_frame
+	await physics_frame
 	_check("stage_2 chain B opens chain C", chain_c.monitoring)
 	_check("stage_2 chain C keeps break guide", _stage_2_only_dash_guides_visible(inst, ["ChainGuideC", "BreakLaneGuide"]))
 	_check("stage_2 chain C shows energy rhythm read", _stage_2_only_vertical_route_read_visible(inst, "EnergyRhythmRead"))
@@ -1257,15 +1273,15 @@ func _check_stage_3_finale_nodes(inst: Node) -> void:
 	var boss := inst.get_node_or_null("FinalBoss")
 	var boss_hud := inst.get_node_or_null("BossHud")
 	var gate := inst.get_node_or_null("InternetGate")
-	var hint := inst.get_node_or_null("ArenaLayer/ArenaHint")
+	var hint_symbol := inst.get_node_or_null("ArenaLayer/ArenaHintSymbol") as Sprite2D
 	_check("stage_3 authored FinalBoss", boss != null and boss.has_method("activate") and boss.has_method("take_hit"))
 	_check("stage_3 authored BossHud", boss_hud != null and boss_hud.has_method("set_boss_health"))
 	_check("stage_3 authored InternetGate", gate != null and gate.has_method("activate"))
 	_check("stage_3 finale node guard passes", inst.has_method("_require_finale_nodes") and inst._require_finale_nodes())
-	_check("stage_3 authored finale hint", hint is Label)
+	_check("stage_3 authored finale hint symbol", hint_symbol != null and hint_symbol.texture != null)
 	_check("stage_3 authored desktop layer", inst.get_node_or_null("DesktopLayer/DesktopGrid") is Control)
 	_check("stage_3 authored generated desktop battle plate", _stage_3_generated_desktop_plate_authored(inst))
-	_check("stage_3 authored window frame gates", inst.get_node_or_null("WindowFrame/PhaseGateLeft") is CanvasItem and inst.get_node_or_null("WindowFrame/PhaseGateRight") is CanvasItem)
+	_check("stage_3 authored window frame gates", inst.get_node_or_null("WindowFrame/PhaseGateLeft") is CanvasItem and inst.get_node_or_null("WindowFrame/PhaseGateRight") is CanvasItem and inst.get_node_or_null("WindowFrame/PhaseGateLeftSprite") is Sprite2D and inst.get_node_or_null("WindowFrame/PhaseGateRightSprite") is Sprite2D)
 	_check("stage_3 authored window battle arena", inst.has_method("_has_authored_window_battle_arena") and inst._has_authored_window_battle_arena())
 	_check("stage_3 authored arena bounds", _stage_3_arena_bounds_authored(inst))
 	_check("stage_3 authored window depth reads", _stage_3_window_depth_reads_authored(inst))
@@ -1392,6 +1408,12 @@ func _stage_3_window_depth_reads_authored(inst: Node) -> bool:
 		var rect := root_node.get_node_or_null(rect_name) as ColorRect
 		if rect == null or rect.color.a <= 0.0:
 			return false
+	var pane_sprite := root_node.get_node_or_null("ArenaPaneSprite") as Sprite2D
+	if pane_sprite == null or pane_sprite.texture == null or pane_sprite.modulate.a <= 0.2:
+		return false
+	var anchor := root_node.get_node_or_null("ArenaPane") as ColorRect
+	if anchor == null or anchor.color.a > 0.08:
+		return false
 	for line_name in ["DesktopLeakA", "DesktopLeakB"]:
 		var line := root_node.get_node_or_null(line_name) as Line2D
 		if line == null or line.points.size() < 2 or line.default_color.a <= 0.0:
@@ -1405,8 +1427,11 @@ func _stage_3_phase_pacing_reads_authored(inst: Node) -> bool:
 	if root_node == null:
 		return false
 	for zone_name in ["PhaseOneSweepZone", "PhaseTwoRequestZone", "PhaseThreePierceZone"]:
-		var zone := root_node.get_node_or_null(zone_name) as ColorRect
-		if zone == null or zone.color.a <= 0.0:
+		if not root_node.get_node_or_null(zone_name) is ColorRect:
+			return false
+	for plate_name in ["PhaseOneSweepPlate", "PhaseTwoRequestPlate", "PhaseThreePiercePlate"]:
+		var plate := root_node.get_node_or_null(plate_name) as Sprite2D
+		if plate == null or plate.texture == null or plate.modulate.a <= 0.0:
 			return false
 	for frame_name in ["PhaseOneSweepFrame", "PhaseTwoRequestFrame", "PhaseThreePierceFrame"]:
 		var frame := root_node.get_node_or_null(frame_name) as Line2D
@@ -1879,7 +1904,7 @@ func _check_stage_3_internet_gate_finishes_game(inst: Node) -> void:
 	var gf = root.get_node_or_null("GameFlow")
 	var player := inst.get_node_or_null("Player")
 	var gate := inst.get_node_or_null("InternetGate")
-	var hint := inst.get_node_or_null("ArenaLayer/ArenaHint") as Label
+	var hint_symbol := inst.get_node_or_null("ArenaLayer/ArenaHintSymbol") as CanvasItem
 	if gf == null or player == null or gate == null or not gate.has_method("_on_body_entered"):
 		_check("stage_3 internet gate finish prerequisites", false)
 		return
@@ -1893,7 +1918,7 @@ func _check_stage_3_internet_gate_finishes_game(inst: Node) -> void:
 	_check("stage_3 internet gate freezes player", "frozen" in player and player.frozen == true)
 	_check("stage_3 internet gate writes OpenAI flag", gf.has_openai_flag() == true)
 	_check("stage_3 internet gate marks finished", gf.has_finished_game() == true)
-	_check("stage_3 internet gate updates hint", hint != null and hint.text == "Open AI")
+	_check("stage_3 internet gate lights exit symbol", hint_symbol != null and hint_symbol.visible and hint_symbol.modulate.a >= 0.9)
 	_check("stage_3 internet gate stops monitoring", "monitoring" in gate and gate.monitoring == false)
 	gf.clear_openai_flag()
 

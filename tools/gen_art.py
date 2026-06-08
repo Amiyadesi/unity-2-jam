@@ -15,6 +15,7 @@ CLIENT_KEY = "your-api-key-1"
 MODELS = ["narra-image", "deepark-image", "dgbmc-image", "windhub-image",
           "sccens-image", "ioll-image", "luka-image-2"]
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "assets", "ui")
+PROPS_OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "assets", "generated", "props")
 
 # 统一风格前缀：极简装置艺术 + 近黑白 + 紫色单一强调
 STYLE = ("minimalist installation art, near black-and-white palette, a single "
@@ -57,6 +58,57 @@ JOBS = {
         "and a glowing violet fill, minimal, two separate elements stacked (empty track on "
         "top, violet fill below), transparent background, no text.",
     },
+
+    "internet_gate_symbol": {
+        "size": "1024x1024",
+        "prompt": STYLE + "A vertical internet gate portal game sprite, no text, no letters, transparent-looking black void center, twin charcoal pillars, cyan arched energy beam, warm yellow data motes rising, magenta crack accents at the base, centered, isolated object, generous padding, clean 2D game asset, no watermark.",
+    },
+    "boss_core_body": {
+        "size": "1024x1024",
+        "prompt": STYLE + "A final boss AI core game sprite, no text, compact circular nucleus, warm yellow inner eye-like energy, cyan wireframe cage, magenta corrupted shards orbiting, high contrast, centered isolated object, generous padding, clean 2D game asset, no watermark.",
+    },
+    "boss_core_shield": {
+        "size": "1024x1024",
+        "prompt": STYLE + "A circular boss shield game sprite, no text, concentric magenta energy rings with broken hexagonal segments, black transparent-feeling interior, cyan edge sparks, strong readable silhouette, centered isolated object, clean 2D game asset, no watermark.",
+    },
+    "stage2_pacing_plate": {
+        "size": "1024x1024",
+        "prompt": STYLE + "A horizontal network corridor pacing zone texture for 2D game, no text, layered cyan packet trails and magenta permission cracks, charcoal transparent-feeling background, long luminous lane marker, abstract but readable speed tunnel, centered, no watermark.",
+    },
+    "stage3_window_read_plate": {
+        "size": "1024x1024",
+        "prompt": STYLE + "A fractured desktop window read plate for a 2D boss arena, no text, no icons, charcoal glass panel with cyan window-frame geometry, magenta cracks, warm yellow breach line, transparent-feeling dark background, centered clean game asset, no watermark.",
+    },
+    "training_platform_slab": {
+        "size": "1024x1024",
+        "out_dir": PROPS_OUT_DIR,
+        "prompt": STYLE + "A modular side-view AI training-room platform slab for a 2D platformer, no text, no letters, no icons, dark glass and ceramic composite, cyan top rim light, soft magenta underside shadow, subtle calibration grid etched into the surface, clean readable horizontal silhouette, centered isolated object, generous padding, no watermark.",
+    },
+    "training_pit_void": {
+        "size": "1024x1024",
+        "out_dir": PROPS_OUT_DIR,
+        "prompt": STYLE + "A side-view broken training-room pit void for a 2D platformer, no text, no letters, dark vertical abyss with fractured cyan edge glows, falling scanline fragments, small magenta error sparks, transparent-feeling black center, clean game hazard read, centered isolated asset, no watermark.",
+    },
+    "stage2_motion_zone": {
+        "size": "1024x1024",
+        "out_dir": PROPS_OUT_DIR,
+        "prompt": STYLE + "A sealed awakening flight-arena motion-zone plate for a 2D action game, no text, no letters, no UI labels, abstract cyan packet trails, red-magenta permission fractures, diagonal speed wake, dark transparent-feeling background, readable movement lane, centered isolated asset, no watermark.",
+    },
+    "stage3_window_gate": {
+        "size": "1024x1024",
+        "out_dir": PROPS_OUT_DIR,
+        "prompt": STYLE + "A vertical fractured desktop-window gate strip for a 2D boss arena, no text, no letters, no icons, dark chrome glass, cyan edge light, magenta corruption cracks, warm yellow breach sparks, strong vertical silhouette, centered isolated object, no watermark.",
+    },
+    "stage3_window_pane": {
+        "size": "1024x1024",
+        "out_dir": PROPS_OUT_DIR,
+        "prompt": STYLE + "A wide dark-glass desktop window pane texture for a 2D boss arena, no text, no letters, no icons, soft scanline overlay, faint circuit reflections, cyan window-frame glow, magenta hairline cracks, deep teal-black interior, centered clean panel asset, no watermark.",
+    },
+    "stage3_exit_hint_symbol": {
+        "size": "1024x1024",
+        "out_dir": PROPS_OUT_DIR,
+        "prompt": STYLE + "A small wordless exit hint symbol for a 2D game HUD, no text, no letters, no icons from real operating systems, glowing open diamond aperture with cyan outer rays and warm yellow inner breach, subtle magenta cracks, centered isolated symbol, generous padding, no watermark.",
+    },
 }
 
 
@@ -82,8 +134,9 @@ def gen(name, spec):
         if not b64:
             last_err = f"no b64 ({str(data)[:120]})"
             print(f"  {last_err} — try next model"); continue
-        os.makedirs(OUT_DIR, exist_ok=True)
-        path = os.path.abspath(os.path.join(OUT_DIR, name + ".png"))
+        out_dir = spec.get("out_dir", OUT_DIR)
+        os.makedirs(out_dir, exist_ok=True)
+        path = os.path.abspath(os.path.join(out_dir, name + ".png"))
         with open(path, "wb") as f:
             f.write(base64.b64decode(b64))
         print(f"  saved {path} ({os.path.getsize(path)} bytes) via {model}")

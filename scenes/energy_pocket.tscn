@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://d0omqeqxu8lyp"]
+[gd_scene load_steps=3 format=3 uid="uid://d0omqeqxu8lyp"]
 
 [ext_resource type="Script" path="res://scripts/stages/energy_pocket.gd" id="1_pocket"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/energy_pocket.png" id="2_pocket"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pocket"]
 radius = 38.0
@@ -23,13 +24,9 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="Core" type="ColorRect" parent="Visual"]
-offset_left = -10.0
-offset_top = -10.0
-offset_right = 10.0
-offset_bottom = 10.0
-pivot_offset = Vector2(10, 10)
-color = Color(0.72, 0.96, 1, 0.68)
+[node name="Core" type="Sprite2D" parent="Visual"]
+scale = Vector2(0.38, 0.38)
+texture = ExtResource("2_pocket")
 
 [node name="Pulse" type="Line2D" parent="."]
 points = PackedVector2Array(55, 0, 39, 39, 0, 55, -39, 39, -55, 0, -39, -39, 0, -55, 39, -39, 55, 0)

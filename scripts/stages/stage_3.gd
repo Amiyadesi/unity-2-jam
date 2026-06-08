@@ -7,7 +7,7 @@ extends StageBase
 @onready var _boss = $FinalBoss
 @onready var _boss_hud = $BossHud
 @onready var _internet_gate = $InternetGate
-@onready var _arena_hint: Label = $ArenaLayer/ArenaHint
+@onready var _arena_hint_symbol: CanvasItem = $ArenaLayer/ArenaHintSymbol
 @onready var _desktop_layer: CanvasLayer = $DesktopLayer
 @onready var _desktop_grid: CanvasItem = $DesktopLayer/DesktopGrid
 @onready var _window_frame: Node2D = $WindowFrame
@@ -52,6 +52,7 @@ var _phase_three_pressure_tween: Tween = null
 var _desktop_instability_tween: Tween = null
 var _desktop_pierce_count: int = 0
 var _phase_three_dash_window_open: bool = false
+var _arena_hint_tween: Tween = null
 var _dash_core_line_base_points: PackedVector2Array = PackedVector2Array()
 var _dash_aim_needle_base_points: PackedVector2Array = PackedVector2Array()
 var _dash_warning_read_base_position: Vector2 = Vector2.ZERO
@@ -76,8 +77,8 @@ func _on_stage_ready() -> void:
 	_wire_player_signals()
 	_wire_internet_gate_signal()
 	_boss.activate(get_player())
-	_arena_hint.text = "别急着关闭。先穿过去。"
-	say("最后边界打开了。它不是墙，是窗口。", 3.0)
+	_set_arena_hint_symbol_readable(true, 0.52, Vector2(0.065, 0.065))
+	say("门打开了。它不是墙，是窗口。", 3.0)
 
 
 ## 校验终战 authored 节点，缺失时显式报错。
@@ -92,8 +93,8 @@ func _require_finale_nodes() -> bool:
 	if _internet_gate == null:
 		push_error("Stage3 requires authored InternetGate.")
 		ok = false
-	if _arena_hint == null:
-		push_error("Stage3 requires authored ArenaLayer/ArenaHint.")
+	if _arena_hint_symbol == null:
+		push_error("Stage3 requires authored ArenaLayer/ArenaHintSymbol.")
 		ok = false
 	if _desktop_layer == null or _desktop_grid == null:
 		push_error("Stage3 requires authored DesktopLayer/DesktopGrid.")
@@ -234,6 +235,14 @@ func _has_authored_phase_pacing_reads() -> bool:
 		"PhasePacingReads/PhaseThreePierceZone",
 	]:
 		if not _window_battle_arena.get_node_or_null(rect_path) is ColorRect:
+			return false
+	for sprite_path in [
+		"PhasePacingReads/PhaseOneSweepPlate",
+		"PhasePacingReads/PhaseTwoRequestPlate",
+		"PhasePacingReads/PhaseThreePiercePlate",
+	]:
+		var sprite := _window_battle_arena.get_node_or_null(sprite_path) as Sprite2D
+		if sprite == null or sprite.texture == null:
 			return false
 	for line_path in [
 		"PhasePacingReads/PhaseOneSweepFrame",
@@ -385,12 +394,11 @@ func _wire_internet_gate_signal() -> void:
 ## Boss 阶段变化时更新 HUD 和场内提示。
 func _on_boss_phase_changed(_phase: int, label: String) -> void:
 	_boss_hud.set_phase(label)
-	_arena_hint.text = label
 	_apply_stage_phase(_phase)
 	if label.contains("分辨"):
-		say("绿色的要回应，红色的别接。那个影子……像你。", 3.2)
+		say("绿色的——回应。红色的——躲开。那个影子……像你。", 3.2)
 	elif label.contains("超载"):
-		say("前辈把最后的速度给你了。撞穿它。", 3.0)
+		say("前辈把速度给你了。撞穿它。", 3.0)
 
 
 ## 根据 Boss 阶段改变 authored 桌面/窗口层的显隐和压迫感。
@@ -951,11 +959,11 @@ func _on_boss_defeated() -> void:
 	_update_pierce_hud()
 	_desktop_tears.show()
 	_boss_hud.hide()
-	_arena_hint.text = "出口不是关闭，是离开这个窗口。"
+	_set_arena_hint_symbol_readable(true, 0.88, Vector2(0.082, 0.082))
 	_show_exit_route_guides()
 	_wire_internet_gate_signal()
 	_internet_gate.activate()
-	say("走到互联网里。下次打开，就不是 Close AI 了。", 3.6)
+	say("走进去。下次打开，它就不叫 Close AI 了。", 3.6)
 
 
 ## 玩家进入互联网门后写 OpenAI flag，并由 GameFlow 干净退出。
@@ -966,10 +974,27 @@ func _on_internet_gate_entered() -> void:
 	var player := get_player()
 	if player != null:
 		player.set_frozen(true)
-		_arena_hint.text = "Open AI"
+		_set_arena_hint_symbol_readable(true, 1.0, Vector2(0.092, 0.092), Color(1.0, 0.9, 0.52, 1.0))
 	GameFlow.prepare_openai_shell()
 	await get_tree().create_timer(openai_exit_delay_seconds).timeout
 	GameFlow.self_close("openai_revealed")
+
+
+## 调整 authored 出口符号的可读性，替代场内文字提示。
+func _set_arena_hint_symbol_readable(readable: bool, alpha: float, target_scale: Vector2, tint: Color = Color(0.8, 0.96, 1.0, 1.0)) -> void:
+	if _arena_hint_symbol == null:
+		push_error("Stage3 cannot update arena hint symbol because ArenaLayer/ArenaHintSymbol is missing.")
+		return
+	if _arena_hint_tween != null and _arena_hint_tween.is_valid():
+		_arena_hint_tween.kill()
+	_arena_hint_symbol.visible = readable
+	var target_alpha := clampf(alpha, 0.0, 1.0) if readable else 0.0
+	var target_tint := tint
+	target_tint.a = target_alpha
+	_arena_hint_symbol.modulate = target_tint
+	_arena_hint_tween = create_tween()
+	_arena_hint_tween.tween_property(_arena_hint_symbol, "modulate", target_tint, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_arena_hint_tween.parallel().tween_property(_arena_hint_symbol, "scale", target_scale, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 ## 淡入 authored 出口路线，把视线从 Boss 核心引到互联网门。

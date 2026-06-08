@@ -1,6 +1,8 @@
-[gd_scene format=3 uid="uid://c70mqkqkdm8ov"]
+[gd_scene load_steps=4 format=3 uid="uid://c70mqkqkdm8ov"]
 
 [ext_resource type="Script" path="res://scripts/stages/final_boss_request_card.gd" id="1_request"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/request_good.png" id="2_good"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/request_bad.png" id="3_bad"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_request"]
 size = Vector2(92, 38)
@@ -14,12 +16,16 @@ script = ExtResource("1_request")
 shape = SubResource("RectangleShape2D_request")
 disabled = true
 
-[node name="Visual" type="ColorRect" parent="."]
-offset_left = -46.0
-offset_top = -19.0
-offset_right = 46.0
-offset_bottom = 19.0
-color = Color(0.28, 0.86, 0.62, 0.82)
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="GoodCard" type="Sprite2D" parent="Visual"]
+scale = Vector2(0.62, 0.62)
+texture = ExtResource("2_good")
+
+[node name="BadCard" type="Sprite2D" parent="Visual"]
+visible = false
+scale = Vector2(0.62, 0.62)
+texture = ExtResource("3_bad")
 
 [node name="KindRead" type="Node2D" parent="."]
 
@@ -73,24 +79,3 @@ width = 4.0
 default_color = Color(0.9, 0.66, 1, 0.28)
 begin_cap_mode = 2
 end_cap_mode = 2
-
-[node name="Label" type="Label" parent="."]
-offset_left = -44.0
-offset_top = -15.0
-offset_right = 44.0
-offset_bottom = 15.0
-theme_override_colors/font_color = Color(0.96, 0.98, 0.94, 1)
-theme_override_font_sizes/font_size = 15
-text = "回应"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Palette" type="Control" parent="."]
-visible = false
-mouse_filter = 2
-
-[node name="Good" type="ColorRect" parent="Palette"]
-color = Color(0.25, 0.82, 0.58, 0.86)
-
-[node name="Bad" type="ColorRect" parent="Palette"]
-color = Color(0.95, 0.23, 0.34, 0.88)

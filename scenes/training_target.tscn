@@ -1,6 +1,12 @@
-[gd_scene format=3 uid="uid://dqb345w3nynvn"]
+[gd_scene load_steps=8 format=3 uid="uid://dqb345w3nynvn"]
 
 [ext_resource type="Script" path="res://scripts/stages/training_target.gd" id="1_target"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_panel_plate.png" id="2_plate"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_lock_forward.png" id="3_forward"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_lock_side.png" id="4_side"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_lock_dash.png" id="5_dash"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_lock_bug.png" id="6_bug"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_light_strip.png" id="7_prompt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_target"]
 size = Vector2(48, 48)
@@ -15,27 +21,35 @@ script = ExtResource("1_target")
 shape = SubResource("RectangleShape2D_target")
 disabled = true
 
-[node name="Visual" type="ColorRect" parent="."]
-offset_left = -24.0
-offset_top = -24.0
-offset_right = 24.0
-offset_bottom = 24.0
-color = Color(0.4, 0.2, 0.78, 0.34)
+[node name="Visual" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.72)
+scale = Vector2(0.26, 0.26)
+texture = ExtResource("2_plate")
 
-[node name="Core" type="ColorRect" parent="."]
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-color = Color(0.62, 0.48, 1, 0.85)
+[node name="Core" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0.85)
 
-[node name="Prompt" type="Label" parent="."]
+[node name="ForwardIcon" type="Sprite2D" parent="Core"]
+scale = Vector2(0.36, 0.36)
+texture = ExtResource("3_forward")
+
+[node name="SideIcon" type="Sprite2D" parent="Core"]
 visible = false
-offset_left = -58.0
-offset_top = -64.0
-offset_right = 58.0
-offset_bottom = -36.0
-theme_override_colors/font_color = Color(0.91, 0.91, 0.97, 1)
-theme_override_font_sizes/font_size = 15
-text = "释放"
-horizontal_alignment = 1
+scale = Vector2(0.36, 0.36)
+texture = ExtResource("4_side")
+
+[node name="DashIcon" type="Sprite2D" parent="Core"]
+visible = false
+scale = Vector2(0.36, 0.36)
+texture = ExtResource("5_dash")
+
+[node name="BugIcon" type="Sprite2D" parent="Core"]
+visible = false
+scale = Vector2(0.36, 0.36)
+texture = ExtResource("6_bug")
+
+[node name="Prompt" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -58)
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("7_prompt")

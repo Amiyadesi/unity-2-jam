@@ -14,10 +14,9 @@ signal hurt_player(body: Node)
 @export var lifetime: float = 5.0
 
 @onready var _shape: CollisionShape2D = $CollisionShape2D
-@onready var _visual: ColorRect = $Visual
-@onready var _label: Label = $Label
-@onready var _good_swatch: ColorRect = $Palette/Good
-@onready var _bad_swatch: ColorRect = $Palette/Bad
+@onready var _visual: CanvasItem = $Visual
+@onready var _good_card: CanvasItem = $Visual/GoodCard
+@onready var _bad_card: CanvasItem = $Visual/BadCard
 @onready var _good_halo: CanvasItem = $KindRead/GoodHalo
 @onready var _bad_hazard: CanvasItem = $KindRead/BadHazard
 @onready var _travel_trail: Node2D = $TravelTrail
@@ -32,6 +31,8 @@ var _life_left: float = 0.0
 func _ready() -> void:
 	if not _has_authored_kind_reads():
 		push_error("FinalBossRequestCard requires authored KindRead good/bad cues.")
+	if _good_card == null or _bad_card == null:
+		push_error("FinalBossRequestCard requires authored Visual/GoodCard and Visual/BadCard sprites.")
 	body_entered.connect(_on_body_entered)
 	deactivate()
 
@@ -79,10 +80,10 @@ func _physics_process(delta: float) -> void:
 		deactivate()
 
 
-## 应用善恶请求的 authored 色板和文字。
+## 应用善恶请求的 authored 图形读法。
 func _apply_kind_style() -> void:
-	_visual.color = _good_swatch.color if _was_good else _bad_swatch.color
-	_label.text = "回应" if _was_good else "避开"
+	_good_card.visible = _was_good
+	_bad_card.visible = not _was_good
 	_good_halo.visible = _was_good
 	_bad_hazard.visible = not _was_good
 	if _velocity.length() > 0.01 and _travel_trail != null:

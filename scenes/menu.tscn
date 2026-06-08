@@ -59,18 +59,6 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.7, 0.55, 0.3, 0.025)
 
-[node name="StatusLabel" type="Label" parent="." unique_id=159024990]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 28.0
-offset_top = 20.0
-offset_right = -28.0
-offset_bottom = 48.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0.55, 0.85, 0.7, 1)
-theme_override_font_sizes/font_size = 16
-
 [node name="Title" type="Label" parent="." unique_id=1770691837]
 material = SubResource("Mat_glitch_title")
 layout_mode = 1
@@ -140,23 +128,6 @@ bb_text = "[color=#e8c070]设置"
 custom_minimum_size = Vector2(240, 52)
 layout_mode = 2
 bb_text = "[color=#e8c070]感谢"
-
-[node name="Hint" type="Label" parent="." unique_id=1139798833]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = -44.0
-offset_right = -28.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.5, 0.44, 0.36, 1)
-theme_override_font_sizes/font_size = 13
-text = "移动 A/D · 跳跃 空格 · 互动 E"
-horizontal_alignment = 2
 
 [node name="BootFlash" type="ColorRect" parent="." unique_id=1296616263]
 layout_mode = 1

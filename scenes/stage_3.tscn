@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://closeaistage3scn"]
+[gd_scene load_steps=21 format=3 uid="uid://closeaistage3scn"]
 
 [ext_resource type="Script" path="res://scripts/stages/stage_3.gd" id="1_stage3"]
 [ext_resource type="PackedScene" uid="uid://closeaiplayer01" path="res://scenes/player.tscn" id="2_player"]
@@ -11,6 +11,10 @@
 [ext_resource type="PackedScene" path="res://scenes/energy_pocket.tscn" id="9_pocket"]
 [ext_resource type="AudioStream" uid="uid://d32cuiqqss0hj" path="res://assets/third_party/peritune/Ancient_Gust_Retro_9.mp3" id="10_music"]
 [ext_resource type="Texture2D" uid="uid://gxtf2ytee01l" path="res://assets/generated/backgrounds/stage3_window_battle_desktop_ai.png" id="11_bg"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_window_read_plate.png" id="12_window_read"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_window_gate.png" id="13_gate_strip"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_window_pane.png" id="14_window_pane"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/stage3_exit_hint_symbol.png" id="15_exit_hint"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(1600, 48)
@@ -26,18 +30,6 @@ size = Vector2(48, 540)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_horizontal"]
 size = Vector2(1060, 48)
-
-[sub_resource type="StyleBoxFlat" id="SB_hint"]
-bg_color = Color(0.02, 0.018, 0.028, 0.52)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.62, 0.82, 1, 0.32)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
 
 [node name="Stage3" type="Node2D"]
 script = ExtResource("1_stage3")
@@ -174,7 +166,13 @@ offset_left = -520.0
 offset_top = -238.0
 offset_right = -500.0
 offset_bottom = 238.0
-color = Color(0.85, 0.28, 0.48, 0.32)
+color = Color(0.85, 0.28, 0.48, 0.035)
+
+[node name="PhaseGateLeftSprite" type="Sprite2D" parent="WindowFrame"]
+modulate = Color(1, 0.78, 0.88, 0.86)
+position = Vector2(-510, 0)
+scale = Vector2(0.046, 0.28)
+texture = ExtResource("13_gate_strip")
 
 [node name="PhaseGateRight" type="ColorRect" parent="WindowFrame"]
 modulate = Color(1, 1, 1, 0.42)
@@ -182,7 +180,13 @@ offset_left = 500.0
 offset_top = -238.0
 offset_right = 520.0
 offset_bottom = 238.0
-color = Color(0.85, 0.28, 0.48, 0.32)
+color = Color(0.85, 0.28, 0.48, 0.035)
+
+[node name="PhaseGateRightSprite" type="Sprite2D" parent="WindowFrame"]
+modulate = Color(0.82, 0.94, 1, 0.86)
+position = Vector2(510, 0)
+scale = Vector2(0.046, 0.28)
+texture = ExtResource("13_gate_strip")
 
 [node name="ArenaLines" type="Node2D" parent="."]
 
@@ -207,7 +211,13 @@ offset_left = 140.0
 offset_top = 122.0
 offset_right = 1140.0
 offset_bottom = 598.0
-color = Color(0.018, 0.026, 0.042, 0.26)
+color = Color(0.018, 0.026, 0.042, 0.035)
+
+[node name="ArenaPaneSprite" type="Sprite2D" parent="WindowBattleArena/WindowDepthReads"]
+modulate = Color(0.86, 0.98, 1, 0.42)
+position = Vector2(640, 360)
+scale = Vector2(0.62, 0.52)
+texture = ExtResource("14_window_pane")
 
 [node name="InnerTopShadow" type="ColorRect" parent="WindowBattleArena/WindowDepthReads"]
 offset_left = 140.0
@@ -261,21 +271,40 @@ offset_left = 300.0
 offset_top = 386.0
 offset_right = 966.0
 offset_bottom = 450.0
-color = Color(1, 0.42, 0.62, 0.08)
+color = Color(1, 0.42, 0.62, 0.025)
+
+[node name="PhaseOneSweepPlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads"]
+modulate = Color(1, 0.56, 0.72, 0.2)
+position = Vector2(633, 418)
+scale = Vector2(0.5, 0.11)
+texture = ExtResource("12_window_read")
 
 [node name="PhaseTwoRequestZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads"]
 offset_left = 330.0
 offset_top = 248.0
 offset_right = 1190.0
 offset_bottom = 366.0
-color = Color(0.34, 1, 0.76, 0.065)
+color = Color(0.34, 1, 0.76, 0.02)
+
+[node name="PhaseTwoRequestPlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads"]
+modulate = Color(0.46, 1, 0.82, 0.2)
+position = Vector2(760, 307)
+scale = Vector2(0.58, 0.16)
+texture = ExtResource("12_window_read")
 
 [node name="PhaseThreePierceZone" type="ColorRect" parent="WindowBattleArena/PhasePacingReads"]
 offset_left = 592.0
 offset_top = 250.0
 offset_right = 1140.0
 offset_bottom = 374.0
-color = Color(1, 0.9, 0.42, 0.075)
+color = Color(1, 0.9, 0.42, 0.022)
+
+[node name="PhaseThreePiercePlate" type="Sprite2D" parent="WindowBattleArena/PhasePacingReads"]
+modulate = Color(1, 0.92, 0.48, 0.24)
+position = Vector2(866, 312)
+rotation = -0.16
+scale = Vector2(0.42, 0.13)
+texture = ExtResource("12_window_read")
 
 [node name="PhaseOneSweepFrame" type="Line2D" parent="WindowBattleArena/PhasePacingReads"]
 points = PackedVector2Array(320, 418, 940, 418)
@@ -982,40 +1011,11 @@ position = Vector2(1110, 270)
 [node name="ArenaLayer" type="CanvasLayer" parent="."]
 layer = 11
 
-[node name="HintPanel" type="Panel" parent="ArenaLayer"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -230.0
-offset_top = 245.0
-offset_right = 230.0
-offset_bottom = 287.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("SB_hint")
-
-[node name="ArenaHint" type="Label" parent="ArenaLayer"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = 253.0
-offset_right = 220.0
-offset_bottom = 279.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.82, 0.92, 1, 0.92)
-theme_override_font_sizes/font_size = 16
-text = "边界正在打开"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="ArenaHintSymbol" type="Sprite2D" parent="ArenaLayer"]
+modulate = Color(0.8, 0.96, 1, 0.52)
+position = Vector2(640, 612)
+scale = Vector2(0.065, 0.065)
+texture = ExtResource("15_exit_hint")
 
 [node name="PauseLayer" type="CanvasLayer" parent="."]
 process_mode = 3

@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://6rnieg5gni"]
+[gd_scene load_steps=3 format=3 uid="uid://6rnieg5gni"]
 
 [ext_resource type="Script" path="res://scripts/stages/internet_gate.gd" id="1_gate"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/internet_gate_symbol.png" id="2_gate_symbol"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gate"]
 radius = 58.0
@@ -14,13 +15,10 @@ script = ExtResource("1_gate")
 shape = SubResource("CircleShape2D_gate")
 disabled = true
 
-[node name="Core" type="ColorRect" parent="."]
-offset_left = -42.0
-offset_top = -42.0
-offset_right = 42.0
-offset_bottom = 42.0
-pivot_offset = Vector2(42, 42)
-color = Color(0.62, 0.92, 1, 0.34)
+[node name="Core" type="Sprite2D" parent="."]
+modulate = Color(0.72, 0.92, 1, 0.84)
+scale = Vector2(0.17, 0.17)
+texture = ExtResource("2_gate_symbol")
 
 [node name="Ring" type="Line2D" parent="."]
 points = PackedVector2Array(58, 0, 41, 41, 0, 58, -41, 41, -58, 0, -41, -41, 0, -58, 41, -41, 58, 0)
@@ -29,14 +27,3 @@ default_color = Color(0.76, 0.96, 1, 0.86)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
-
-[node name="Label" type="Label" parent="."]
-offset_left = -90.0
-offset_top = 66.0
-offset_right = 90.0
-offset_bottom = 94.0
-theme_override_colors/font_color = Color(0.78, 0.93, 1, 0.92)
-theme_override_font_sizes/font_size = 17
-text = "互联网"
-horizontal_alignment = 1
-vertical_alignment = 1

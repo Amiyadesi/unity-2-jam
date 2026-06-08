@@ -33,6 +33,11 @@ This folder contains verified downloads used or reserved for Close AI.
 - License: Mixkit Free License
 - Use: dash impact / boss hit SFX candidate.
 
+- Source: https://mixkit.co/free-sound-effects/ui/
+- Local path: `assets/third_party/mixkit/ui-zoom-out-2619.wav`
+- License: Mixkit Free License
+- Use: authored ShaderButton hover / press UI SFX source.
+
 ## Search Notes
 
 - Boss-specific sprite download was attempted through the verified adapter workflow but did not produce a usable verified hit.

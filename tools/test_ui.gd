@@ -42,10 +42,14 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check("menu instantiates", is_instance_valid(menu))
+	_check("menu status label removed", menu.get_node_or_null("StatusLabel") == null)
+	_check("menu footer key hint removed", menu.get_node_or_null("Hint") == null)
 	var start_line := menu.get_node_or_null("StartLine") as Label
 	_check("menu start line updated", start_line != null and start_line.text == "我期待与你的再会")
 	var primary = menu.get_node_or_null("ButtonColumn/PrimaryButton")
 	_check("PrimaryButton is ShaderButton", primary != null and primary.has_method("set_bbtext"))
+	_check("PrimaryButton has hover sfx", primary != null and primary.get_node_or_null("HoverSfx") is AudioStreamPlayer and primary.get_node("HoverSfx").stream != null and primary.get_node("HoverSfx").bus == "UI")
+	_check("PrimaryButton has press sfx", primary != null and primary.get_node_or_null("PressSfx") is AudioStreamPlayer and primary.get_node("PressSfx").stream != null and primary.get_node("PressSfx").bus == "UI")
 	var settings = menu.get_node_or_null("SettingsScreen")
 	var thanks = menu.get_node_or_null("ThanksScreen")
 	_check("SettingsScreen present", settings != null)

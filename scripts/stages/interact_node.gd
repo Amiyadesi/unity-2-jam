@@ -2,10 +2,10 @@ extends Area2D
 class_name InteractNode
 ## interact_node.gd — 可交互训练端口（第 1 关教学用「互动」动词）
 ##
-## 玩家进入范围 → 显示 "E" 提示；按 interact(E) → 校准一次，发出 activated。
+## 玩家进入范围 → 显示 authored 无字提示；按 interact(E) → 校准一次，发出 activated。
 ## 与第 1 关的「走进即亮」开关不同：这个必须按键，用来教 E 这个动词。
 ##
-## 放置：collision_mask=2 检测 player；子节点含 "Lit"(初始透明) 与可选 "Prompt"(初始隐藏)。
+## 放置：collision_mask=2 检测 player；子节点含 "Lit"(初始透明) 与 "Prompt"(初始隐藏)。
 
 signal activated(node: Area2D)
 
@@ -58,7 +58,7 @@ func _process(_delta: float) -> void:
 		_activate()
 
 
-## 玩家进入触发范围时显示按键提示。
+## 玩家进入触发范围时显示 authored 交互提示。
 func _on_body_entered(body: Node) -> void:
 	if not _enabled:
 		return
@@ -130,7 +130,7 @@ func _set_lit(a: float, instant: bool) -> void:
 		tw.tween_property(_lit, "modulate:a", a, 0.25)
 
 
-## 控制 authored 提示标签显隐。
+## 控制 authored 无字提示显隐。
 func _set_prompt(show_it: bool) -> void:
 	if _prompt == null:
 		push_error("%s cannot update Prompt because authored visual is missing." % name)

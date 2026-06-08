@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://d0omqeqxu8lyp" path="res://scenes/energy_pocket.tscn" id="8_pocket"]
 [ext_resource type="Texture2D" uid="uid://dnklj40a8lnj3" path="res://assets/generated/backgrounds/stage2_network_corridor.png" id="9_bg"]
 [ext_resource type="AudioStream" uid="uid://dvrnx6a8m7vxc" path="res://assets/third_party/peritune/Ancient_Gust_Retro_6.mp3" id="9_music"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/training_light_strip.png" id="10_light"]
+[ext_resource type="Texture2D" path="res://assets/generated/props/stage2_motion_zone.png" id="11_pacing"]
 
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_arena_wall_vertical"]
@@ -125,21 +127,61 @@ offset_left = 292.0
 offset_top = 394.0
 offset_right = 852.0
 offset_bottom = 566.0
-color = Color(0.22, 0.62, 0.78, 0.13)
+color = Color(0.22, 0.62, 0.78, 0.025)
+
+[node name="LiftSafePlate" type="Sprite2D" parent="PacingZones"]
+modulate = Color(0.66, 0.98, 1, 0.5)
+position = Vector2(572, 480)
+scale = Vector2(0.28, 0.11)
+texture = ExtResource("11_pacing")
+
+[node name="LiftSafeTexture" type="Sprite2D" parent="PacingZones"]
+modulate = Color(0.48, 0.96, 1, 0.2)
+position = Vector2(572, 480)
+scale = Vector2(1.1, 1.45)
+texture = ExtResource("10_light")
 
 [node name="DashChainPeakZone" type="ColorRect" parent="PacingZones" unique_id=952869440]
 offset_left = 980.0
 offset_top = 216.0
 offset_right = 1648.0
 offset_bottom = 482.0
-color = Color(0.58, 0.38, 0.95, 0.12)
+color = Color(0.58, 0.38, 0.95, 0.025)
+
+[node name="DashChainPlate" type="Sprite2D" parent="PacingZones"]
+modulate = Color(0.9, 0.74, 1, 0.56)
+position = Vector2(1314, 349)
+rotation = -0.22
+scale = Vector2(0.34, 0.17)
+texture = ExtResource("11_pacing")
+
+[node name="DashChainTexture" type="Sprite2D" parent="PacingZones"]
+modulate = Color(0.86, 0.72, 1, 0.22)
+position = Vector2(1314, 349)
+rotation = -0.28
+scale = Vector2(1.35, 2.1)
+texture = ExtResource("10_light")
 
 [node name="EnemyWavePeakZone" type="ColorRect" parent="PacingZones" unique_id=1802116618]
 offset_left = 1080.0
 offset_top = 376.0
 offset_right = 1728.0
 offset_bottom = 536.0
-color = Color(1, 0.34, 0.62, 0.1)
+color = Color(1, 0.34, 0.62, 0.025)
+
+[node name="EnemyWavePlate" type="Sprite2D" parent="PacingZones"]
+modulate = Color(1, 0.58, 0.78, 0.52)
+position = Vector2(1404, 456)
+rotation = 0.08
+scale = Vector2(0.33, 0.12)
+texture = ExtResource("11_pacing")
+
+[node name="EnemyWaveTexture" type="Sprite2D" parent="PacingZones"]
+modulate = Color(1, 0.52, 0.72, 0.2)
+position = Vector2(1404, 456)
+rotation = 0.12
+scale = Vector2(1.28, 1.45)
+texture = ExtResource("10_light")
 
 [node name="LiftSafeFrame" type="Line2D" parent="PacingZones" unique_id=1903785901]
 points = PackedVector2Array(292, 566, 520, 505, 720, 410, 852, 394)

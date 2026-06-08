@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://closeaishaderbtn1"]
+[gd_scene load_steps=5 format=3 uid="uid://closeaishaderbtn1"]
 
 [ext_resource type="Script" path="res://ui_kit/components/shader_button.gd" id="1_sbtn"]
+[ext_resource type="AudioStream" path="res://assets/generated/sfx/ui_button_hover.wav" id="2_hover"]
+[ext_resource type="AudioStream" path="res://assets/generated/sfx/ui_button_press.wav" id="3_press"]
 
 [sub_resource type="StyleBoxFlat" id="SB_btn"]
 bg_color = Color(0.04, 0.035, 0.03, 0.55)
@@ -52,5 +54,15 @@ fit_content = true
 scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="HoverSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_hover")
+volume_db = -13.0
+bus = &"UI"
+
+[node name="PressSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_press")
+volume_db = -9.0
+bus = &"UI"
 
 [connection signal="resized" from="Label" to="." method="_on_label_resized"]
